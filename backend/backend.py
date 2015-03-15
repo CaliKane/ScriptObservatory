@@ -1,3 +1,6 @@
+#!/usr/bin/env python2
+#
+
 from flask import Flask
 from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -8,13 +11,12 @@ app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
-
 class Script(db.Model):
     id = Column(Integer, primary_key=True)
     url = Column(Text, unique=False)
+    parent_url = Column(Text, unique=False)
     sha256 = Column(Text, unique=False)
     date = Column(Integer, unique=False)    
-    req_type = Column(Text, unique=False)
 
 db.create_all()
 
