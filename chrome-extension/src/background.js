@@ -1,13 +1,22 @@
 /*
- *  Primary source code for ScriptWatcher extension.
- * 
+ *
+ * This file (background.js) includes the primary source code for the ScriptWatcher extension.
+ *
+ * The content here is loaded in the background within the "background page" Chrome sets up for
+ * the extension. The main functionality is implemented within the chrome.webRequest.onBeforeRequest
+ * listener, which is called by the browser whenever a request is about to be made.
+ *
+ */
+
+
+/* 
+ * CONSTANTS
  */
 API_BASE_URL = "http://127.0.0.1:8080/api/script";
 
 
 /*
  * httpGet(url) - Perform a HTTP GET request to *url* and return its content
- *
  */
 function httpGet(url){
     var xmlHttp = new XMLHttpRequest();
@@ -19,7 +28,6 @@ function httpGet(url){
 
 /*
  * httpPost(url, data) - Send json-ified *data* with a HTTP POST request to *url*
- *
  */
 function httpPost(url, data){
     var request = new XMLHttpRequest();
@@ -46,7 +54,6 @@ function httpPost(url, data){
  *
  * More information is available in the chrome.webRequest docs: 
  *   https://developer.chrome.com/extensions/webRequest
- *
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
@@ -83,7 +90,6 @@ chrome.webRequest.onBeforeRequest.addListener(
  * we want to batch our uploads.
  *
  * TODO: implement
- *
  */
 /*
 window.setInterval(function(){
