@@ -1,6 +1,6 @@
 /*
  *
- * This file (background.js) includes the primary source code for the ScriptWatcher extension.
+ * This file (background.js) implements the basic ScriptObservatory functionality.
  *
  * The content here is loaded in the background within the "background page" Chrome sets up for
  * the extension. The main functionality is implemented within the chrome.webRequest.onBeforeRequest
