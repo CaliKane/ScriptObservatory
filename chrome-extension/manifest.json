@@ -10,7 +10,7 @@
   "background": {
     "scripts": [
       "src/background.js",
-      "js/sha256.js"
+      "src/sha256.js"
     ],
     "persistent": true
   }
