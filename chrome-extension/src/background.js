@@ -57,30 +57,22 @@ function httpPost(url, data){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
-        // download script in a separate web request
-        data = httpGet(details.url);
+        var data = httpGet(details.url);
 
-        // calculate SHA256 of script data   
-        hash = CryptoJS.SHA256(data); 
-        hash = hash.toString(CryptoJS.enc.Base64);
+        var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+
+        var post_data = {"url": details.url, 
+                         "sha256": hash, 
+                         "req_type": details.type, 
+                         "date": (new Date()).getTime()};
 
         // TODO batch URL & SHA256 to be sent off to server
-        //info = details.url + " " + hash;
-        //batch.push(info);
-
-        var date = (new Date()).getTime();
         
-        post_data = {"url": details.url, "sha256": hash, "req_type": details.type, "date": date};
-        // for now we immediately send it:
         httpPost(API_BASE_URL, post_data);
 
-        // convert to base64 and return the script code as a data URI
-        data = window.btoa(data);
-        
-        console.log(info);
-        return {"redirectUrl":"data:text/html;base64, " + data};
+        return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
     }, 
-    {urls: ["<all_urls>"], types: ["script", "object", "other"]}, 
+    {urls: ["<all_urls>"], types: ["script"]}, 
     ["blocking"]
 );
 
