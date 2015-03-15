@@ -39,11 +39,12 @@ function httpPost(url, data){
  * It would be nice if we could let the browser do the request normally and grab the content of the response,
  * but this is not currently possible with the chrome.* APIs. 
  *
- * It's discussed in the following issue: **TODO GET URL**
+ * It's discussed in the following issue: https://code.google.com/p/chromium/issues/detail?id=104058
+ * 
+ * A draft proposal for adding this functionality is here: https://groups.google.com/a/chromium.org/forum/#!msg/apps-dev/v176iCmRgSs/iM-72Evf8JgJ
  *
  * More information:
  * -> chrome.webRequest docs: https://developer.chrome.com/extensions/webRequest
- * ->
  *
  */
 chrome.webRequest.onBeforeRequest.addListener(
