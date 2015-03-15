@@ -1,0 +1,28 @@
+{
+  "name": "ScriptObservatory",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Keep track of what scripts you run.",
+  "default_locale": "en",
+  "permissions": [
+    "http://*/*", "https://*/*", "webRequest", "webRequestBlocking"
+  ],
+  "background": {
+    "scripts": [
+      "src/bg/background.js",
+      "js/sha256.js"
+    ],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*", "http://*/*/"
+      ],
+      "js": [
+        "src/inject/inject.js"
+      ]
+    }
+  ]
+
+}
