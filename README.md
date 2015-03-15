@@ -58,7 +58,7 @@ Roadmap
 
 Near-term:
  - Add support to track parent URL
- - Support embedded script tags (ex: "<script> ... </script>")
+ - Support embedded script tags
  - Support batching uploads
  - Expand Privacy documentation
 
