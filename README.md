@@ -64,6 +64,7 @@ Near-term:
 
 Long-term:
  - Expand to collect data on _all_ web objects
+ - Don't interfere with other extensions / ad-blockers
  - Add visualizations for server's data
 
 Contributing
