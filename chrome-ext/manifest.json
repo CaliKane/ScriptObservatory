@@ -9,20 +9,9 @@
   ],
   "background": {
     "scripts": [
-      "src/bg/background.js",
+      "src/background.js",
       "js/sha256.js"
     ],
     "persistent": true
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://*/*", "http://*/*/"
-      ],
-      "js": [
-        "src/inject/inject.js"
-      ]
-    }
-  ]
-
+  }
 }
