@@ -2,7 +2,6 @@
  *  Primary source code for ScriptWatcher extension.
  * 
  */
-
 API_BASE_URL = "http://127.0.0.1:8080/api/script";
 
 
@@ -34,17 +33,19 @@ function httpPost(url, data){
 /* 
  * We hook into chrome.webRequest.onBeforeRequest to perform our own download of the content and calculate the
  * sha256 hash of the content. After the download is complete, we POST the url & hash value to *API_BASE_URL* 
- * and embed the content in the webpage with a data URI object (to avoid having to download the content twice).
+ * and embed the content in the webpage by changing the URL to a data URI object (avoids downloading content twice).
  * 
- * It would be nice if we could let the browser do the request normally and grab the content of the response,
- * but this is not currently possible with the chrome.* APIs. 
+ * It would be nice if we could let the browser do the request normally and grab the content of its response,
+ * but this is not currently possible with the chrome APIs. 
  *
- * It's discussed in the following issue: https://code.google.com/p/chromium/issues/detail?id=104058
+ * This functionality is discussed in the following issue: 
+ *   https://code.google.com/p/chromium/issues/detail?id=104058
  * 
- * A draft proposal for adding this functionality is here: https://groups.google.com/a/chromium.org/forum/#!msg/apps-dev/v176iCmRgSs/iM-72Evf8JgJ
+ * A draft proposal for adding this functionality is here: 
+ *   https://groups.google.com/a/chromium.org/forum/#!msg/apps-dev/v176iCmRgSs/iM-72Evf8JgJ
  *
- * More information:
- * -> chrome.webRequest docs: https://developer.chrome.com/extensions/webRequest
+ * More information is available in the chrome.webRequest docs: 
+ *   https://developer.chrome.com/extensions/webRequest
  *
  */
 chrome.webRequest.onBeforeRequest.addListener(
