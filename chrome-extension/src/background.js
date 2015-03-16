@@ -119,25 +119,3 @@ chrome.webRequest.onResponseStarted.addListener(
 
 
 
-/* 
- * Because sending a POST for every GET request is inefficient, we want to batch our POSTS.
- * we want to batch our uploads.
- *
- * TODO: implement
- */
-/*
-window.setInterval(function(){
-    // serialize batch
-    batched_data = batch.join(";");
-    
-    if (batched_data){
-        // clear batch
-        batch = [];
-
-        // send serialized batch off in a web request
-        console.log("INFO: uploading batched data to server");
-        httpPost(API_BASE_URL, batched_data);
-    }
-
-}, SECS_PER_SHIPMENT*1000);
-*/
