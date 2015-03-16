@@ -11,7 +11,7 @@ If things go well, it may be extended to include additional types of resources.
 
 Want to browse the data? [Start here](https://www.scriptobservatory.org).
 
-Want to install the Chrome extension to add what you see to the observatory?
+Want to install the Chrome extension? 
 [Start here](https://github.com/andy11/ScriptObservatory#usage).
 
 
