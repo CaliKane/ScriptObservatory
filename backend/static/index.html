@@ -2,13 +2,12 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>ScriptObservatory Status Page</title>
+    <title>ScriptObservatory</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="basic.js"></script>
+    <script src="js/basic.js"></script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
-
 
 <div align="center">
     <h1> ScriptObservatory </h1>
@@ -16,6 +15,19 @@
     <a href="#" onclick="by_parent(); return false;">by site</a>
     <a href="#" onclick="by_url(); return false;">by script</a>
     <a href="#" onclick="by_raw(); return false;">raw</a>
+    <br>
+    Date Filter:
+    (coming soon)
+    <!--
+    last
+    <a href="#" onclick="set_date_filter(xx); return false;">24h</a>
+    <a href="#" onclick="set_date_filter(xx); return false;">7d</a>
+    <a href="#" onclick="set_date_filter(xx); return false;">1m</a>
+    <a href="#" onclick="set_date_filter(xx); return false;">1yr</a>
+    -->
+    <br>
+    Query Filter:
+    (coming soon)
 </div>    
 
 <br>
@@ -26,7 +38,7 @@
         <th style="width:43%"> Script URL </th>
         <th style="width:10%"> Hash (10 chars) </th>
         <th style="width:35%"> Parent Site URL </th>
-        <tr ng-repeat="script in app.scripts">
+        <tr ng-repeat="script in app.records | orderBy:'-date'">
             <td>{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
             <td>{{ script.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
             <td>{{ script.sha256 | limitTo:10 }}</td>
@@ -36,35 +48,38 @@
 </div>
 
 <div id="by_url" style="display:none">
-    <table>
-        <tr ng-repeat="script in app.by_script_url">
-            <td>{{ script.url }}</td>
-            <td>{{ script.parent_urls }}</td>
-        <tr>
-    </table>
 <pre>
+    <i>coming soon...</i>
+    <br>
     www.google-analytics.com/ga.js          parent #1 (hash #1), parent #2 (hash #1, hash #2), parent #3 (hash #2)
     www.jquery.org/jquery.js                parent #1 (hash #1)
 </pre>    
 </div>
 
 <div id="by_parent" style="display:none">
-<pre>
-    www.bbc.com 
-        script #1       seen 100% of the time       hash #1 (100%)
-        script #2       seen 100% of the time       hash #1 (99%), hash #2 (1%)
-        script #3       seen 5% of the time         hash #1 (30%), hash #2 (30%), hash #3 (30%), hash #4 (10%)
-    
-    www.reddit.com
-        script #1       seen 100% of the time       hash #1 (100%)
-        script #2       seen 100% of the time       hash #1 (100%)
-</pre>
-</div>
+    <table>
+        <th style="width:30%"> Site URL </th>
+        <th style="width:4%"> N </th>
+        <th style="width:60%"> Scripts </th>
+        <tr ng-repeat="site in app.sites | orderBy:'-occur'">
+            <td>{{ site.url | limitTo: 60 }}{{ site.url.length > 60 ? '...' : '' }}</td>
+            <td>{{ site.occur }}</td>
+            <td>
+                <span ng-repeat="script in site.scripts"> 
+                    {{ script.url | limitTo:60 }}{{ script.url.length > 60 ? '...':'' }} -->
+                    <span ng-repeat="hash in script.hashes"> 
+                        {{ hash.sha256 | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}}
+                    </span>
+                    <br>
+                </span>
+            </td>
+        <tr>
+    </table>
 
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <script src="js/app.js"></script>
-
 
 </body>
 </html>

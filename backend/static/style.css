@@ -7,3 +7,7 @@ table {
     table-layout:fixed; 
     width:100%;
 }
+
+table, th, td {
+    border: 1px dotted black;
+}
