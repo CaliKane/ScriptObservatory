@@ -6,8 +6,14 @@ The goal of the ScriptObservatory project is to extend the idea behind the
 from the internet.
 
 Initially, the only objects that the ScriptObservatory will target for analysis 
-will be Javascript files. If things go well, I'll extend it to include all objects 
-that your browser pulls down off the internet.
+will be files that Chrome classifies as "scripts" (for ex: Javascript). If things 
+go well, it may be extended to include additional types of objects pulled down 
+off the Internet.
+
+_Want to browse the data?_ Start [here](https://www.scriptobservatory.org).
+
+_Want to install the Chrome extension to add what you see to the observatory?_
+Start [here](https://github.com/andy11/ScriptObservatory#usage).
 
 
 Usage
@@ -57,15 +63,24 @@ Roadmap
 -------
 
 Near-term:
- - Add support to track parent URL
+ - ~~Add support to track parent URL~~
+ - Set up backend on https://scriptobservatory.org 
+ - Set up a robobrowser to collect data from popular sites & look for bugs
+ - Fix/finalize parent URL tracking setup
  - Support embedded script tags
+ - Add filter to webpage to let users search by Parent URL, Script URL, and Hash values
+ - Add filter to webpage to let users select data from specific date ranges
+ - Add "by_script" view to webpage
  - Support batching uploads
  - Expand Privacy documentation
+ - Update/clean README & all documentation
 
 Long-term:
- - Expand to collect data on _all_ web objects
+ - Expand to collect data on _all_ web objects?
  - Don't interfere with other extensions / ad-blockers
  - Add visualizations for server's data
+ - Improve scalability of backend design
+
 
 Contributing
 ------------
