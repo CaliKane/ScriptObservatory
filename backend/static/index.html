@@ -2,23 +2,59 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Welcome!</title>
+    <title>ScriptObservatory Status Page</title>
+
+    <script type="text/javascript"> 
+    function by_raw(){    
+        document.getElementById('by_raw').style.display="block";
+        document.getElementById('by_url').style.display="none";
+        document.getElementById('by_parent').style.display="none";
+    }
+
+    function by_url(){    
+        document.getElementById('by_raw').style.display="none";
+        document.getElementById('by_url').style.display="block";
+        document.getElementById('by_parent').style.display="none";
+    }
+
+    function by_parent(){    
+        document.getElementById('by_raw').style.display="none";
+        document.getElementById('by_url').style.display="none";
+        document.getElementById('by_parent').style.display="block";
+    }
+    </script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
 
-<div align="center">
-    <h3>Current Sites:</h3>
 
-    <table style="width:100%">
+<div align="center">
+    <h1> ScriptObservatory </h1>
+    Options:
+    <a href="#" onclick="by_raw(); return false;">raw</a>
+    <a href="#" onclick="by_url(); return false;">by url</a>
+    <a href="#" onclick="by_parent(); return false;">by parent</a>
+</div>    
+
+<br>
+
+<div id="by_raw" style="display:none">
+    <table style="table-layout: fixed; width: 100%;">
         <tr ng-repeat="script in app.scripts">
-            <td>{{ script.date }}</td>
-            <td>{{ script.parent_url }}</td>
-            <td>{{ script.url }}</td>
-            <td>{{ script.sha256 }}</td>
+            <td style="width: 8%">{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td style="width: 20%">{{ script.parent_url | limitTo: 50 }}</td>
+            <td style="width: 20%">{{ script.url | limitTo: 50 }}</td>
+            <td style="width: 15%">{{ script.sha256 }}</td>
         </tr>
     </table>
 </div>
+
+<div id="by_url" style="display:none">
+</div>
+
+<div id="by_parent" style="display:none">
+</div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <script src="js/app.js"></script>

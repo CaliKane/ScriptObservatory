@@ -70,6 +70,7 @@ function makeIdString(tabId, frameId){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
+        console.log("starting on " + details.url);
         var data = httpGet(details.url);
 
         var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
@@ -85,10 +86,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                          "sha256": hash, 
                          "date": details.timeStamp};
 
-        // TODO batch URL & SHA256 to be sent off to server
+        // TODO batch up multiple post_datas to send to server more than one at a time
         
         httpPost(API_BASE_URL, post_data);
 
+        console.log("finished    " + details.url);
         return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
     }, 
     {urls: ["<all_urls>"], types: ["script"]}, 
@@ -116,6 +118,5 @@ chrome.webRequest.onResponseStarted.addListener(
         PARENT_URLS[id_string] = details.url;
     },
     {urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]});
-
 
 
