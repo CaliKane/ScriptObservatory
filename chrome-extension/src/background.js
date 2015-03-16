@@ -87,8 +87,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                          "date": details.timeStamp};
 
         // TODO batch up multiple post_datas to send to server more than one at a time
-        
-        httpPost(API_BASE_URL, post_data);
+
+        // temporary exclusion of our own ScriptObservatory page 
+        if (parent_url != "http://127.0.0.1:8080/" && parent_url != "http://127.0.0.1:8080/#"){       
+            httpPost(API_BASE_URL, post_data);
+        }
 
         console.log("finished    " + details.url);
         return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
