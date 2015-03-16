@@ -27,11 +27,11 @@ How It Works
 The ScriptObservatory extension is notified every time your browser is about to
 make a request for an object that Chrome classifies as a "script". ScriptObservatory
 stops the browser from making the request and makes its own request instead.
-Once it has received the content, it calculates a hash of the data it received and 
-passes the object back to the browser to be used like normal.
+Once it receives the content, it calculates a hash of the data and passes the object
+back to the browser.
 
 This way of grabbing the content isn't ideal, but documentation of design decisions 
-can be found in the source code itself (start with chrome-extension/background.js).
+can be found directly in the source code (start with *chrome-extension/background.js*).
 
 Periodically, the extension will upload the data it collects to a ScriptObservatory
 server to be recorded. These four pieces of information are sent to the server:
@@ -40,10 +40,10 @@ server to be recorded. These four pieces of information are sent to the server:
  3. The SHA-256 hash of the retrieved content
  4. The time that you viewed the object
 
-In the future, ScriptObservatory might be extended to support uploading the content
-of what you received in the event that there's a hash mismatch between what you saw
-and what the server has on record for that URL. This will always be an optional 
-feature and it will always be clearly visible in the settings panel.
+In the future, ScriptObservatory might be extended to support uploading the *content*
+of the objects you receive in the event that there's a hash mismatch between what you 
+see and what the server has on record. This will always be an optional feature and 
+the option to disable it will always be clearly visible in the settings panel.
 
 
 Privacy
@@ -52,26 +52,27 @@ Privacy
 With this extension installed, your browser will send the data described above to a 
 remote server (https://www.scriptobservatory.org) at regular intervals.
 
-The following steps have been taken to attempt to make the ScriptObservatory extension
-as trustworthy as possible:
+The following steps have been taken to make the ScriptObservatory extension as 
+trustworthy as possible:
  - The connection from the Chrome extension to the remote server will always be encrypted 
    using SSL/TLS. (It will fail otherwise.)
- - No IP Addresses or any kind of "User ID" values will ever be recorded in the database or 
+ - No IP addresses or any kind of "User ID" values will ever be recorded in the database or 
    saved in association with the uploaded data. This makes viewing the data on a "per-user"
    basis impossible.
  - The source code for both the client and the server will always be available for you to 
-   review (see chrome-extension/ and backend/ directories to get started).
+   review (see the *chrome-extension/* and *backend/* directories to get started).
 
 If you still don't feel comfortable having the extension upload your data to the centralized
 server, you can set up your own, private version of the server and configure the extension 
 to send data there instead.
 
-I haven't decided yet, but at some point I may restrict access to the analysis & data 
+At some point I may restrict access to the data & analysis from the centralized server 
 to people who have the extension installed in their browser. Without people contributing 
-their observations to the project, interesting data and analysis will never be possible.
+their observations to the project, interesting data and analysis will never be possible 
+in the first place.
 
-Currently, it's not clear if the ScriptObservatory extension will interfere with 
-the operation of other extensions like adblockers. You might find that your 
+Currently, it's not clear if the ScriptObservatory extension interferes with 
+the operation of other extensions (like adblockers, for example). You might find that your 
 requests to Google Analytics & other trackers go through even though they would 
 usually be blocked. I'll eventually try to address this.
 
