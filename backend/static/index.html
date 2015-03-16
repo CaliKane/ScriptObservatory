@@ -57,22 +57,28 @@
 </div>
 
 <div id="by_parent" style="display:none">
-    <table>
-        <th style="width:30%"> Site URL </th>
-        <th style="width:4%"> N </th>
-        <th style="width:60%"> Scripts </th>
+    <table style="border: 1px dotted black;">
+        <th style="border: 1px dotted black; width:30%"> Site URL </th>
+        <th style="border: 1px dotted black; width:4%"> N </th>
+        <th style="border: 1px dotted black; width:65%"> Scripts </th>
         <tr ng-repeat="site in app.sites | orderBy:'-occur'">
-            <td>{{ site.url | limitTo: 60 }}{{ site.url.length > 60 ? '...' : '' }}</td>
-            <td>{{ site.occur }}</td>
-            <td>
-                <span ng-repeat="script in site.scripts"> 
-                    {{ script.url | limitTo:60 }}{{ script.url.length > 60 ? '...':'' }} -->
-                    <span ng-repeat="hash in script.hashes"> 
-                        {{ hash.sha256 | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}}
-                    </span>
-                    <br>
-                </span>
+            <pre>
+            <td style="border: 1px dotted black;">{{ site.url | limitTo: 47 }}{{ site.url.length > 47 ? '...' : '' }}</td>
+            <td style="border: 1px dotted black;">{{ site.occur }}</td>
+            <td style="border: 1px dotted black;">
+                <table>
+                <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
+                    <td style="width:55%;"> {{ script.url | limitTo:50 }}{{ script.url.length > 50 ? '...':'' }} </td>
+                    <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
+                    <td style="width:35%;">
+                        <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
+                            {{ hash.sha256 | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}}
+                        </span>
+                    </td>
+                </tr>
+                </table>
             </td>
+            </pre>
         <tr>
     </table>
 

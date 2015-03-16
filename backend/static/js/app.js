@@ -1,4 +1,12 @@
-var app = angular.module("app", []);
+var app = angular.module("app", []).filter('object2Array', function() {
+    return function(input) {
+      var out = []; 
+      for(i in input){
+        out.push(input[i]);
+      }
+      return out;
+    }
+  });
 
 BASE_URL = "127.0.0.1:8080";
 
@@ -68,15 +76,17 @@ app.controller("AppCtrl", function($http, $scope){
                     if (!(app.records[j].url in to_add.scripts)){
                         to_add.scripts[app.records[j].url] = {};
                         to_add.scripts[app.records[j].url].url = app.records[j].url;
-                        to_add.scripts[app.records[j].url].hashes = {}
+                        to_add.scripts[app.records[j].url].hashes = {};
+                        to_add.scripts[app.records[j].url].occur = 0;
                     }
                     
                     if (!(app.records[j].sha256 in to_add.scripts[app.records[j].url].hashes)){
-                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256] = {}
+                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256] = {};
                         to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur = 0;
                         to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].sha256 = app.records[j].sha256;
                     }
                     
+                    to_add.scripts[app.records[j].url].occur += 1;
                     to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur += 1;
                 }
                 else{
@@ -87,8 +97,10 @@ app.controller("AppCtrl", function($http, $scope){
             // convert hash occur values to percentages
             for (var script_url in to_add.scripts){
                 for (var hash_val in to_add.scripts[script_url].hashes){
-                    to_add.scripts[script_url].hashes[hash_val].occur *= (100.0 / to_add.occur);
+                    to_add.scripts[script_url].hashes[hash_val].occur *= (100.0 / to_add.scripts[script_url].occur);
                 }
+                
+                to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
             }
 
 
