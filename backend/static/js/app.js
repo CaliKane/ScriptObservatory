@@ -1,4 +1,16 @@
+/*
+ *
+ *
+ */
+
+
+API_BASE_URL = "127.0.0.1:8080";
+
 var app = angular.module("app", []).filter('object2Array', function() {
+    /* 
+     * add object2Array filter to let us sort Objects from Angular in the 
+     * same way we sort Arrays.
+     */
     return function(input) {
       var out = []; 
       for(i in input){
@@ -8,9 +20,11 @@ var app = angular.module("app", []).filter('object2Array', function() {
     }
   });
 
-BASE_URL = "127.0.0.1:8080";
 
-
+/* 
+ * add a contains() method to Array objects, so we can check if 
+ * element *k* exists in a given array.
+ */
 Array.prototype.contains = function(k) {
   for(var i=0; i < this.length; i++){
     if(this[i] === k){
@@ -23,20 +37,6 @@ Array.prototype.contains = function(k) {
 
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
-
-
-    /*
-       Auto-refreshers for updates every 10s
-        this is hacky and should be changed, but it's good enough for now...
-    */
-    window.setInterval(function(){
-        $http.get("/api/script").success(function (data){
-            if (data.objects != app.records){
-                app.records = data.objects;
-            }
-        });
-    }, 10000);
-
 
     /*
         Main Script API
@@ -103,7 +103,6 @@ app.controller("AppCtrl", function($http, $scope){
                 to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
             }
 
-
             seen_urls.push(cur_record.parent_url);
             app.sites.push(to_add);
         }
@@ -111,8 +110,7 @@ app.controller("AppCtrl", function($http, $scope){
     
 
         // build by_script data structure:
-
+        //  ...TODO...
     });
-
 });
 
