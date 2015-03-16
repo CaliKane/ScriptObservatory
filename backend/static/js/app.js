@@ -25,32 +25,5 @@ app.controller("AppCtrl", function($http, $scope){
         app.scripts = data.objects;
     });
 
-    /* Manually adding URLs is disabled for now...
-    app.addScript = function(url) {
-        // if a script with this url exists, don't duplicate it:
-        for (i=0; i < app.scripts.length; ++i){
-            if (app.scripts[i].url == url) return;
-        }
-
-        // calculate hash value
-        hash = "hash val";
-
-        // make post request
-        $http.post("/api/script", {"url":url, "sha256":hash})
-            .success(function (data){
-                app.scripts.push(data);
-            });
-    };
-    */
-
-    /* Manually deleting URLs is disabled for now...
-    app.deleteScript = function(url){
-        $http.delete("/api/script/" + url.id).success(function (response) {
-            app.players.splice(app.scripts.indexOf(url), 1)
-        })
-    };
-    */
-
 });
-
 

@@ -3,26 +3,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>ScriptObservatory Status Page</title>
-
-    <script type="text/javascript"> 
-    function by_raw(){    
-        document.getElementById('by_raw').style.display="block";
-        document.getElementById('by_url').style.display="none";
-        document.getElementById('by_parent').style.display="none";
-    }
-
-    function by_url(){    
-        document.getElementById('by_raw').style.display="none";
-        document.getElementById('by_url').style.display="block";
-        document.getElementById('by_parent').style.display="none";
-    }
-
-    function by_parent(){    
-        document.getElementById('by_raw').style.display="none";
-        document.getElementById('by_url').style.display="none";
-        document.getElementById('by_parent').style.display="block";
-    }
-    </script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="basic.js"></script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
@@ -31,28 +13,52 @@
 <div align="center">
     <h1> ScriptObservatory </h1>
     Options:
+    <a href="#" onclick="by_parent(); return false;">by site</a>
+    <a href="#" onclick="by_url(); return false;">by script</a>
     <a href="#" onclick="by_raw(); return false;">raw</a>
-    <a href="#" onclick="by_url(); return false;">by url</a>
-    <a href="#" onclick="by_parent(); return false;">by parent</a>
 </div>    
 
 <br>
 
 <div id="by_raw" style="display:none">
-    <table style="table-layout: fixed; width: 100%;">
+    <table>
+        <th style="width:12%"> Date </th>
+        <th style="width:43%"> Script URL </th>
+        <th style="width:10%"> Hash (10 chars) </th>
+        <th style="width:35%"> Parent Site URL </th>
         <tr ng-repeat="script in app.scripts">
-            <td style="width: 8%">{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
-            <td style="width: 20%">{{ script.parent_url | limitTo: 50 }}</td>
-            <td style="width: 20%">{{ script.url | limitTo: 50 }}</td>
-            <td style="width: 15%">{{ script.sha256 }}</td>
+            <td>{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td>{{ script.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
+            <td>{{ script.sha256 | limitTo:10 }}</td>
+            <td>{{ script.parent_url | limitTo: 40 }}{{ script.parent_url.length > 40 ? '...' : '' }}</td>
         </tr>
     </table>
 </div>
 
 <div id="by_url" style="display:none">
+    <table>
+        <tr ng-repeat="script in app.by_script_url">
+            <td>{{ script.url }}</td>
+            <td>{{ script.parent_urls }}</td>
+        <tr>
+    </table>
+<pre>
+    www.google-analytics.com/ga.js          parent #1 (hash #1), parent #2 (hash #1, hash #2), parent #3 (hash #2)
+    www.jquery.org/jquery.js                parent #1 (hash #1)
+</pre>    
 </div>
 
 <div id="by_parent" style="display:none">
+<pre>
+    www.bbc.com 
+        script #1       seen 100% of the time       hash #1 (100%)
+        script #2       seen 100% of the time       hash #1 (99%), hash #2 (1%)
+        script #3       seen 5% of the time         hash #1 (30%), hash #2 (30%), hash #3 (30%), hash #4 (10%)
+    
+    www.reddit.com
+        script #1       seen 100% of the time       hash #1 (100%)
+        script #2       seen 100% of the time       hash #1 (100%)
+</pre>
 </div>
 
 
