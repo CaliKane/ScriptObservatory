@@ -7,12 +7,11 @@ from the internet.
 
 Initially, the only objects that the ScriptObservatory will target for analysis 
 will be files that Chrome classifies as "scripts" (like Javascript, for example).
-If things go well, it may be extended to include additional types of objects 
-pulled down off the Internet.
+If things go well, it may be extended to include additional types of resources.
 
-**_Want to browse the data?_** [Start here](https://www.scriptobservatory.org).
+Want to browse the data? [Start here](https://www.scriptobservatory.org).
 
-**_Want to install the Chrome extension to add what you see to the observatory?_**
+Want to install the Chrome extension to add what you see to the observatory?
 [Start here](https://github.com/andy11/ScriptObservatory#usage).
 
 
