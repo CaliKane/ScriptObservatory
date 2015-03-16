@@ -38,6 +38,19 @@ function httpPost(url, data){
 }
 
 
+/*
+ * makeIdString(tabId, frameId)) - Create a unique ID string from *tabId* and *frameId*
+ *
+ * this is used to try to detect the parent frame that is responsible for a given request.
+ * frameId is only unique on a per-tab basis, so both are needed.
+ *
+ * more info: https://developer.chrome.com/extensions/webRequest
+ */
+function makeIdString(tabId, frameId){
+    return tabId + "-" + frameId;
+}
+
+
 /* 
  * We hook into chrome.webRequest.onBeforeRequest to perform our own download of the content and calculate the
  * sha256 hash of the content. After the download is complete, we POST the url & hash value to *API_BASE_URL* 
@@ -61,10 +74,16 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
+        var parent_url = "n/a";
+        var id_string = makeIdString(details.tabId, details.frameId);
+        if (id_string in PARENT_URLS){
+            parent_url = PARENT_URLS[id_string];
+        }
+
         var post_data = {"url": details.url, 
+                         "parent_url": parent_url,
                          "sha256": hash, 
-                         "req_type": details.type, 
-                         "date": (new Date()).getTime()};
+                         "date": details.timeStamp};
 
         // TODO batch URL & SHA256 to be sent off to server
         
@@ -75,6 +94,29 @@ chrome.webRequest.onBeforeRequest.addListener(
     {urls: ["<all_urls>"], types: ["script"]}, 
     ["blocking"]
 );
+
+
+/*
+ * PARENT_URLS and the chrome.webRequest.onResponseStarted listener are an ugly hack 
+ * to try to keep track of the URL of each page that could possibly spawn a javascript
+ * request later on.
+ * 
+ * Once the onBeforeRequest listener is expanded to grab all types of pages, the URLs
+ * and parent/children relationships should be recorded there...
+ * 
+ * The current setup will fail in cases like news.ycombinator.com, where the initial
+ * request actually returns a javascript object that then pulls down the page content.
+ */
+
+PARENT_URLS = {};
+
+chrome.webRequest.onResponseStarted.addListener(
+    function(details){
+        var id_string = makeIdString(details.tabId, details.frameId);
+        PARENT_URLS[id_string] = details.url;
+    },
+    {urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]});
+
 
 
 /* 

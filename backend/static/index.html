@@ -10,10 +10,10 @@
 <div align="center">
     <h3>Current Sites:</h3>
 
-    <table>
+    <table style="width:100%">
         <tr ng-repeat="script in app.scripts">
             <td>{{ script.date }}</td>
-            <td>{{ script.req_type }}</td>
+            <td>{{ script.parent_url }}</td>
             <td>{{ script.url }}</td>
             <td>{{ script.sha256 }}</td>
         </tr>
