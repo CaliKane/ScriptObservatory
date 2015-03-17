@@ -9,6 +9,6 @@ Roadmap:
 --------
 - ~~first pass implementation~~
 - enable autocomparing pages loaded with/without extension for bug reports
-- expose an API to control to robo-browser via the website
+- expose an API to give the robo-browser tasks via the website
 
 
