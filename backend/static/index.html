@@ -15,19 +15,6 @@
     <a href="#" onclick="by_parent(); return false;">by site</a>
     <a href="#" onclick="by_url(); return false;">by script</a>
     <a href="#" onclick="by_raw(); return false;">raw</a>
-    <br>
-    Date Filter:
-    (coming soon)
-    <!--
-    last
-    <a href="#" onclick="set_date_filter(xx); return false;">24h</a>
-    <a href="#" onclick="set_date_filter(xx); return false;">7d</a>
-    <a href="#" onclick="set_date_filter(xx); return false;">1m</a>
-    <a href="#" onclick="set_date_filter(xx); return false;">1yr</a>
-    -->
-    <br>
-    Query Filter:
-    (coming soon)
 </div>    
 
 <br>
@@ -35,10 +22,10 @@
 <div id="by_raw" style="display:none">
     <table>
         <th style="width:12%"> Date </th>
-        <th style="width:43%"> Script URL </th>
-        <th style="width:10%"> Hash (10 chars) </th>
-        <th style="width:35%"> Parent Site URL </th>
-        <tr ng-repeat="script in app.records | orderBy:'-date'">
+        <th style="width:43%"> <input ng-model="search.url" placeholder="Script URL"></th>
+        <th style="width:10%"> <input ng-model="search.sha256" placeholder="Hash"></th>
+        <th style="width:35%"> <input ng-model="search.parent_url" placeholder="Parent URL"> </th>
+        <tr ng-repeat="script in app.records | filter:search | orderBy:'-date'">
             <td>{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
             <td>{{ script.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
             <td>{{ script.sha256 | limitTo:10 }}</td>
@@ -58,10 +45,12 @@
 
 <div id="by_parent" style="display:none">
     <table style="border: 1px dotted black;">
-        <th style="border: 1px dotted black; width:30%"> Site URL </th>
+        <th style="border: 1px dotted black; width:30%"> 
+            Site URL <input ng-model="search.url" placeholder="Filter by URL" autofocus>
+        </th>
         <th style="border: 1px dotted black; width:4%"> N </th>
         <th style="border: 1px dotted black; width:65%"> Scripts </th>
-        <tr ng-repeat="site in app.sites | orderBy:'-occur'">
+        <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
             <pre>
             <td style="border: 1px dotted black;">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</td>
             <td style="border: 1px dotted black;">{{ site.occur }}</td>
