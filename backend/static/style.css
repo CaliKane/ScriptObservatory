@@ -1,10 +1,17 @@
 body {
+    /*
+    background: white url("https://scriptobservatory.org/img/stars.jpg") no-repeat;
+    background-size:cover;
+    background-attachment:fixed;
+    overflow-y:scroll;
+    */
     font-family: 'Courier New', monospace;
     font-size:12px;
 }
 
 table { 
     table-layout:fixed; 
+    background-color:white;
     width:100%;
 }
 
