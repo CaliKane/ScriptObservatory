@@ -82,20 +82,23 @@ Roadmap
 
 Near-term:
  - ~~Add support to track parent URL~~
- - Set up backend on https://scriptobservatory.org 
- - Set up a robobrowser to collect data from popular sites & look for bugs
+ - ~~Set up backend on https://scriptobservatory.org~~
+ - ~~Set up a robobrowser to collect data from popular sites~~
  - Fix/finalize parent URL tracking setup
  - Support embedded script tags
- - Add filter to webpage to let users search by Parent URL, Script URL, and Hash values
+ - Use robobrowser to autodetect bugs
+ - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
  - Add filter to webpage to let users select data from specific date ranges
- - Add "by_script" view to webpage
  - Support batching uploads
- - Expand Privacy documentation
- - Update/clean README & all documentation
+ - Rework database structure to scale better
+ - Add "by_script" view to webpage
 
 Long-term:
  - Expand to collect data on _all_ web objects?
  - Don't interfere with other extensions / ad-blockers
+ - Expand Privacy documentation
+ - Integrate with VirusTotal & other sites
+ - Import from PCAP
  - Add visualizations for server's data
  - Improve scalability of backend design
 
