@@ -1,0 +1,28 @@
+NEXT TO-DO LIST:
+================
+
+(1) fix intermediate cert chain
+
+
+(2) add new views
+         
+         Submit a Query (allow date range): 
+          -> by parent url
+          -> by script url
+          -> by script hash
+
+         Add a site to be robobrowsed
+
+         View raw stream of last 100 observations
+
+ 
+(3) fix parent URL tracking
+
+
+(4) support script tags
+
+
+(5) batching POSTs
+
+
+(6) add by_script view
