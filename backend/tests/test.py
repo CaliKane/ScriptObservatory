@@ -1,7 +1,7 @@
 import json
 import requests
 
-BASE_URL = "http://127.0.0.1:8080"
+BASE_URL = "https://scriptobservatory.org"
 
 new_data = {"url": "www.google.com", "sha256": "hash_value_here"}
 

@@ -12,7 +12,7 @@
 /* 
  * CONSTANTS
  */
-API_BASE_URL = "http://127.0.0.1:8080/api/script";
+API_BASE_URL = "https://scriptobservatory.org/api/script";
 
 
 /*
@@ -89,7 +89,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // TODO batch up multiple post_datas to send to server more than one at a time
 
         // temporary exclusion of our own ScriptObservatory page 
-        if (parent_url != "http://127.0.0.1:8080/" && parent_url != "http://127.0.0.1:8080/#"){       
+        if (parent_url != "https://scriptobservatory.org/" && parent_url != "https://scriptobservatory.org/#"){       
             httpPost(API_BASE_URL, post_data);
         }
 

@@ -4,7 +4,7 @@
  */
 
 
-API_BASE_URL = "127.0.0.1:8080";
+API_BASE_URL = "https://scriptobservatory.org";
 
 var app = angular.module("app", []).filter('object2Array', function() {
     /* 
