@@ -12,6 +12,8 @@ from sqlalchemy import Column, Integer, Text
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_cert_chain(os.environ['TLS_CRT_PATH'], os.environ['TLS_KEY_PATH'])
+context.set_ciphers("EECDH:EDH:AESGCM:HIGH:!eNULL:!aNULL:!RC4")
+context.options |= ssl.OP_NO_COMPRESSION
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -30,6 +32,12 @@ api_manager = APIManager(app, flask_sqlalchemy_db=db)
 api_manager.create_api(Script,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Strict-Transport-Security', 'max-age=15552000; includeSubDomains; preload')
+    response.headers.add('X-Frame-Options', 'SAMEORIGIN')
+    return response
 
 @app.route('/')
 def index():
