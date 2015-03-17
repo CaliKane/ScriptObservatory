@@ -1,11 +1,17 @@
 #!/usr/bin/env python2
 #
 
+import os
+import ssl
+
 from flask import Flask
 from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, Text
 
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain(os.environ['TLS_CRT_PATH'], os.environ['TLS_KEY_PATH'])
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -31,7 +37,6 @@ def index():
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host="127.0.0.1", port=8080, use_reloader=False)
+    app.run(host="0.0.0.0", port=443, ssl_context=context, use_reloader=False)
 
 
