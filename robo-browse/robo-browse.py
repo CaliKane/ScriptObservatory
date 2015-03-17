@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import os
 import random
+import sys
 import time
 
 from selenium import webdriver
@@ -15,8 +16,11 @@ N_SECS_BETWEEN_PAGES = 10
 N_SECS_REQ_TIMEOUT = 60
 MAX_CLICKS_PER_SITE = 10
 
-EXTENSION_PATH = "/home/andy/projects/ScriptObservatory/chrome-extension/"  # TODO
-WEB_ADDR_LIST = "/home/andy/projects/ScriptObservatory/robo-browse/site-list.txt"  # TODO
+if len(sys.argv) < 2:
+    print("Run with ./robo-browse.py URL_LIST_FILE")
+    exit()
+
+WEB_ADDR_LIST = sys.argv[1]
 
 
 def get_webpage(driver, web_address, return_n_links=0):
@@ -37,7 +41,7 @@ def get_webpage(driver, web_address, return_n_links=0):
 
 # Set up Selenium
 chrome_options = Options()
-chrome_options.add_argument("--load-extension={0}".format(EXTENSION_PATH))
+chrome_options.add_argument("--load-extension={0}".format(os.environ['SCRIPT_OBS_PATH']))
 
 driver = webdriver.Chrome(chrome_options=chrome_options)
 driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
