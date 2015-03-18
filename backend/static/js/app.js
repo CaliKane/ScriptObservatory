@@ -40,7 +40,7 @@ app.controller("AppCtrl", function($http, $scope){
 
     $scope.submitParentQuery = function(){
         var query = $scope.parentQueryText;
-        var queryString = "{\"filters\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+        var queryString = "{\"filters\": [{\"or\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
         $scope.populateData(queryString);
         by_parent();
     }
@@ -114,7 +114,6 @@ app.controller("AppCtrl", function($http, $scope){
                 seen_urls.push(cur_record.parent_url);
                 app.sites.push(to_add);
             }
-            console.log("finished setting app.sites");
         
 
             // build by_script data structure:
