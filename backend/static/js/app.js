@@ -66,14 +66,21 @@ app.controller("AppCtrl", function($http, $scope){
             for (var i = 0; i < app.records.length; i++){
                 var cur_record = app.records[i];
 
-                if (seen_urls.contains(cur_record.parent_url)){
+                if (seen_urls.contains(cur_record.parent_url) || seen_urls.contains(cur_record.url)){
                     continue;
                 }
         
-                var to_add = {"url": cur_record.parent_url, 
+                var to_add = {"url": "",
                               "occur": 0,
                               "scripts": {}};
                 
+                if (cur_record.parent_url == "") {
+                    to_add.url = cur_record.url;
+                }
+                else {
+                    to_add.url = cur_record.parent_url;
+                }
+
                 for (var j = i; j < app.records.length; j++){
                     
                     if (app.records[j].parent_url == "" && app.records[j].url == to_add.url){
@@ -111,7 +118,12 @@ app.controller("AppCtrl", function($http, $scope){
                     to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
                 }
 
-                seen_urls.push(cur_record.parent_url);
+                if (cur_record.parent_url == "") {
+                    seen_urls.push(cur_record.url);
+                else {
+                    seen_urls.push(cur_record.parent_url);
+                }
+
                 app.sites.push(to_add);
             }
             console.log("finished setting app.sites");
