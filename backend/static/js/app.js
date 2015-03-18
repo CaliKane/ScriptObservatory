@@ -120,6 +120,7 @@ app.controller("AppCtrl", function($http, $scope){
 
                 if (cur_record.parent_url == "") {
                     seen_urls.push(cur_record.url);
+                }
                 else {
                     seen_urls.push(cur_record.parent_url);
                 }

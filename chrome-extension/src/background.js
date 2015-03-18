@@ -102,7 +102,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
         }
         else {
-            alert("sent Post for non-script!!");
             return {cancel: false};
         }
 
