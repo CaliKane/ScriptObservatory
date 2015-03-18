@@ -11,13 +11,18 @@
 
 <div align="center">
     <h1> ScriptObservatory </h1>
-    Submit a Query: <input value="coming soon..."></input> <br>
-    Submit a Site: <input value="coming soon..."></input> <br>
-    <br>
-    View options:
-    <a href="#" onclick="by_parent(); return false;">by site</a>
-    <a href="#" onclick="by_url(); return false;">by script</a>
-    <a href="#" onclick="by_raw(); return false;">raw</a>
+
+    <form ng-submit="submitParentQuery()">
+        Submit a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL" required/>
+        <input type="submit" id="submit" value="Submit" />
+    </form>
+    <form ng-submit="submitScriptQuery()">
+        Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText" required/>
+        <input type="submit" id="submit" value="Submit" />
+    </form>
+
+
+
 </div>    
 
 <br>

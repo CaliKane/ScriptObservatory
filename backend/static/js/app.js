@@ -38,79 +38,94 @@ Array.prototype.contains = function(k) {
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
 
-    /*
-        Main Script API
-    */
-    $http.get("/api/script").success(function (data){
-        // update raw data structure:
-        app.records = data.objects;
-        console.log("finished setting app.records");
-           
-        // build by_site data structure:
-        //   TODO: needs major refactoring.....
-        app.sites = [];
-        
-        seen_urls = [];
-        for (var i = 0; i < app.records.length; i++){
-            var cur_record = app.records[i];
-        
-            if (cur_record.parent_url == "n/a"){
-                continue;
-            }
+    $scope.submitParentQuery = function(){
+        var query = $scope.parentQueryText;
+        var queryString = "{\"filters\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+        $scope.populateData(queryString);
+        by_parent();
+    }
 
-            if (seen_urls.contains(cur_record.parent_url)){
-                continue;
-            }
-    
-            var to_add = {"url": cur_record.parent_url, "occur": 0, "scripts": {} };
+    $scope.submitScriptQuery = function(){
+        var query = $scope.scriptQueryText;
+        var queryString = "{\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+        $scope.populateData(queryString);
+        by_url();
+    }
+
+
+    $scope.populateData = function(queryString){
+        $http.get("/api/script?q=" + queryString).success(function (data){
+            // update raw data structure:
+            app.records = data.objects;
+            console.log("finished setting app.records");
+               
+            // build by_site data structure:
+            //   TODO: needs major refactoring.....
+            app.sites = [];
             
-            var active = false;
-            for (var j = i; j < app.records.length; j++){
-                if (app.records[j].parent_url == to_add.url){
-                    /* this "active" variable is a hack and needs to be removed once page loads are tracked separately. */
-                    if (active == false){
-                        to_add.occur += 1;
-                        active = true;   
-                    }
+            seen_urls = [];
+            for (var i = 0; i < app.records.length; i++){
+                var cur_record = app.records[i];
+            
+                if (cur_record.parent_url == "n/a"){
+                    continue;
+                }
 
-                    if (!(app.records[j].url in to_add.scripts)){
-                        to_add.scripts[app.records[j].url] = {};
-                        to_add.scripts[app.records[j].url].url = app.records[j].url;
-                        to_add.scripts[app.records[j].url].hashes = {};
-                        to_add.scripts[app.records[j].url].occur = 0;
-                    }
-                    
-                    if (!(app.records[j].sha256 in to_add.scripts[app.records[j].url].hashes)){
-                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256] = {};
-                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur = 0;
-                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].sha256 = app.records[j].sha256;
-                    }
-                    
-                    to_add.scripts[app.records[j].url].occur += 1;
-                    to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur += 1;
+                if (seen_urls.contains(cur_record.parent_url)){
+                    continue;
                 }
-                else{
-                    active = false;
-                }
-            }
-
-            // convert hash occur values to percentages
-            for (var script_url in to_add.scripts){
-                for (var hash_val in to_add.scripts[script_url].hashes){
-                    to_add.scripts[script_url].hashes[hash_val].occur *= (100.0 / to_add.scripts[script_url].occur);
-                }
+        
+                var to_add = {"url": cur_record.parent_url, "occur": 0, "scripts": {} };
                 
-                to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
+                var active = false;
+                for (var j = i; j < app.records.length; j++){
+                    if (app.records[j].parent_url == to_add.url){
+                        /* this "active" variable is a hack and needs to be removed once page loads are tracked separately. */
+                        if (active == false){
+                            to_add.occur += 1;
+                            active = true;   
+                        }
+
+                        if (!(app.records[j].url in to_add.scripts)){
+                            to_add.scripts[app.records[j].url] = {};
+                            to_add.scripts[app.records[j].url].url = app.records[j].url;
+                            to_add.scripts[app.records[j].url].hashes = {};
+                            to_add.scripts[app.records[j].url].occur = 0;
+                        }
+                        
+                        if (!(app.records[j].sha256 in to_add.scripts[app.records[j].url].hashes)){
+                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256] = {};
+                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur = 0;
+                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].sha256 = app.records[j].sha256;
+                        }
+                        
+                        to_add.scripts[app.records[j].url].occur += 1;
+                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur += 1;
+                    }
+                    else{
+                        active = false;
+                    }
+                }
+
+                // convert hash occur values to percentages
+                for (var script_url in to_add.scripts){
+                    for (var hash_val in to_add.scripts[script_url].hashes){
+                        to_add.scripts[script_url].hashes[hash_val].occur *= (100.0 / to_add.scripts[script_url].occur);
+                    }
+                    
+                    to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
+                }
+
+                seen_urls.push(cur_record.parent_url);
+                app.sites.push(to_add);
             }
+            console.log("finished setting app.sites");
+        
 
-            seen_urls.push(cur_record.parent_url);
-            app.sites.push(to_add);
-        }
-        console.log("finished setting app.sites");
-    
-
-        // build by_script data structure:
-        //  ...TODO...
-    });
+            // build by_script data structure:
+            //  ...TODO...
+        });
+    }
 });
+
 
