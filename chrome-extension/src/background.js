@@ -70,41 +70,42 @@ function makeIdString(tabId, frameId){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
-        console.log("starting on " + details.url);
         var data = httpGet(details.url);
-
-        var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-
-        var parent_url = "n/a";
-        var id_string = makeIdString(details.tabId, details.frameId);
-        if (id_string in PARENT_URLS){
-            parent_url = PARENT_URLS[id_string];
+        
+        if (details.type == "main_frame" || details.type == "sub_frame"){
+            var id_string = makeIdString(details.tabId, details.frameId);
+            PARENT_URLS[id_string] = details.url;
         }
 
-        var post_data = {"url": details.url, 
-                         "parent_url": parent_url,
-                         "sha256": hash, 
-                         "date": details.timeStamp};
+        if (details.type == "script"){
+            var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+            var parent_url = "n/a";
+            var id_string = makeIdString(details.tabId, details.frameId);
 
-        // TODO batch up multiple post_datas to send to server more than one at a time
+            if (id_string in PARENT_URLS){
+                parent_url = PARENT_URLS[id_string];
+            }
 
-        // temporary exclusion of our own ScriptObservatory page 
-        if (parent_url != "https://scriptobservatory.org/" && parent_url != "https://scriptobservatory.org/#"){       
+            var post_data = {"url": details.url, 
+                             "parent_url": parent_url,
+                             "sha256": hash, 
+                             "date": details.timeStamp};
+
+            // TODO batch up multiple post_datas to send to server more than one at a time
+       
             httpPost(API_BASE_URL, post_data);
         }
 
-        console.log("finished    " + details.url);
         return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
     }, 
-    {urls: ["<all_urls>"], types: ["script"]}, 
+    {urls: ["<all_urls>"], types: ["script", "main_frame", "sub_frame"]}, 
     ["blocking"]
 );
 
 
 /*
- * PARENT_URLS and the chrome.webRequest.onResponseStarted listener are an ugly hack 
- * to try to keep track of the URL of each page that could possibly spawn a javascript
- * request later on.
+ * The current use of PARENT_URLS is an ugly hack to try to keep track of the URL of 
+ * each page that could possibly spawn a javascript request later on.
  * 
  * Once the onBeforeRequest listener is expanded to grab all types of pages, the URLs
  * and parent/children relationships should be recorded there...
@@ -114,12 +115,4 @@ chrome.webRequest.onBeforeRequest.addListener(
  */
 
 PARENT_URLS = {};
-
-chrome.webRequest.onResponseStarted.addListener(
-    function(details){
-        var id_string = makeIdString(details.tabId, details.frameId);
-        PARENT_URLS[id_string] = details.url;
-    },
-    {urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]});
-
 
