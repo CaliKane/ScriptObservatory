@@ -11,6 +11,9 @@ IMMEDIATE FUTURE TO-DO LIST:
 - add way to add a site to be robobrowsed
 
 - batching POSTs
+- show stream of last 10 sites scanned?
+- show in GitHub total number of records in the database (see how bithub does dynamic content)
  
+- support flash objects
 
 
