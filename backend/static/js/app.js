@@ -135,7 +135,10 @@ app.controller("AppCtrl", function($http, $scope){
                     seen_urls.push(cur_record.parent_url);
                 }
 
-                app.sites.push(to_add);
+                // only show sites if they have atleast 1 script
+                if (Object.keys(to_add.scripts).length > 0){
+                    app.sites.push(to_add);
+                }
             }
         
 
