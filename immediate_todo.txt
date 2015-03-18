@@ -1,0 +1,16 @@
+IMMEDIATE FUTURE TO-DO LIST:
+============================
+
+- fix intermediate cert chain
+
+- fix parent URL tracking
+- support script tags
+
+- add script view
+- allow date ranges in queries
+- add way to add a site to be robobrowsed
+
+- batching POSTs
+ 
+
+
