@@ -1,19 +1,18 @@
 IMMEDIATE FUTURE TO-DO LIST:
 ============================
 
-- fix intermediate cert chain
+- add script view
+- allow date ranges in queries
 
 - fix parent URL tracking
 - support script tags
-
-- add script view
-- allow date ranges in queries
-- add way to add a site to be robobrowsed
+- support flash objects
 
 - batching POSTs
 - show stream of last 10 sites scanned?
 - show in GitHub total number of records in the database (see how bithub does dynamic content)
  
-- support flash objects
+- add way to add a site to be robobrowsed
+
 
 
