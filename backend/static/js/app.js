@@ -40,21 +40,31 @@ app.controller("AppCtrl", function($http, $scope){
 
     $scope.submitParentQuery = function(){
         var query = $scope.parentQueryText;
-        var queryString = "{\"filters\": [{\"or\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
+        var query_string = "";
+
+        if (query != "") {
+            queryString = "?q={\"filters\": [{\"or\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
+        }
+
         $scope.populateData(queryString);
         by_parent();
     }
 
     $scope.submitScriptQuery = function(){
         var query = $scope.scriptQueryText;
-        var queryString = "{\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+        var queryString = "";
+
+        if (query != "") {
+            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+        }
+
         $scope.populateData(queryString);
         by_url();
     }
 
 
     $scope.populateData = function(queryString){
-        $http.get("/api/script?q=" + queryString).success(function (data){
+        $http.get("/api/script" + queryString).success(function (data){
             // update raw data structure:
             app.records = data.objects;
                

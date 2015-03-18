@@ -78,12 +78,12 @@ chrome.webRequest.onBeforeRequest.addListener(
             var id_string = makeIdString(details.tabId, details.frameId);
             PARENT_URLS[id_string] = details.url;
         }
-        else if (details.type == "script"){
+        if (details.type == "script"){
             data = httpGet(details.url);
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-            
+        }
+        if (details.type == "script" || details.type == "sub_frame"){
             var id_string = makeIdString(details.tabId, details.frameId);
-
             if (id_string in PARENT_URLS){
                 parent_url = PARENT_URLS[id_string];
             }

@@ -13,11 +13,11 @@
     <h1> ScriptObservatory </h1>
     <a href="#" onclick="by_raw(); return false;">sanity check</a> <br>
     <form ng-submit="submitParentQuery()">
-        Submit a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL" required/>
+        Submit a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
     <form ng-submit="submitScriptQuery()">
-        Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText" required/>
+        Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
 
