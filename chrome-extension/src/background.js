@@ -101,8 +101,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (details.type == "script") {
             return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
         }
+        else {
+            alert("sent Post for non-script!!");
+            return {cancel: false};
+        }
 
-        return false;
     }, 
     {urls: ["<all_urls>"], types: ["script", "main_frame", "sub_frame"]}, 
     ["blocking"]
