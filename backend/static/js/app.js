@@ -57,7 +57,6 @@ app.controller("AppCtrl", function($http, $scope){
         $http.get("/api/script?q=" + queryString).success(function (data){
             // update raw data structure:
             app.records = data.objects;
-            console.log("finished setting app.records");
                
             // build by_site data structure:
             //   TODO: needs major refactoring.....
@@ -66,26 +65,25 @@ app.controller("AppCtrl", function($http, $scope){
             seen_urls = [];
             for (var i = 0; i < app.records.length; i++){
                 var cur_record = app.records[i];
-            
-                if (cur_record.parent_url == "n/a"){
-                    continue;
-                }
 
                 if (seen_urls.contains(cur_record.parent_url)){
                     continue;
                 }
         
-                var to_add = {"url": cur_record.parent_url, "occur": 0, "scripts": {} };
+                var to_add = {"url": cur_record.parent_url, 
+                              "occur": 0,
+                              "scripts": {}};
                 
-                var active = false;
                 for (var j = i; j < app.records.length; j++){
-                    if (app.records[j].parent_url == to_add.url){
-                        /* this "active" variable is a hack and needs to be removed once page loads are tracked separately. */
-                        if (active == false){
-                            to_add.occur += 1;
-                            active = true;   
-                        }
+                    
+                    if (app.records[j].parent_url == "" && app.records[j].url == to_add.url){
+                        // if parent_url is null, this was not a script object! 
+                        // if we end up in here, it's because we loaded the page itself!
+                        to_add.occur += 1;
+                    }
 
+                    if (app.records[j].parent_url == to_add.url){
+   
                         if (!(app.records[j].url in to_add.scripts)){
                             to_add.scripts[app.records[j].url] = {};
                             to_add.scripts[app.records[j].url].url = app.records[j].url;
@@ -101,9 +99,6 @@ app.controller("AppCtrl", function($http, $scope){
                         
                         to_add.scripts[app.records[j].url].occur += 1;
                         to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur += 1;
-                    }
-                    else{
-                        active = false;
                     }
                 }
 

@@ -72,29 +72,30 @@ chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         var data = httpGet(details.url);
         
+        var parent_url = "";  // only non-Null for scripts
+
         if (details.type == "main_frame" || details.type == "sub_frame"){
             var id_string = makeIdString(details.tabId, details.frameId);
             PARENT_URLS[id_string] = details.url;
         }
-
-        if (details.type == "script"){
-            var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-            var parent_url = "n/a";
+        else if (details.type == "script"){
             var id_string = makeIdString(details.tabId, details.frameId);
 
             if (id_string in PARENT_URLS){
                 parent_url = PARENT_URLS[id_string];
             }
-
-            var post_data = {"url": details.url, 
-                             "parent_url": parent_url,
-                             "sha256": hash, 
-                             "date": details.timeStamp};
-
-            // TODO batch up multiple post_datas to send to server more than one at a time
-       
-            httpPost(API_BASE_URL, post_data);
         }
+        
+        var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+        
+        var post_data = {"url": details.url, 
+                         "parent_url": parent_url,
+                         "sha256": hash, 
+                         "date": details.timeStamp};
+
+        // TODO batch up multiple post_datas to send to server more than one at a time
+   
+        httpPost(API_BASE_URL, post_data);
 
         return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
     }, 
