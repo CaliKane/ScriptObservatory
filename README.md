@@ -84,12 +84,12 @@ Near-term:
  - ~~Add support to track parent URL~~
  - ~~Set up backend on https://scriptobservatory.org~~
  - ~~Set up a robobrowser to collect data from popular sites~~
- - Fix/finalize parent URL tracking setup
+ - ~~Fix/finalize parent URL tracking setup~~
  - Support embedded script tags
  - Use robobrowser to autodetect bugs
  - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
  - Add filter to webpage to let users select data from specific date ranges
- - Support batching uploads
+ - ~~Support batching uploads~~
  - Rework database structure to scale better
  - Add "by_script" view to webpage
 

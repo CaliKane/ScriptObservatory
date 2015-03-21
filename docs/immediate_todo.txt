@@ -4,11 +4,11 @@ IMMEDIATE FUTURE TO-DO LIST:
 - add script view
 - allow date ranges in queries
 
-- fix parent URL tracking
+- ~~fix parent URL tracking~~
 - support script tags
 - support flash objects
 
-- batching POSTs
+- ~~batching POSTs~~
 - show stream of last 10 sites scanned?
 - show in GitHub total number of records in the database (see how bithub does dynamic content)
  
