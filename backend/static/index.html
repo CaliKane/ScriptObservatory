@@ -11,28 +11,43 @@
 
 <div align="center">
     <h1> ScriptObservatory </h1>
+
+    <a href="#" onclick="show_about(); return false;">about</a>
+    <a href="#" onclick="show_website(); return false;">analysis view</a> 
+    <a href="#" onclick="show_raw(); return false;">raw data view</a> 
+    (make a query first) <br>
+
+
+
     <form ng-submit="submitParentQuery()">
-        Search for a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL"/>
+        Search for a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder='URL (ex: "reddit.com")'/>
         <input type="submit" id="submit" value="Submit" />
     </form>
-    <a href="#" onclick="by_raw(); return false;">sanity check (see all records for query)</a> <br>
-<!--
+    
+    <!--
     <form ng-submit="submitScriptQuery()">
         Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
--->
-
-
+    -->
 </div>    
 
 <br>
 
-<div id="by_raw" style="display:none">
+<div id="about_section" style="display:block; width:50%; margin-left:auto; margin-right:auto;" align="center">
+    <br><br>
+    <p> 
+        ScriptObservatory is not stable, but feel free to play around. You can find more info <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
+        <br><br>
+        Some queries to get you started: "vt.edu", "reddit.com", "scriptobservatory.org"
+    </p>
+</div>
+
+<div id="raw_section" style="display:none">
     <table>
         <th style="width:12%"> Date </th>
         <th style="width:43%"> <input ng-model="search.url" placeholder="Page URL"></th>
-        <th style="width:35%"> <input ng-model="search.scripts" placeholder="Scripts"> </th>
+        <th style="width:35%"> Scripts </th>
         <tr ng-repeat="pageview in app.records | filter:search | orderBy:'-date'">
             <td>{{ pageview.date | date:'yyyy-MM-dd HH:mm' }}</td>
             <td>{{ pageview.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
@@ -41,7 +56,7 @@
     </table>
 </div>
 
-<div id="by_parent" style="display:none">
+<div id="website_section" style="display:none">
     <table style="border: 1px dotted black;">
         <th style="border: 1px dotted black; width:30%"> 
             Site URL <input ng-model="search.url" placeholder="Filter by URL">

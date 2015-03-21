@@ -1,11 +1,19 @@
-function by_raw(){    
-    document.getElementById('by_raw').style.display="block";
-    document.getElementById('by_parent').style.display="none";
+function show_about(){
+    document.getElementById('about_section').style.display="block";
+    document.getElementById('raw_section').style.display="none";
+    document.getElementById('website_section').style.display="none";
 }
 
-function by_parent(){    
-    document.getElementById('by_raw').style.display="none";
-    document.getElementById('by_parent').style.display="block";
+function show_raw(){    
+    document.getElementById('about_section').style.display="none";
+    document.getElementById('raw_section').style.display="block";
+    document.getElementById('website_section').style.display="none";
+}
+
+function show_website(){    
+    document.getElementById('about_section').style.display="none";
+    document.getElementById('raw_section').style.display="none";
+    document.getElementById('website_section').style.display="block";
 }
 
 String.prototype.repeat = function( num )

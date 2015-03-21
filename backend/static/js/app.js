@@ -49,15 +49,13 @@ app.controller("AppCtrl", function($http, $scope){
         }
 
         $scope.populateData(queryString);
-        by_parent();
+        show_website();
     }
 
     $scope.populateData = function(queryString){
         $http.get("/api/pageview" + queryString).success(function (data){
-            // update raw data structure:
             app.records = data.objects;
                
-            // build by_site data structure:
             app.sites = [];
             seen_urls = [];
             for (var i = 0; i < app.records.length; i++){
@@ -111,9 +109,6 @@ app.controller("AppCtrl", function($http, $scope){
                 app.sites.push(to_add);
             }
             
-
-            // build by_script data structure:
-            //  ...TODO...
         });
     }
 });
