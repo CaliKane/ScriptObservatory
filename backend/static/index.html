@@ -11,11 +11,11 @@
 
 <div align="center">
     <h1> ScriptObservatory </h1>
-    <a href="#" onclick="by_raw(); return false;">sanity check</a> <br>
     <form ng-submit="submitParentQuery()">
-        Submit a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL"/>
+        Search for a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
+    <a href="#" onclick="by_raw(); return false;">sanity check (see all records for query)</a> <br>
 <!--
     <form ng-submit="submitScriptQuery()">
         Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText"/>
@@ -59,7 +59,7 @@
                     <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
                     <td style="width:35%;">
                         <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                            {{ hash.sha256 | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}}
+                            {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}}
                         </span>
                     </td>
                 </tr>
