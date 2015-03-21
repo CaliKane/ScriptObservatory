@@ -12,7 +12,9 @@
 /* 
  * CONSTANTS
  */
-API_BASE_URL = "https://scriptobservatory.org/api/script";
+API_BASE_URL = "https://scriptobservatory.org/api/pageview";
+SCRIPT_OBJECTS_TABLE = [];
+MAX_PAGES = 10;
 
 
 /*
@@ -72,32 +74,42 @@ chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         var data = "";
         var hash = "";
-        var parent_url = "";  // only set non-Null for scripts
+        var parent_url = "";
 
-        if (details.type == "main_frame" || details.type == "sub_frame"){
-            var id_string = makeIdString(details.tabId, details.frameId);
-            PARENT_URLS[id_string] = details.url;
+        var id_string = makeIdString(details.tabId, details.frameId);
+        var parent_id_string = makeIdString(details.tabId, details.parentFrameId);
+
+        console.log(details.url + " --> " + id_string + " " + parent_id_string);        
+
+        if (details.type == "main_frame"){
+            MAIN_FRAME_URLS[id_string] = details.url;  // id_string --> url
+            MAIN_FRAME_URLS[parent_id_string] = details.url;  // id_string --> url
+        
+            SCRIPTS[details.url] = [];
         }
+        else {
+            PARENTS[id_string] = parent_id_string;  // sub_frame id_string --> parent's id_string
+        }
+
+        while (id_string in PARENTS){
+            id_string = PARENTS[id_string];
+        }
+
+        // debug:
+        if (!(id_string in MAIN_FRAME_URLS)){
+            console.log("root id_string of " + id_string + " found for " + details.url + " but main_frame not found!!");
+        }
+        root_url = MAIN_FRAME_URLS[id_string];
+
         if (details.type == "script"){
             data = httpGet(details.url);
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+            SCRIPTS[root_url].push({"url": details.url, "hash": hash});
         }
-        if (details.type == "script" || details.type == "sub_frame"){
-            var id_string = makeIdString(details.tabId, details.frameId);
-            if (id_string in PARENT_URLS){
-                parent_url = PARENT_URLS[id_string];
-            }
-        }
-        
-        var post_data = {"url": details.url, 
-                         "parent_url": parent_url,
-                         "sha256": hash, 
-                         "date": details.timeStamp};
+ 
 
-        // TODO batch up multiple post_datas to send to server more than one at a time
-   
-        httpPost(API_BASE_URL, post_data);
-
+        // we want to redirect to the data we received if the object is a script,
+        // otherwise just be done and let the browser make its own request
         if (details.type == "script") {
             return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
         }
@@ -109,6 +121,25 @@ chrome.webRequest.onBeforeRequest.addListener(
     {urls: ["<all_urls>"], types: ["script", "main_frame", "sub_frame"]}, 
     ["blocking"]
 );
+
+chrome.tabs.onUpdated.addListener(
+    function(tabId, changeInfo, tab){
+
+        if (changeInfo.status == "complete"){
+            
+            var timeStamp = new Date().getTime();
+            var post_data = {"url": tab.url, 
+                             "date": timeStamp,
+                             "scripts": SCRIPTS[tab.url]};
+            
+            delete SCRIPTS[tab.url];
+
+            console.log("finished ->" + JSON.stringify(post_data));
+            httpPost(API_BASE_URL, post_data);
+        }
+    }
+);
+
 
 
 /*
@@ -123,4 +154,8 @@ chrome.webRequest.onBeforeRequest.addListener(
  */
 
 PARENT_URLS = {};
+MAIN_FRAME_URLS = {};
+PARENTS = {};
+SCRIPTS = {};
+
 

@@ -5,7 +5,7 @@
   "description": "Keep track of what scripts you run.",
   "default_locale": "en",
   "permissions": [
-    "http://*/*", "https://*/*", "webRequest", "webRequestBlocking"
+    "http://*/*", "https://*/*", "webRequest", "webRequestBlocking", "tabs"
   ],
   "background": {
     "scripts": [
