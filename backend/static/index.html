@@ -40,6 +40,19 @@
         ScriptObservatory is not stable, but feel free to play around. You can find more info <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
         <br><br>
         Some queries to get you started: "vt.edu", "reddit.com", "scriptobservatory.org"
+        <br><br>
+        <script>
+            function httpGet(url){
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open("GET", url, false);
+                xmlHttp.send();
+                return xmlHttp.responseText;  // TODO: check return code
+            }
+            
+            var N = httpGet("/api/count_entries");
+            document.write("The database currently contains the results from " + N + " queries.");
+        </script>
+
     </p>
 </div>
 

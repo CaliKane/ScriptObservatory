@@ -7,8 +7,8 @@ import ssl
 from flask import Flask
 from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, Text, ForeignKey
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy import Column, Integer, Text, ForeignKey, create_engine
 
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -20,15 +20,10 @@ app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
-#class Website(db.Model):
-#    __tablename__ = "website"
-#    id = Column(Integer, primary_key=True)
-
 class Pageview(db.Model):
     __tablename__ = "pageview"
     id = Column(Integer, primary_key=True)
     url = Column(Text, unique=False)
-    #website_id = Column(Integer, ForeignKey("website.id"))
     date = Column(Integer, unique=False)    
     scripts = relationship("Script")
 
@@ -61,9 +56,16 @@ def after_request(response):
 def index():
     return app.send_static_file("index.html")
 
+@app.route('/api/count_entries')
+def count_entries():
+    some_engine = create_engine("sqlite:///database.db")
+    Session = sessionmaker(bind=some_engine)
+    session = Session()
+    return str(session.query(Script).count())
+
 
 if __name__ == '__main__':
-    app.debug = True
+    #app.debug = True
     app.run(host="0.0.0.0", port=443, ssl_context=context, use_reloader=False)
 
 
