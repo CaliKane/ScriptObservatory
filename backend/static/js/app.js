@@ -52,19 +52,6 @@ app.controller("AppCtrl", function($http, $scope){
         by_parent();
     }
 
-    $scope.submitScriptQuery = function(){
-        var query = $scope.scriptQueryText;
-        var queryString = "";
-
-        if (query != "") {
-            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
-        }
-
-        $scope.populateData(queryString);
-        by_url();
-    }
-
-
     $scope.populateData = function(queryString){
         $http.get("/api/pageview" + queryString).success(function (data){
             // update raw data structure:
@@ -79,6 +66,7 @@ app.controller("AppCtrl", function($http, $scope){
                 // TEMPORARY
                 if (already_seen.contains(cur_record.url)) continue;
                 already_seen.push(cur_record.url);
+                // end TEMPORARY
 
                 var to_add = {"url": cur_record.url,
                               "occur": 0,
@@ -89,7 +77,6 @@ app.controller("AppCtrl", function($http, $scope){
                         to_add.occur += 1;
     
                         for (var script_ind = 0; script_ind < app.records[j].scripts.length; script_ind++){
-
                             var script_url = app.records[j].scripts[script_ind].url;
                             var script_hash = app.records[j].scripts[script_ind].hash;
 
