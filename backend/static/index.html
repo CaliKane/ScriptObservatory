@@ -16,11 +16,12 @@
         Submit a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder="URL"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
+<!--
     <form ng-submit="submitScriptQuery()">
         Submit a Script: <input type="text" placeholder="URL or SHA256" ng-model="scriptQueryText"/>
         <input type="submit" id="submit" value="Submit" />
     </form>
-
+-->
 
 
 </div>    
@@ -30,25 +31,14 @@
 <div id="by_raw" style="display:none">
     <table>
         <th style="width:12%"> Date </th>
-        <th style="width:43%"> <input ng-model="search.url" placeholder="Script URL"></th>
-        <th style="width:10%"> <input ng-model="search.sha256" placeholder="Hash"></th>
-        <th style="width:35%"> <input ng-model="search.parent_url" placeholder="Parent URL"> </th>
-        <tr ng-repeat="script in app.records | filter:search | orderBy:'-date'">
-            <td>{{ script.date | date:'yyyy-MM-dd HH:mm' }}</td>
-            <td>{{ script.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
-            <td>{{ script.sha256 | limitTo:10 }}</td>
-            <td>{{ script.parent_url | limitTo: 50 }}{{ script.parent_url.length > 50 ? '...' : '' }}</td>
+        <th style="width:43%"> <input ng-model="search.url" placeholder="Page URL"></th>
+        <th style="width:35%"> <input ng-model="search.scripts" placeholder="Scripts"> </th>
+        <tr ng-repeat="pageview in app.records | filter:search | orderBy:'-date'">
+            <td>{{ pageview.date | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td>{{ pageview.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
+            <td>{{ pageview.scripts | limitTo: 50 }}{{ script.parent_url.length > 50 ? '...' : '' }}</td>
         </tr>
     </table>
-</div>
-
-<div id="by_url" style="display:none">
-<pre>
-    <i>coming soon...</i>
-    <br>
-    www.google-analytics.com/ga.js          parent #1 (hash #1), parent #2 (hash #1, hash #2), parent #3 (hash #2)
-    www.jquery.org/jquery.js                parent #1 (hash #1)
-</pre>    
 </div>
 
 <div id="by_parent" style="display:none">

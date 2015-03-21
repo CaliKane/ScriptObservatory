@@ -34,6 +34,7 @@ Array.prototype.contains = function(k) {
   return false;
 }
 
+already_seen = [];
 
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
@@ -43,7 +44,8 @@ app.controller("AppCtrl", function($http, $scope){
         var query_string = "";
 
         if (query != "") {
-            queryString = "?q={\"filters\": [{\"or\":[{\"name\":\"parent_url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
+            //queryString = "?q={\"filters\": [{\"or\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
+            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
         }
 
         $scope.populateData(queryString);
@@ -64,58 +66,49 @@ app.controller("AppCtrl", function($http, $scope){
 
 
     $scope.populateData = function(queryString){
-        $http.get("/api/script" + queryString).success(function (data){
+        $http.get("/api/pageview" + queryString).success(function (data){
             // update raw data structure:
             app.records = data.objects;
                
             // build by_site data structure:
-            //   TODO: needs major refactoring.....
             app.sites = [];
-            
             seen_urls = [];
             for (var i = 0; i < app.records.length; i++){
                 var cur_record = app.records[i];
 
-                if (seen_urls.contains(cur_record.parent_url) || seen_urls.contains(cur_record.url)){
-                    continue;
-                }
-        
-                var to_add = {"url": "",
+                // TEMPORARY
+                if (already_seen.contains(cur_record.url)) continue;
+                already_seen.push(cur_record.url);
+
+                var to_add = {"url": cur_record.url,
                               "occur": 0,
                               "scripts": {}};
                 
-                if (cur_record.parent_url == "") {
-                    to_add.url = cur_record.url;
-                }
-                else {
-                    to_add.url = cur_record.parent_url;
-                }
-
                 for (var j = i; j < app.records.length; j++){
-                    
-                    if (app.records[j].parent_url == "" && app.records[j].url == to_add.url){
-                        // if parent_url is null, this was not a script object! 
-                        // if we end up in here, it's because we loaded the page itself!
+                    if (app.records[j].url == to_add.url){
                         to_add.occur += 1;
-                    }
+    
+                        for (var script_ind = 0; script_ind < app.records[j].scripts.length; script_ind++){
 
-                    if (app.records[j].parent_url == to_add.url){
-   
-                        if (!(app.records[j].url in to_add.scripts)){
-                            to_add.scripts[app.records[j].url] = {};
-                            to_add.scripts[app.records[j].url].url = app.records[j].url;
-                            to_add.scripts[app.records[j].url].hashes = {};
-                            to_add.scripts[app.records[j].url].occur = 0;
+                            var script_url = app.records[j].scripts[script_ind].url;
+                            var script_hash = app.records[j].scripts[script_ind].hash;
+
+                            if (!(script_url in to_add.scripts)){
+                                to_add.scripts[script_url] = {};
+                                to_add.scripts[script_url].url = script_url; // might not be necessary
+                                to_add.scripts[script_url].hashes = {};
+                                to_add.scripts[script_url].occur = 0;
+                            }
+                            
+                            if (!(script_hash in to_add.scripts[script_url].hashes)){
+                                to_add.scripts[script_url].hashes[script_hash] = {};
+                                to_add.scripts[script_url].hashes[script_hash].hash = script_hash; // might not be necessary
+                                to_add.scripts[script_url].hashes[script_hash].occur = 0;
+                            }
+                            
+                            to_add.scripts[script_url].occur += 1;
+                            to_add.scripts[script_url].hashes[script_hash].occur += 1;
                         }
-                        
-                        if (!(app.records[j].sha256 in to_add.scripts[app.records[j].url].hashes)){
-                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256] = {};
-                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur = 0;
-                            to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].sha256 = app.records[j].sha256;
-                        }
-                        
-                        to_add.scripts[app.records[j].url].occur += 1;
-                        to_add.scripts[app.records[j].url].hashes[app.records[j].sha256].occur += 1;
                     }
                 }
 
@@ -128,19 +121,9 @@ app.controller("AppCtrl", function($http, $scope){
                     to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
                 }
 
-                if (cur_record.parent_url == "") {
-                    seen_urls.push(cur_record.url);
-                }
-                else {
-                    seen_urls.push(cur_record.parent_url);
-                }
-
-                // only show sites if they have atleast 1 script
-                if (Object.keys(to_add.scripts).length > 0){
-                    app.sites.push(to_add);
-                }
+                app.sites.push(to_add);
             }
-        
+            
 
             // build by_script data structure:
             //  ...TODO...
