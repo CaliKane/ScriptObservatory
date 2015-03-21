@@ -7,7 +7,8 @@ import ssl
 from flask import Flask
 from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Text, ForeignKey
 
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -19,12 +20,24 @@ app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
-class Script(db.Model):
+#class Website(db.Model):
+#    __tablename__ = "website"
+#    id = Column(Integer, primary_key=True)
+
+class Pageview(db.Model):
+    __tablename__ = "pageview"
     id = Column(Integer, primary_key=True)
     url = Column(Text, unique=False)
-    parent_url = Column(Text, unique=False)
-    sha256 = Column(Text, unique=False)
+    #website_id = Column(Integer, ForeignKey("website.id"))
     date = Column(Integer, unique=False)    
+    scripts = relationship("Script")
+
+class Script(db.Model):
+    __tablename__ = "script"
+    id = Column(Integer, primary_key=True)
+    pageview_id = Column(Integer, ForeignKey("pageview.id"))
+    url = Column(Text, unique=False)
+    hash = Column(Text, unique=False)
 
 db.create_all()
 
@@ -32,6 +45,11 @@ api_manager = APIManager(app, flask_sqlalchemy_db=db)
 api_manager.create_api(Script,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
+
+api_manager.create_api(Pageview,
+                       max_results_per_page=0,
+                       methods=["GET", "POST", "DELETE", "PUT"])
+
 
 @app.after_request
 def after_request(response):
@@ -45,6 +63,7 @@ def index():
 
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(host="0.0.0.0", port=443, ssl_context=context, use_reloader=False)
 
 
