@@ -49,8 +49,8 @@
                 return xmlHttp.responseText;  // TODO: check return code
             }
             
-            var N = httpGet("/api/count_entries");
-            document.write("The database currently contains the results from " + N + " queries.");
+            var entries = httpGet("/api/count_entries").split(' ');
+            document.write("Currently, the database contains observations of " + entries[0] + " script objects coming from " + entries[1] + " pageviews.");
         </script>
 
     </p>

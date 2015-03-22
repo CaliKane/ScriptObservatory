@@ -20,10 +20,16 @@ app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
+#class Webpage(db.Model):
+#    __tablename__ = "webpage"
+#    url = Column(Text, primary_key=True)
+#    pageviews = relationship("Pageview")
+
 class Pageview(db.Model):
     __tablename__ = "pageview"
     id = Column(Integer, primary_key=True)
     url = Column(Text, unique=False)
+#    url = Column(Text, ForeignKey("webpage.url"))
     date = Column(Integer, unique=False)    
     scripts = relationship("Script")
 
@@ -45,6 +51,9 @@ api_manager.create_api(Pageview,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
 
+#api_manager.create_api(Webpage,
+#                       max_results_per_page=0,
+#                       methods=["GET", "POST", "DELETE", "PUT"])
 
 @app.after_request
 def after_request(response):
@@ -61,7 +70,10 @@ def count_entries():
     some_engine = create_engine("sqlite:///database.db")
     Session = sessionmaker(bind=some_engine)
     session = Session()
-    return str(session.query(Script).count())
+
+    n_scripts = session.query(Script).count()
+    n_pageviews = session.query(Pageview).count()
+    return "{0} {1}".format(n_scripts, n_pageviews)
 
 
 if __name__ == '__main__':
