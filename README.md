@@ -9,10 +9,10 @@ Initially, the only objects that the ScriptObservatory will target for analysis
 will be files that Chrome classifies as "scripts" (like Javascript, for example).
 If things go well, it may be extended to include additional types of resources.
 
-Want to browse the data? [Start here](https://www.scriptobservatory.org).
+Want to browse the data? [Start here](https://www.scriptobservatory.org)
 
 Want to install the Chrome extension? 
-[Start here](https://github.com/andy11/ScriptObservatory#usage).
+[Start here](https://github.com/andy11/ScriptObservatory#usage)
 
 
 Usage
@@ -88,19 +88,14 @@ Near-term:
  - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
  - ~~Support batching uploads~~
  - ~~Show total size of database on homepage~~
-
  - Add way to search & view by script
  - Allow users to query from within a specific date range
  - Allow users to submit sites to be robobrowsed
-
  - Debug issue seen with robobrowser on JS-heavy websites
  - Debug issue with non-ASCII encoded scripts 
-
  - Support inline script tags
  - Support flash objects
-
  - Show total size of database in github readme
-
  - Use robobrowser to autodetect bugs
 
 Long-term ideas:
