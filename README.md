@@ -90,10 +90,11 @@ Near-term:
  - ~~Show total size of database on homepage~~
  - ~~Debug issue seen with robobrowser on JS-heavy websites~~
  - ~~Debug issue with non-ASCII encoded scripts~~ 
+ - Give some kind of notification about progress if a query takes a long time
  - Support inline script tags
  - Allow users to submit sites to be robobrowsed (handle automatically when a new site is queried 
  - Allow users to click a "rescan" button when displaying current results)
- - Add way to search & view by script (by url & hash)
+ - ~~Add way to search & view by script (by url & hash)~~
  - ~~Allow users to query from within a specific date range~~
  - Support flash objects
  - Show total size of database in github readme
