@@ -14,6 +14,13 @@
 
     <form ng-submit="submitParentQuery()">
         Enter a website, script, or SHA-256 hash: <input type="text" name="url" ng-model="parentQueryText" />
+        <select ng-model="dateRangeChoice">
+            <option selected value="all">All time</option>
+            <option value="day">Last 24h</option>
+            <option value="week">Last 1w</option>
+            <option value="month">Last 1mo</option>
+            <option value="year">Last 1y</option>
+        </select>
         <input type="submit" id="submit" value="Submit" />
     </form>
 </div>    
@@ -21,9 +28,8 @@
 <br>
 
 <div id="about_section" style="display:block; width:50%; margin-left:auto; margin-right:auto;" align="center">
-    <br><br>
     <p> 
-        ScriptObservatory is not stable, but you can use it now if you don't mind weird bugs here and there. 
+        ScriptObservatory is not stable, but you can use it now if you don't mind weird bugs. 
         <br><br>
         You can find more info <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
         <br><br>

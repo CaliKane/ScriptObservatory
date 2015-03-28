@@ -39,12 +39,32 @@ already_seen = [];
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
 
+    $scope.dateRangeChoice = "all";
+
     $scope.submitParentQuery = function(){
         var query = $scope.parentQueryText;
+        var date_option = $scope.dateRangeChoice;
+
+        var current_time = (new Date()).getTime();
+        var min_time = 0;
+        
+        if (date_option == "year"){
+            min_time = current_time - (1000*60*60*24*365);
+        }
+        else if (date_option == "month"){
+            min_time = current_time - (1000*60*60*24*30);
+        }
+        else if (date_option == "week"){
+            min_time = current_time - (1000*60*60*24*7);
+        }
+        else if (date_option == "day"){
+            min_time = current_time - (1000*60*60*24);
+        }
+ 
         var query_string = "";
 
         if (query != "") {
-            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"eq\",\"val\":\"" + query + "\"}]}";
+            queryString = "?q={\"filters\": [{\"and\":[{\"name\":\"url\",\"op\":\"eq\",\"val\":\"" + query + "\"}, {\"name\":\"date\",\"op\":\">=\",\"val\":\"" + min_time + "\"}]}] }";
         }
 
         $scope.populateData(queryString);
