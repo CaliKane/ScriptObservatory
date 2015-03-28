@@ -88,8 +88,8 @@ Near-term:
  - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
  - ~~Support batching uploads~~
  - ~~Show total size of database on homepage~~
- - Debug issue seen with robobrowser on JS-heavy websites
- - Debug issue with non-ASCII encoded scripts 
+ - ~~Debug issue seen with robobrowser on JS-heavy websites~~
+ - ~~Debug issue with non-ASCII encoded scripts~~ 
  - Support inline script tags
  - Allow users to submit sites to be robobrowsed (handle automatically when a new site is 
  - Add way to search & view by script (by url & hash)
