@@ -96,11 +96,12 @@ chrome.webRequest.onBeforeRequest.addListener(
             }
             else{
                 // TODO: determine why this happens and find a workaround
+                // --> one case where it happens is when asynchronous JavaScript runs 
+                //     after page load has finished. 
                 console.log("tabId of " + tabId + " found for " + details.url + " but main_frame not found!!");
             }
 
-            // TODO: determine why btoa call fails (encoding issues?)
-            return {"redirectUrl":"data:text/html;base64, " + window.btoa(data)};
+            return {"redirectUrl":"data:text/html;base64, " + window.btoa(unescape(encodeURIComponent(data)))};
         }
 
         return {cancel: false};
