@@ -63,7 +63,17 @@ app.controller("AppCtrl", function($http, $scope){
         var query_string = "";
 
         if (query != "") {
-            queryString = "?q={\"filters\": [{\"and\":[{\"name\":\"url\",\"op\":\"eq\",\"val\":\"" + query + "\"}, {\"name\":\"date\",\"op\":\">=\",\"val\":\"" + min_time + "\"}]}] }";
+            /* 
+             * if the last character in the URL is a /, we strip it off because we allow
+             * a single character following the query string to be any character to avoid missing
+             * results from www.google.com/ when the user enters www.google.com & results from 
+             * www.google.com when the user enters www.google.com/
+             */
+            if (query.slice(-1) == '/'){
+                query = query.slice(0, -1);
+            }
+
+            queryString = "?q={\"filters\": [{\"and\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "_\"}, {\"name\":\"date\",\"op\":\">=\",\"val\":\"" + min_time + "\"}]}] }";
         }
 
         $scope.populateData(queryString);
