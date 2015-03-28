@@ -88,15 +88,16 @@ Near-term:
  - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
  - ~~Support batching uploads~~
  - ~~Show total size of database on homepage~~
- - Add way to search & view by script
- - Allow users to query from within a specific date range
- - Allow users to submit sites to be robobrowsed
  - Debug issue seen with robobrowser on JS-heavy websites
  - Debug issue with non-ASCII encoded scripts 
  - Support inline script tags
+ - Allow users to submit sites to be robobrowsed (handle automatically when a new site is 
+ - Add way to search & view by script (by url & hash)
+ - Allow users to query from within a specific date range
+queried & allow users to click a "rescan" button when displaying current results)
  - Support flash objects
  - Show total size of database in github readme
- - Use robobrowser to autodetect bugs
+ - Have robobrowser automatically report all console errors while browsing sites
 
 Long-term ideas:
  - Rework database structure to scale better
