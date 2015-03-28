@@ -10,8 +10,8 @@
 <body ng-app="app" ng-controller="AppCtrl as app">
 
 <div align="center">
-    <h1> <a href="/"> ScriptObservatory </a> </h1>
-
+    <h1> <a href="/" style="color: inherit;"> ScriptObservatory </a> </h1>
+    <br>
     <form ng-submit="submitQueryForm()">
         Enter a website, script, or SHA-256 hash: <input type="text" name="url" ng-model="parentQueryText" />
         <select ng-model="dateRangeChoice">
@@ -27,17 +27,22 @@
 
 <br>
 
-<div id="about_section" style="display:block; width:50%; margin-left:auto; margin-right:auto;" align="center">
+<div id="about_section" style="display:block; width:60%; margin-left:auto; margin-right:auto;" align="left">
+    <hr> 
+    <br>
     <p> 
-        ScriptObservatory is not stable, but you can use it now if you don't mind weird bugs.
-        You can find more info <a style="color: blue;" href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
+        ScriptObservatory's not stable, but it's up and running now if you want to try it out.
+        <br><br>
+        You can find more info <a style="color:blue; visited:blue;" href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
         <br><br>
         Some sample queries:
-        <br>http://www.vt.edu/
-        <br>reddit.com
-        <br>http://www.google-analytics.com/ga.js 
-        <br>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89
-        <br><br>
+        <ul>
+        <li><a href="#" style="color:blue; visited:blue;" ng-click='submitQuery("http://www.vt.edu/");'>http://www.vt.edu/</a>
+        <li><a href="#" style="color:blue; visited:blue;" ng-click='submitQuery("reddit.com");'>reddit.com</a>
+        <li><a href="#" style="color:blue; visited:blue;" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
+        <li><a href="#" style="color:blue; visited:blue;" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
+        </ul>
+        
         <script>
             function httpGet(url){
                 var xmlHttp = new XMLHttpRequest();
