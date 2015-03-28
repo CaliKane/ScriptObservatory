@@ -34,11 +34,10 @@ Array.prototype.contains = function(k) {
   return false;
 }
 
-already_seen = [];
-
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
 
+    // make "all" the default time range choice
     $scope.dateRangeChoice = "all";
 
     $scope.submitParentQuery = function(){
@@ -77,6 +76,8 @@ app.controller("AppCtrl", function($http, $scope){
                
             app.sites = [];
             seen_urls = [];
+            already_seen = [];
+
             for (var i = 0; i < app.records.length; i++){
                 var cur_record = app.records[i];
 
