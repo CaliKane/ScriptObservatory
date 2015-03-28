@@ -40,8 +40,12 @@ app.controller("AppCtrl", function($http, $scope){
     // make "all" the default time range choice
     $scope.dateRangeChoice = "all";
 
-    $scope.submitParentQuery = function(){
+    $scope.submitQueryForm = function(){
         var query = $scope.parentQueryText;
+        $scope.submitQuery(query);
+    }
+
+    $scope.submitQuery = function(query){
         var date_option = $scope.dateRangeChoice;
 
         var current_time = (new Date()).getTime();
