@@ -85,22 +85,31 @@ Near-term:
  - ~~Set up backend on https://scriptobservatory.org~~
  - ~~Set up a robobrowser to collect data from popular sites~~
  - ~~Fix/finalize parent URL tracking setup~~
- - Support embedded script tags
- - Use robobrowser to autodetect bugs
  - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
- - Add filter to webpage to let users select data from specific date ranges
  - ~~Support batching uploads~~
- - Rework database structure to scale better
- - Add "by_script" view to webpage
+ - ~~Show total size of database on homepage~~
 
-Long-term:
+ - Add way to search & view by script
+ - Allow users to query from within a specific date range
+ - Allow users to submit sites to be robobrowsed
+
+ - Debug issue seen with robobrowser on JS-heavy websites
+ - Debug issue with non-ASCII encoded scripts 
+
+ - Support inline script tags
+ - Support flash objects
+
+ - Show total size of database in github readme
+
+ - Use robobrowser to autodetect bugs
+
+Long-term ideas:
+ - Rework database structure to scale better
  - Expand to collect data on _all_ web objects?
- - Don't interfere with other extensions / ad-blockers
- - Expand Privacy documentation
- - Integrate with VirusTotal & other sites
- - Import from PCAP
- - Add visualizations for server's data
- - Improve scalability of backend design
+ - Make sure there's no interference with other extensions / ad-blockers
+ - Integrate with VirusTotal & other URL-scanning websites
+ - Allow users to import web traffic from PCAP
+ - Add interactive visualizations for collected data
 
 
 Contributing
