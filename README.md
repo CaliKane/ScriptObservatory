@@ -91,10 +91,10 @@ Near-term:
  - ~~Debug issue seen with robobrowser on JS-heavy websites~~
  - ~~Debug issue with non-ASCII encoded scripts~~ 
  - Support inline script tags
- - Allow users to submit sites to be robobrowsed (handle automatically when a new site is 
+ - Allow users to submit sites to be robobrowsed (handle automatically when a new site is queried 
+ - Allow users to click a "rescan" button when displaying current results)
  - Add way to search & view by script (by url & hash)
- - Allow users to query from within a specific date range
-queried & allow users to click a "rescan" button when displaying current results)
+ - ~~Allow users to query from within a specific date range~~
  - Support flash objects
  - Show total size of database in github readme
  - Have robobrowser automatically report all console errors while browsing sites
