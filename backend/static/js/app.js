@@ -44,8 +44,7 @@ app.controller("AppCtrl", function($http, $scope){
         var query_string = "";
 
         if (query != "") {
-            //queryString = "?q={\"filters\": [{\"or\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}, {\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}] }";
-            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"like\",\"val\":\"%" + query + "%\"}]}";
+            queryString = "?q={\"filters\":[{\"name\":\"url\",\"op\":\"eq\",\"val\":\"%" + query + "%\"}]}";
         }
 
         $scope.populateData(queryString);

@@ -17,8 +17,6 @@
     <a href="#" onclick="show_raw(); return false;">raw data view</a> 
     (make a query first) <br>
 
-
-
     <form ng-submit="submitParentQuery()">
         Search for a Website: <input type="text" name="url" ng-model="parentQueryText" placeholder='URL (ex: "reddit.com")'/>
         <input type="submit" id="submit" value="Submit" />
@@ -39,7 +37,7 @@
     <p> 
         ScriptObservatory is not stable, but feel free to play around. You can find more info <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">here</a>. 
         <br><br>
-        Some queries to get you started: "vt.edu", "reddit.com", "scriptobservatory.org"
+        Some queries to get you started: "http://www.vt.edu", "https://www.reddit.com", "https://scriptobservatory.org"
         <br><br>
         <script>
             function httpGet(url){
