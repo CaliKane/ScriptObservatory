@@ -87,6 +87,5 @@ Long-term ideas:
 Contributing
 ------------
 
-If you have ideas/comments/suggestions, go ahead and submit them as Issues or Pull Requests. 
-
+If you have ideas/comments/suggestions, please submit them as Issues or Pull Requests. Thanks!
 
