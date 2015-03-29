@@ -2,13 +2,12 @@ ScriptObservatory
 =================
 
 The goal of the ScriptObservatory project is to extend the idea behind the 
-[SSL Observatory](https://www.eff.org/observatory) to include recording and 
-organizing **_live content_** from the internet as well as SSL certificates.
+[SSL Observatory](https://www.eff.org/observatory) by recording and 
+organizing the **_live content_** people see on the internet.
 
 Initially, the only objects that the ScriptObservatory extension will target 
-for analysis will be files that Chrome classifies as "scripts" (like 
-Javascript, for example). It may eventually include additional types of 
-resources as well.
+for analysis will be JavaScript files. Eventually, this may be extended to 
+analyze other content, such as flash objects and iframes.
 
 Want to browse the data? [Click here](https://www.scriptobservatory.org)
 
@@ -32,37 +31,35 @@ instead. Once it receives the content, it calculates a hash of the data and
 passes the object back to the browser.
 
 This way of grabbing the content isn't ideal and will hopefully be improved soon.
-Documentation of design decisions can be found directly in the source code (start 
-with [chrome-extension/background.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/src/background.js)).
-
-Periodically, the extension will upload the data it collects to a ScriptObservatory
-server to be recorded. These four pieces of information are sent to the server:
- 1. The full URL of the requested script
- 2. The full URL of the parent webpage where the script was included
- 3. The SHA-256 hash of the script's content
- 4. The time that you viewed the object
+Documentation of design decisions can be found directly in the source code. 
+([chrome-extension/background.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/src/background.js))
+would be a good place to start.)
 
 
 Privacy
 -------
 
-With the ScriptObservatory Chrome extension installed, your browser will send the
-data described above to a remote server at regular intervals.
+With the ScriptObservatory Chrome extension installed, your browser will send these
+four pieces of information to a remote server at regular intervals:
+ 1. The full URL of the script
+ 2. The full URL of the parent webpage where the script was included
+ 3. The SHA-256 hash of the script's content
+ 4. The time that you made the request
 
 The following steps have been taken to make the process as trustworthy as possible:
  - The connection from you to the remote server will always be 
    [encrypted using SSL/TLS](https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org). 
- - No IP addresses or any kind of "User ID" values will ever be recorded in the database or 
-   logged on the server. This makes viewing the data on a "per-user" basis impossible.
+ - No IP addresses or User IDs are ever be recorded in the database or logged on the server.
+   This makes viewing the data on a "per-user" basis impossible.
  - The source code for both the client and the server will always be available for you to 
-   review (see the 
+   review. (See the 
    [chrome-extension/](https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension) 
    and [backend/](https://github.com/andy11/ScriptObservatory/tree/master/backend) 
-   directories to get started).
+   directories to get started.)
 
-If you still don't feel comfortable having the extension upload your data to the centralized
-server, you can set up your own, private version of the server and configure the extension 
-to send data there instead.
+If you still don't feel comfortable having the extension upload this data to the centralized
+server, you can set up your own version of the server and configure the extension to send 
+data there instead.
 
 
 Roadmap
