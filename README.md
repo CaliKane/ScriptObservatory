@@ -6,9 +6,12 @@ The goal of the ScriptObservatory project is to extend the idea behind the
 organizing information about the **_live content_** people are seeing on
 the internet.
 
-Initially, the only objects that the ScriptObservatory extension will target 
-for analysis will be JavaScript files. Eventually, this may be extended to 
-analyze other content like flash objects and iframes.
+Initially, the only objects that will be analyzed are JavaScript files. 
+Eventually, this might be extended to include other types of content like 
+flash objects and iframes. The long-term goal is for the Chrome extension
+to function like a traditional ad-blocker but have the ability to be
+**_content-aware_**, letting you to have finer control over what runs on
+your computer.
 
 Want to browse the data? [Click here](https://www.scriptobservatory.org)
 
