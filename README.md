@@ -8,10 +8,14 @@ the internet.
 
 Initially, the only objects that will be analyzed are JavaScript files. 
 Eventually, this might be extended to include other types of content like 
-flash objects and iframes. The long-term goal is for the Chrome extension
-to function like a traditional ad-blocker but have the ability to be
-**_content-aware_**, letting you to have finer control over what runs on
-your computer.
+flash objects and iframes. 
+
+The long-term goal for the website is for it to be a place where anyone can
+go to view and analyze the record of what snippets of code people have been
+sent while browsing the web. The long-term goal for the Chrome extension
+is for it to crowdsource the collection of the data and for it to function
+like a traditional script-blocker but with the ability to be **_content-aware_**,
+letting you to have finer control over what runs on your computer. 
 
 Want to browse the data? [Click here](https://www.scriptobservatory.org)
 
