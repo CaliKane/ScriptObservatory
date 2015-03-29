@@ -58,20 +58,38 @@ Here are some steps that have been made to make this process as trustworthy as p
    directories to get started.)
 
 If you still don't feel comfortable having the extension upload data to the server, 
-you can set up your own version and configure the extension to send data there instead.
+you can set up a server of your own and configure the extension to send data there
+instead.
 
 
 Roadmap
 -------
 
 Near-term:
- - Add tests for chrome extension code
  - Make queries link-able and have traditional URL paths
- - Add progress indicator when making a query on the website
  - Create a web API to control the robobrowser
  - Allow users to click a "scan" button when displaying results
  - Autoscan queried websites with no prior results
+ - Add small menu for clicking on results within stats:
+    - Site URL: 
+        - search for this website here
+        - view on URLQuery
+        - view on VirusTotal
+        - copy URL to clipboard
+    - Script URL:
+        - see all sites that have used this script
+        - view current script content
+        - view on VirusTotal
+        - copy URL to clipboard
+    - Script Hash:
+        - see all sites that have used this version of this script
+        - view archived script content (eventually)
+        - view on VirusTotal
+        - copy Hash to clipboard
+ - Add progress indicator when making a query on the website
  - Add button to chrome extension to toggle reporting on and off
+ - Allow blacklisting stats upload for websites in the chrome extension
+ - Add tests for chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
 
 Long-term ideas:
