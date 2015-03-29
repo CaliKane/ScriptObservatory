@@ -9,8 +9,8 @@
   ],
   "background": {
     "scripts": [
-      "src/extension.js",
-      "src/sha256.js"
+      "extension.js",
+      "sha256.js"
     ],
     "persistent": true
   }
