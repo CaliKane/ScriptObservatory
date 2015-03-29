@@ -33,7 +33,7 @@ passes the object back to the browser.
 
 This way of grabbing the content isn't ideal and will hopefully be improved soon.
 Documentation of design decisions can be found directly in the source code. 
-([chrome-extension/background.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/src/background.js)
+([chrome-extension/src/extension.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/src/extension.js)
 would be a good place to start.)
 
 
