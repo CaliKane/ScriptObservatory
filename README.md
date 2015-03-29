@@ -57,42 +57,31 @@ Here are some steps that have been made to make this process as trustworthy as p
    and [backend/](https://github.com/andy11/ScriptObservatory/tree/master/backend) 
    directories to get started.)
 
-If you still don't feel comfortable having the extension upload this data to the centralized
-server, you can set up your own version and configure the extension to send data there instead.
+If you still don't feel comfortable having the extension upload data to the server, 
+you can set up your own version and configure the extension to send data there instead.
 
 
 Roadmap
 -------
 
 Near-term:
- - ~~Add support to track parent URL~~
- - ~~Set up backend on https://scriptobservatory.org~~
- - ~~Set up a robobrowser to collect data from popular sites~~
- - ~~Fix/finalize parent URL tracking setup~~
- - ~~Add filter to webpage to let users search by Parent URL, Script URL, and Hash values~~
- - ~~Support batching uploads~~
- - ~~Show total size of database on homepage~~
- - ~~Debug issue seen with robobrowser on JS-heavy websites~~
- - ~~Debug issue with non-ASCII encoded scripts~~ 
  - Add tests for chrome extension code
- - Give some kind of notification about progress if a query takes a long time
- - Support inline script tags
- - Allow users to submit sites to be robobrowsed (handle automatically when a new site is queried)
- - Allow users to click a "rescan" button when displaying current results
+ - Make queries link-able and have traditional URL paths
+ - Add progress indicator when making a query on the website
+ - Create a web API to control the robobrowser
+ - Allow users to click a "scan" button when displaying results
+ - Autoscan queried websites with no prior results
  - Add button to chrome extension to toggle reporting on and off
- - ~~Add way to search & view by script (by url & hash)~~
- - ~~Allow users to query from within a specific date range~~
- - Support flash objects
- - Show total size of database in github readme
  - Have robobrowser automatically report all errors while browsing sites
 
 Long-term ideas:
- - Rework database structure to scale better
- - Expand to collect data on _all_ web objects?
- - Make sure there's no interference with other extensions / ad-blockers
+ - Support inline script tags
+ - Support flash objects
  - Integrate with VirusTotal & other URL-scanning websites
- - Allow users to import web traffic from PCAP
  - Add interactive visualizations for collected data
+ - Make sure there's no interference with other extensions / ad-blockers
+ - Rework database structure to scale better
+ - Allow users to import web traffic from PCAP
 
 
 Contributing
