@@ -16,10 +16,16 @@ from selenium.webdriver.chrome.options import Options
 
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
-N_SECS_TO_WAIT_AFTER_ONLOAD = 20
+N_SECS_TO_WAIT_AFTER_ONLOAD = 5
 N_SECS_REQ_TIMEOUT = 100
-N_SECS_BETWEEN_PAGES = 1
 
+
+options = Options()
+options.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
+options.add_argument("--disable-application-cache")
+
+driver = webdriver.Chrome(chrome_options=options)
+driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
 
 while True:
     try:
@@ -42,19 +48,10 @@ while True:
         id = task["objects"][0]["id"]
         print("got task:", id, priority, url)
 
-        
         # go fetch the page in our browser
         web_addr = str(url)
-        
-        options = Options()
-        options.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
-
-        driver = webdriver.Chrome(chrome_options=options)
-        driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
         driver.get(web_addr)
-
         time.sleep(N_SECS_TO_WAIT_AFTER_ONLOAD)
-
 
         # remove our job from the queue
         response = requests.delete("{0}/{1}".format(API_BASE_URL, id), verify=False)
