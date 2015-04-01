@@ -72,7 +72,7 @@ Roadmap
 v0.1:
  - ~~Create a web API to control the robobrowser~~
  - ~~Make robo-browser work headless~~
- - Support inline script tags
+ - ~~Support inline script tags~~
  - Comment / clean angular javascript code
  - ~~Comment / clean robobrowser code~~
 
