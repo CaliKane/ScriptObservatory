@@ -84,12 +84,25 @@ function httpPost(url, data){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
-        var data = "";
-        var hash = "";
+        var data = httpGet(details.url);
         var tabId = details.tabId;
+        var hash = "";
 
-        if (details.type == "script") {
-            data = httpGet(details.url);
+        if (details.type == "main_frame") {
+            SCRIPTS[tabId] = []; 
+            
+            var scripts = document.getElementsByTagName("script");
+    
+            for (var i=0;i<scripts.length;i++) {
+                data = scripts[i].innerHTML;
+                hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+                
+                SCRIPTS[tabId].push({"url": details.url+"__inline__"+hash.slice(0,10), "hash": hash});
+                console.log(i,scripts[i].innerHTML,hash);
+            }
+
+        } 
+        else if (details.type == "script") {
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
             if (tabId in SCRIPTS) {
@@ -101,17 +114,12 @@ chrome.webRequest.onBeforeRequest.addListener(
                             " found for " + details.url +
                             " but main_frame not found!!");
             }
-
-            var data_uri = window.btoa(unescape(encodeURIComponent(data)));
-            return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
-        else if (details.type == "main_frame") {
-            SCRIPTS[tabId] = []; 
-        } 
-        
-        return {cancel: false};
+       
+        var data_uri = window.btoa(unescape(encodeURIComponent(data)));
+        return {"redirectUrl":"data:text/html;base64, " + data_uri};
     }, 
-    {urls: ["<all_urls>"], types: ["script", "main_frame", "sub_frame"]}, 
+    {urls: ["<all_urls>"], types: ["script", "main_frame"]}, 
     ["blocking"]
 );
 
