@@ -35,6 +35,12 @@ class Script(db.Model):
     url = Column(Text, unique=False)
     hash = Column(Text, unique=False)
 
+class RoboTask(db.Model):
+    __tablename__ = "robotask"
+    id = Column(Integer, primary_key=True)
+    url = Column(Text, unique=False)
+    priority = Column(Integer, unique=False)
+
 
 db.create_all()
 
@@ -46,6 +52,11 @@ api_manager.create_api(Script,
 api_manager.create_api(Pageview,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
+
+api_manager.create_api(RoboTask,
+                       max_results_per_page=0,
+                       methods=["GET", "POST", "DELETE", "PUT"])
+
 
 @app.after_request
 def after_request(response):
