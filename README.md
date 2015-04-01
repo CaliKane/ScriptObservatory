@@ -70,11 +70,11 @@ Roadmap
 -------
 
 v0.1:
- - Create a web API to control the robobrowser
- - Allow users to click a "scan" button when displaying results
- - Build a VM-based solution to sandbox the robobrowser
+ - ~~Create a web API to control the robobrowser~~
+ - Make robo-browser work headless
  - Support inline script tags
  - Comment / clean angular javascript code
+ - Comment / clean robobrowser code
 
 Milestone: Make GitHub repo public & start crawling the internet 24/7
 
@@ -83,6 +83,7 @@ v0.2:
  - Add small menu for clicking on results within stats:
     - Site URL: 
         - search for this website here
+        - scan this website again now
         - view on URLQuery
         - view on VirusTotal
         - builtwith.com
@@ -110,6 +111,7 @@ Milestone: Make Chrome extension public
 v0.4:
  - Add tests for chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
+ - Build a VM-based solution to sandbox the robobrowser
 
 Long-term:
  - Support iframes
