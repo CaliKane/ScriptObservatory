@@ -61,19 +61,6 @@
     </p>
 </div>
 
-<div id="raw_section" style="display:none">
-    <table>
-        <th style="width:12%"> Date </th>
-        <th style="width:43%"> <input ng-model="search.url" placeholder="Page URL"></th>
-        <th style="width:35%"> Scripts </th>
-        <tr ng-repeat="pageview in app.records | filter:search | orderBy:'-date'">
-            <td>{{ pageview.date | date:'yyyy-MM-dd HH:mm' }}</td>
-            <td>{{ pageview.url | limitTo: 70 }}{{ script.url.length > 70 ? '...' : '' }}</td>
-            <td>{{ pageview.scripts | limitTo: 50 }}{{ script.parent_url.length > 50 ? '...' : '' }}</td>
-        </tr>
-    </table>
-</div>
-
 <div id="website_section" style="display:none">
     <table style="border: 1px dotted black;">
         <th style="border: 1px dotted black; width:30%"> 
