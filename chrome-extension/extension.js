@@ -131,8 +131,6 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the API_BASE_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
-
-
 chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab){
         if (changeInfo.status == "complete"){
@@ -143,8 +141,8 @@ chrome.tabs.onUpdated.addListener(
                 for (var i = 0; i < arrayLength; i++) {
                     data = String(scripts[i]);
                     hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-
-                    SCRIPTS[tabId].push({"url": "inline_script_tag_"+hash.slice(0,16), "hash": hash});
+                    var url = "inline_script_tag_" + hash.slice(0,16);
+                    SCRIPTS[tabId].push({"url": url, "hash": hash});
                 }
 
                 var timeStamp = new Date().getTime();
@@ -159,7 +157,10 @@ chrome.tabs.onUpdated.addListener(
 
             };
 
-            injected_code = "var to_return = []; var scripts = document.getElementsByTagName('script'); for (var i=0; i<scripts.length; i++) { if(!scripts[i].src) to_return.push( scripts[i].innerHTML ); }; to_return";
+            injected_code = "var to_return = []; var scripts = " +
+                    "document.getElementsByTagName('script'); for (var i=0; " +
+                    "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
+                    "scripts[i].innerHTML ); }; to_return";
 
             chrome.tabs.executeScript(tabId, 
                                       {code: injected_code},
