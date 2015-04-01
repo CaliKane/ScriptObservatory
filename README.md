@@ -76,9 +76,7 @@ v0.1:
  - Support inline script tags
  - Comment / clean angular javascript code
 
-* MAKE GITHUB REPO PUBLIC * 
-
-* RESET DATABASE AND START CRAWLING 24/7 *
+Milestone: Make GitHub repo public & start crawling the internet 24/7
 
 v0.2:
  - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
@@ -107,7 +105,7 @@ v0.3:
  - Add button to chrome extension to toggle reporting on and off
  - Allow blacklisting stats upload for websites in the chrome extension
 
- * MAKE CHROME EXTENSION PUBLIC * 
+Milestone: Make Chrome extension public
 
 v0.4:
  - Add tests for chrome extension code
