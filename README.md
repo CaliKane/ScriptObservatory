@@ -73,10 +73,10 @@ v0.1:
  - ~~Create a web API to control the robobrowser~~
  - ~~Make robo-browser work headless~~
  - ~~Support inline script tags~~
- - Comment / clean angular javascript code
+ - ~~Comment / clean angular javascript code~~
  - ~~Comment / clean robobrowser code~~
-
-Milestone: Make GitHub repo public & start crawling the internet 24/7
+ - Start crawling the internet 24/7
+ - Make GitHub repo public
 
 v0.2:
  - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
@@ -105,8 +105,7 @@ v0.2:
 v0.3:
  - Add button to chrome extension to toggle reporting on and off
  - Allow blacklisting stats upload for websites in the chrome extension
-
-Milestone: Make Chrome extension public
+ - Make Chrome extension public
 
 v0.4:
  - Add tests for chrome extension code

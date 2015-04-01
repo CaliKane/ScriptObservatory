@@ -1,9 +1,12 @@
 /*
- *
- *
+ * app.js is the main JavaScript code for the website. It includes some generic
+ * JavaScript as well as some AngularJS code.
  */
 
-
+/* 
+ * visualization helper functions
+ *  (these should be deleted when the page moves to bootstrap)
+ */
 function show_about(){
     document.getElementById('about_section').style.display="block";
     document.getElementById('website_section').style.display="none";
@@ -14,40 +17,45 @@ function show_website(){
     document.getElementById('website_section').style.display="block";
 }
 
-String.prototype.repeat = function( num )
-{
+/* 
+ * add a repeat(n) method to String objects so we can get a String of 
+ * a substring repeated *n* times.
+ */
+String.prototype.repeat = function(num){
     return new Array( num + 1 ).join( this );
 }
 
-API_BASE_URL = "https://scriptobservatory.org";
-
-var app = angular.module("app", []).filter('object2Array', function() {
-    /* 
-     * add object2Array filter to let us sort Objects from Angular in the 
-     * same way we sort Arrays.
-     */
-    return function(input) {
-      var out = []; 
-      for(i in input){
-        out.push(input[i]);
-      }
-      return out;
-    }
-  });
-
-
 /* 
- * add a contains() method to Array objects, so we can check if 
+ * add a contains(k) method to Array objects, so we can check if 
  * element *k* exists in a given array.
  */
 Array.prototype.contains = function(k) {
-  for(var i=0; i < this.length; i++){
-    if(this[i] === k){
-      return true;
+    for(var i=0; i < this.length; i++){
+        if(this[i] === k){
+            return true;
+        }
     }
-  }
-  return false;
+    return false;
 }
+
+/* 
+ * AngularJS app definition
+ */
+var app = angular.module("app", []);
+  
+/*
+ * add object2Array filter to let us sort Objects from Angular in the 
+ * same way we sort Arrays.
+ */ 
+app.filter('object2Array', function() {
+    return function(input) {
+        var out = []; 
+        for(i in input){
+            out.push(input[i]);
+        }
+        return out;
+    }
+});
 
 app.controller("AppCtrl", function($http, $scope){
     var app = this;
