@@ -3,7 +3,7 @@ ScriptObservatory
 
 The goal of the ScriptObservatory project is to extend the idea behind the 
 [SSL Observatory](https://www.eff.org/observatory) by recording and 
-organizing information about the **_live content_** people are seeing on
+information about the **_live content_** people are seeing on
 the internet.
 
 Initially, the only objects that will be analyzed are JavaScript files. 
@@ -11,12 +11,12 @@ Eventually, it might be extended to include other types of content like
 flash objects and iframes. 
 
 The long-term goal of the [website](https://www.scriptobservatory.org)
-is for it to be a place where anyone can view and analyze the record of 
-what snippets of code people have been sent while browsing the web. The 
+is for it to be a place where anyone can analyze the record of 
+what snippets of code people have been sent while on the internet. The 
 long-term goal for the 
 [Chrome extension](https://github.com/andy11/ScriptObservatory#usage)
-is to crowdsource the data collection and to act like a traditional
-script-blocker but also be **_content-aware_**, letting you have finer control 
+is to crowdsource the data collection and to (optionally) act as a 
+**_content-aware_** script blocker, letting you have finer control 
 over what runs on your computer. 
 
 
@@ -69,16 +69,25 @@ instead.
 Roadmap
 -------
 
-Near-term:
- - Make queries link-able and have traditional URL paths
+v0.1:
  - Create a web API to control the robobrowser
  - Allow users to click a "scan" button when displaying results
- - Autoscan queried websites with no prior results
+ - Build a VM-based solution to sandbox the robobrowser
+ - Support inline script tags
+ - Comment / clean angular javascript code
+
+* MAKE GITHUB REPO PUBLIC * 
+
+* RESET DATABASE AND START CRAWLING 24/7 *
+
+v0.2:
+ - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
  - Add small menu for clicking on results within stats:
     - Site URL: 
         - search for this website here
         - view on URLQuery
         - view on VirusTotal
+        - builtwith.com
         - copy URL to clipboard
     - Script URL:
         - see all sites that have used this script
@@ -90,16 +99,23 @@ Near-term:
         - view archived script content (eventually)
         - view on VirusTotal
         - copy Hash to clipboard
- - Add progress indicator when making a query on the website
+ - Autoscan queried websites with no prior results
+ - Add progress indicator when making queries on the website
+ - Make queries link-able and have traditional URL paths
+
+v0.3:
  - Add button to chrome extension to toggle reporting on and off
  - Allow blacklisting stats upload for websites in the chrome extension
+
+ * MAKE CHROME EXTENSION PUBLIC * 
+
+v0.4:
  - Add tests for chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
 
-Long-term ideas:
- - Support inline script tags
+Long-term:
+ - Support iframes
  - Support flash objects
- - Integrate with VirusTotal & other URL-scanning websites
  - Add interactive visualizations for collected data
  - Make sure there's no interference with other extensions / ad-blockers
  - Rework database structure to scale better
