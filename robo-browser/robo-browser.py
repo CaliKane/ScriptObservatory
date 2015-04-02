@@ -23,11 +23,12 @@ options = Options()
 options.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
 options.add_argument("--disable-application-cache")
 
-driver = webdriver.Chrome(chrome_options=options)
-driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
-
 while True:
     try:
+        # set up the chrome driver
+        driver = webdriver.Chrome(chrome_options=options)
+        driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
+
         # get the next task from the robotask API:
         response = requests.get(API_BASE_URL, 
                                 params=dict(q=json.dumps(dict(field='priority', direction='asc'))),
