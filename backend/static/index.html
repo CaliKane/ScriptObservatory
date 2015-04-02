@@ -46,18 +46,6 @@
         <li><a href="#" style="color:blue; visited:blue;" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
         </ul>
         
-        <script>
-            function httpGet(url){
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open("GET", url, false);
-                xmlHttp.send();
-                return xmlHttp.responseText;  // TODO: check return code
-            }
-            
-            var entries = httpGet("/api/count_entries").split(' ');
-            document.write("Currently, the database contains " + entries[0] + " script objects coming from " + entries[1] + " pageviews.");
-        </script>
-
     </p>
 </div>
 
