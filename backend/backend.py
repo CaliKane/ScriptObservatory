@@ -1,20 +1,12 @@
 #!/usr/bin/env python2
 #
 
-import os
-import ssl
-
 from flask import Flask
 from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import Column, Integer, Text, ForeignKey, create_engine
 
-
-context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain(os.environ['TLS_CRT_PATH'], os.environ['TLS_KEY_PATH'])
-context.set_ciphers("EECDH:EDH:AESGCM:HIGH:!eNULL:!aNULL:!RC4")
-context.options |= ssl.OP_NO_COMPRESSION
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -58,12 +50,6 @@ api_manager.create_api(RoboTask,
                        methods=["GET", "POST", "DELETE", "PUT"])
 
 
-@app.after_request
-def after_request(response):
-    response.headers.add('Strict-Transport-Security', 'max-age=15552000; includeSubDomains; preload')
-    response.headers.add('X-Frame-Options', 'SAMEORIGIN')
-    return response
-
 @app.route('/')
 def index():
     return app.send_static_file("index.html")
@@ -80,6 +66,6 @@ def count_entries():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=443, ssl_context=context, use_reloader=False)
+    app.run(host="0.0.0.0", port=8080, use_reloader=False)
 
 
