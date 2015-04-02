@@ -16,7 +16,7 @@ from selenium.webdriver.chrome.options import Options
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 N_SECS_TO_WAIT_AFTER_ONLOAD = 5
-N_SECS_REQ_TIMEOUT = 100
+N_SECS_REQ_TIMEOUT = 60
 
 
 options = Options()
