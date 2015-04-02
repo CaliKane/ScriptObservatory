@@ -60,5 +60,5 @@ while True:
     except selenium.common.exceptions.TimeoutException:
         print("the page load timed out for {0} - continuing on...".format(web_addr))
 
-driver.quit()
+    driver.quit()
 
