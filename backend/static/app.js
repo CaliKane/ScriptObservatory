@@ -38,6 +38,17 @@ Array.prototype.contains = function(k) {
     return false;
 }
 
+
+function isValidHash(str) {
+    var l = str.length;
+    for (i = 0; i < l; ++i){
+        val = str.charCodeAt(i);
+        if ((val < 97 && val > 122) && (val < 48 && val > 57)) return false;
+    }
+    return true;
+}
+
+
 /* 
  * AngularJS app definition
  */
@@ -90,17 +101,29 @@ app.controller("AppCtrl", function($http, $scope){
         var query_string = "";
 
         if (query != "") {
-            /* 
-             * if the last character in the URL is a /, we strip it off because we allow
-             * a single character following the query string to be any character to avoid missing
-             * results from www.google.com/ when the user enters www.google.com & results from 
-             * www.google.com when the user enters www.google.com/
-             */
-            if (query.slice(-1) == '/'){
-                query = query.slice(0, -1);
+            if (query.length == 64 && isValidHash(query)){
+                // this is a hash query
+                queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]}]}';
             }
-
-            queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+            else if (query.slice(-3) == ".js"){
+                // this is a javascript query
+                queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__url","op":"any","val":"' + query + '"}]}]}';
+            }
+            else {
+                // this is a webpage query
+                /* 
+                 * if the last character in the URL is a /, we strip it off because we allow
+                 * a single character following the query string to be any character to avoid missing
+                 * results from www.google.com/ when the user enters www.google.com & results from 
+                 * www.google.com when the user enters www.google.com/
+                 */
+                if (query.slice(-1) == '/'){
+                    query = query.slice(0, -1);
+                }
+                queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+            }
+            //queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+            //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
         }
 
         $scope.populateData(queryString);
