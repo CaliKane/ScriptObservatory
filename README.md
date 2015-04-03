@@ -69,16 +69,8 @@ instead.
 Roadmap
 -------
 
-v0.1:
- - ~~Create a web API to control the robobrowser~~
- - ~~Make robo-browser work headless~~
- - ~~Support inline script tags~~
- - ~~Comment / clean angular javascript code~~
- - ~~Comment / clean robobrowser code~~
- - Start crawling the internet 24/7
- - Make GitHub repo public
-
 v0.2:
+ - Set up / teardown the Xvfb display within the Python script 
  - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
  - Add small menu for clicking on results within stats:
     - Site URL: 
