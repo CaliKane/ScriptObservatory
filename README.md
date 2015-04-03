@@ -70,6 +70,7 @@ Roadmap
 -------
 
 v0.2:
+ - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
  - Set up / teardown the Xvfb display within the Python script 
  - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
  - Add small menu for clicking on results within stats:
