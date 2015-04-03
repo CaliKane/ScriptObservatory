@@ -105,7 +105,7 @@ app.controller("AppCtrl", function($http, $scope){
                 // this is a hash query
                 queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]}]}';
             }
-            else if (query.slice(-3) == ".js"){
+            else if (query.slice(-3) == ".js" || query.slice(0, 18) == "inline_script_tag_"){
                 // this is a javascript query
                 queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__url","op":"any","val":"' + query + '"}]}]}';
             }
