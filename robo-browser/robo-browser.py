@@ -25,10 +25,6 @@ options.add_argument("--disable-application-cache")
 
 while True:
     try:
-        # set up the chrome driver
-        driver = webdriver.Chrome(chrome_options=options)
-        driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
-
         # get the next task from the robotask API:
         response = requests.get(API_BASE_URL, 
                                 params=dict(q=json.dumps(dict(field='priority', direction='asc'))),
@@ -58,6 +54,8 @@ while True:
             continue
 
         # go fetch the page in the selenium webdriver
+        driver = webdriver.Chrome(chrome_options=options)
+        driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
         web_addr = str(url)
         driver.get(web_addr)
         time.sleep(N_SECS_TO_WAIT_AFTER_ONLOAD)
