@@ -70,7 +70,6 @@ Roadmap
 -------
 
 v0.2:
- - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
  - Set up / teardown the Xvfb display within the Python script 
  - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
  - Add small menu for clicking on results within stats:
@@ -91,12 +90,14 @@ v0.2:
         - view archived script content (eventually)
         - view on VirusTotal
         - copy Hash to clipboard
- - Autoscan queried websites with no prior results
  - Add progress indicator when making queries on the website
  - Make queries link-able and have traditional URL paths
 
 v0.3:
+ - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
+ - Autoscan queried websites with no prior results
  - Add button to chrome extension to toggle reporting on and off
+ - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for websites in the chrome extension
  - Make Chrome extension public
 
