@@ -35,7 +35,10 @@ while True:
                                 headers={'Content-Type': 'application/json'},
                                 verify=False)
 
-        assert response.status_code == 200
+        if response.status_code != 200:
+            print("GET returned non-200 response code! ...trying again...")
+            continue
+
         task = response.json()
 
         if len(task["objects"]) == 0:
@@ -50,7 +53,9 @@ while True:
 
         # remove the job from the queue
         response = requests.delete("{0}/{1}".format(API_BASE_URL, task_id), verify=False)
-        assert response.status_code == 204
+        if response.status_code != 204:
+            print("GET returned non-200 response code! ...trying again...")
+            continue
 
         # go fetch the page in the selenium webdriver
         web_addr = str(url)
@@ -59,6 +64,10 @@ while True:
 
     except selenium.common.exceptions.TimeoutException:
         print("the page load timed out for {0} - continuing on...".format(web_addr))
-
+    
+    except selenium.common.exceptions.WebDriverException:
+        print("tab crashed!")
+        time.sleep(30)
+    
     driver.quit()
 
