@@ -27,7 +27,7 @@ while True:
     try:
         # get the next task from the robotask API:
         response = requests.get(API_BASE_URL, 
-                                params=dict(q=json.dumps(dict(field='priority', direction='asc'))),
+                                params=dict(q=json.dumps(dict(order_by=[dict(field='priority', direction='asc')]))),
                                 headers={'Content-Type': 'application/json'},
                                 verify=False)
 
