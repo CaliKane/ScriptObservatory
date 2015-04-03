@@ -7,7 +7,7 @@ import sys
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 
-task = {'url': u"https://www.andymartin.cc", 'priority': int(sys.argv[1])}
+task = {'url': unicode(sys.argv[1]), 'priority': int(sys.argv[2])}
 
 r = requests.post(API_BASE_URL, 
                   data=json.dumps(task), 
