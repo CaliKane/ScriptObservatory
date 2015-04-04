@@ -1,0 +1,89 @@
+html {
+    min-height: 100%;
+   overflow-y: scroll; 
+}
+
+a {
+  color: #990000;
+  text-decoration: none;
+  visited: #990000;
+}
+
+.form-control:focus {
+  border-color: #FF0000;
+}
+
+body {
+  font-family: Helvetica, sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #8F9FAD; 
+  font-size: 15px;
+}
+
+.querybox {
+  border-bottom: 2px solid #000000;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.bodycontainer{
+  max-width: 1000px;
+  border: 2px solid #000000;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #C2C5C8;
+}
+
+.container{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  max-width: 900px;
+}
+
+.btn {
+  background-color: #FFFFFF;
+  border: 1px solid #000;
+}
+
+.btn:focus{
+  border-color: #FF0000;
+}
+
+/* Page headers */
+.bs-header {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #000000;
+  padding: 30px 15px 40px; /* side padding builds on .container 15px, so 30px */
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+  color: #FFF1DE;
+  text-align: left;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  background-color: #000000;
+  background-position: right;  
+  background-repeat: no-repeat;
+  background-image: url(header.jpg);
+}
+.bs-header h1 {
+  font-size: 320%;
+  margin-left: 2%;
+  font-weight: bold;
+  font-family: Georgia, serif;
+}
+.bs-header p {
+  font-weight: 200;
+  line-height: 1.4;
+  margin-left: 2%;
+  margin-right: 50%;
+}
+.bs-header a {
+    text-decoration: inherit;
+    color: inherit;
+    visited: inherit;
+}
+
