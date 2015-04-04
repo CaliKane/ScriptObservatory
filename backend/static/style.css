@@ -29,7 +29,9 @@ body {
 }
 
 .bodycontainer{
+  width: 90%;
   max-width: 1000px;
+  min-width: 800px;
   border: 2px solid #000000;
   margin-left: auto;
   margin-right: auto;
@@ -39,6 +41,7 @@ body {
 .container{
   padding-top: 12px;
   padding-bottom: 12px;
+  width: 90%;
   max-width: 900px;
 }
 
@@ -64,7 +67,9 @@ body {
   text-shadow: 0 1px 0 rgba(0,0,0,.15);
   margin-left: auto;
   margin-right: auto;
+  width: 90%;
   max-width: 1000px;
+  min-width: 800px;
   background-color: #000000;
   background-position: right;  
   background-repeat: no-repeat;
