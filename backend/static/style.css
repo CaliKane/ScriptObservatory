@@ -20,6 +20,12 @@ body {
   margin-right: auto;
   background-color: #8F9FAD; 
   font-size: 15px;
+  padding-bottom: 30px;
+}
+
+table {
+  font-family: Courier, monospace;
+  font-size:11px;
 }
 
 .querybox {

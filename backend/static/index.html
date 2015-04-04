@@ -76,9 +76,9 @@
             <td>
                 <table class="table-condensed table-hover" style="background-color:inherit;">
                 <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
-                    <td style="width:55%;"> <a href="#" ng-click="submitQuery(script.url);"> {{ script.url | limitTo:67 }}{{ script.url.length > 67 ? '...':'' }} </a> </td>
+                    <td style="width:60%;"> <a href="#" ng-click="submitQuery(script.url);"> {{ script.url | limitTo:60 }}{{ script.url.length > 60 ? '...':'' }} </a> </td>
                     <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
-                    <td style="width:35%;">
+                    <td style="width:30%;">
                         <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
                             <a href="#" ng-click="submitQuery(hash.hash);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
                         </span>
