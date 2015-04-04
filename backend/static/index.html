@@ -66,9 +66,9 @@
 <div id="website_section" style="display:none; font-size:11px;" >
   <table class="table table-bordered table-condensed">
         <th style="width:30%; text-align:center;"> 
-            Site URL 
+            Site URL <input ng-model="search.url" placeholder="Filter by URL"> 
         </th>
-        <th style="width:4%; text-align:center;"> N </th>
+        <th style="width:5%; text-align:center;"> N </th>
         <th style="width:65%; text-align:center;"> Scripts </th>
         <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
             <td style="text-align: center;"><a href="#" ng-click="submitQuery(site.url);"> {{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }} </a> </td>
@@ -76,9 +76,9 @@
             <td>
                 <table class="table-condensed table-hover" style="background-color:inherit;">
                 <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
-                    <td style="width:60%;"> <a href="#" ng-click="submitQuery(script.url);"> {{ script.url | limitTo:60 }}{{ script.url.length > 60 ? '...':'' }} </a> </td>
+                    <td style="width:65%;"> <a href="#" ng-click="submitQuery(script.url);"> {{ script.url | limitTo:60 }}{{ script.url.length > 60 ? '...':'' }} </a> </td>
                     <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
-                    <td style="width:30%;">
+                    <td style="width:25%;">
                         <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
                             <a href="#" ng-click="submitQuery(hash.hash);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
                         </span>
