@@ -72,14 +72,14 @@ body {
 }
 .bs-header h1 {
   font-size: 320%;
-  margin-left: 2%;
+  margin-left: 4%;
   font-weight: bold;
   font-family: Georgia, serif;
 }
 .bs-header p {
   font-weight: 200;
   line-height: 1.4;
-  margin-left: 2%;
+  margin-left: 4%;
   margin-right: 50%;
 }
 .bs-header a {
