@@ -52,7 +52,8 @@ function isValidHash(str) {
 /* 
  * AngularJS app definition
  */
-var app = angular.module("app", []);
+var app = angular.module("app", ['ui.bootstrap']);
+
   
 /*
  * add object2Array filter to let us sort Objects from Angular in the 
@@ -68,8 +69,36 @@ app.filter('object2Array', function() {
     }
 });
 
-app.controller("AppCtrl", function($http, $scope){
+
+app.controller("AppCtrl", function($http, $scope, $modal){
     var app = this;
+
+    $scope.openScript = function (script) {
+      $scope.currentScript = script;
+      var modalInstance = $modal.open({
+        templateUrl: 'scriptModalContent.html',
+        controller: 'ModalInstanceCtrl',
+        size: 'lg',
+        resolve: {
+          current: function () {
+            return $scope.currentScript;
+          }
+        }
+      });
+    };
+    $scope.openWebsite = function (site) {
+      $scope.currentSite = site;
+      var modalInstance = $modal.open({
+        templateUrl: 'websiteModalContent.html',
+        controller: 'ModalInstanceCtrl',
+        size: 'lg',
+        resolve: {
+          current: function () {
+            return $scope.currentSite;
+          }
+        }
+      });
+    };
 
     // make "all" the default time range choice
     $scope.dateRangeChoice = "all";
@@ -194,3 +223,12 @@ app.controller("AppCtrl", function($http, $scope){
 });
 
 
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, current) {
+  $scope.currentSite = current;
+  $scope.currentScript = current;
+  $scope.currentHash = current;
+
+  $scope.ok = function () {
+    $modalInstance.close();
+  };
+});
