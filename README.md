@@ -71,24 +71,24 @@ Roadmap
 
 v0.2:
  - Set up / teardown the Xvfb display within the Python script 
- - Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)
+ - ~~~Move to UI bootstrap (https://angular-ui.github.io/bootstrap/)~~~
  - Add small menu for clicking on results within stats:
     - Site URL: 
         - search for this website here
+        - copy URL to clipboard
         - scan this website again now
         - view on URLQuery
-        - view on VirusTotal
-        - builtwith.com
-        - copy URL to clipboard
+        - ~~~view on VirusTotal~~~
+        - ~~~builtwith.com~~~
     - Script URL:
         - see all sites that have used this script
-        - view current script content
-        - view on VirusTotal
+        - ~~~view current script content~~~
+        - ~~~view on VirusTotal~~~
         - copy URL to clipboard
     - Script Hash:
         - see all sites that have used this version of this script
         - view archived script content (eventually)
-        - view on VirusTotal
+        - ~~~view on VirusTotal~~~
         - copy Hash to clipboard
  - Add progress indicator when making queries on the website
  - Make queries link-able and have traditional URL paths

@@ -78,8 +78,14 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         controller: 'ModalInstanceCtrl',
         size: 'lg',
         resolve: {
-          current: function () {
+          currentObj: function () {
             return site;
+          },
+          webpageUrl: function () {
+            return site.url;
+          },
+          scriptUrl: function () {
+            return "";
           },
           openWebsite: function() {
             return $scope.openWebsite;
@@ -94,14 +100,20 @@ app.controller("AppCtrl", function($http, $scope, $modal){
       });
     };
 
-    $scope.openScript = function (script) {
+    $scope.openScript = function (script, webpageUrl) {
       var modalInstance = $modal.open({
         templateUrl: 'scriptModalContent.html',
         controller: 'ModalInstanceCtrl',
         size: 'lg',
         resolve: {
-          current: function () {
+          currentObj: function () {
             return script;
+          },
+          webpageUrl: function () {
+            return webpageUrl;
+          },
+          scriptUrl: function () {
+            return script.url;
           },
           openWebsite: function() {
             return $scope.openWebsite;
@@ -117,14 +129,20 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     };
 
 
-    $scope.openHash = function (hash) {
+    $scope.openHash = function (hash, scriptUrl, webpageUrl) {
       var modalInstance = $modal.open({
         templateUrl: 'hashModalContent.html',
         controller: 'ModalInstanceCtrl',
         size: 'lg',
         resolve: {
-          current: function () {
+          currentObj: function () {
             return hash;
+          },
+          webpageUrl: function () {
+            return webpageUrl;
+          },
+          scriptUrl: function () {
+            return scriptUrl;
           },
           openWebsite: function() {
             return $scope.openWebsite;
@@ -263,21 +281,16 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 });
 
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, current, openWebsite, openScript, openHash) {
-  $scope.currentSite = current;
-  $scope.currentScript = current;
-  $scope.currentHash = current;
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, currentObj, scriptUrl, webpageUrl, openWebsite, openScript, openHash) {
+  $scope.currentObj = currentObj;
 
-  $scope.openScript = function (script){
-    openScript(script);
-  }
-  
-  $scope.openWebsite = function(site){
-    openWebsite(site);
-  }
-
-  $scope.openHash = function(hash){
-    openHash(hash);
+  $scope.scriptUrl = scriptUrl;
+  $scope.webpageUrl = webpageUrl;
+ 
+  $scope.openObj = function(obj, type, webpageUrl, scriptUrl){
+    if (type == "website") openWebsite(obj);
+    else if (type == "script") openScript(obj, webpageUrl);
+    else if (type == "hash") openHash(obj, scriptUrl, webpageUrl);
   }
 
   $scope.ok = function () {
