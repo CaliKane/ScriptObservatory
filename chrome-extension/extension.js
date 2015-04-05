@@ -3,7 +3,7 @@
  * This file (extension.js) implements all non-crypto functionality for the ScriptObservatory
  * Chrome extension. 
  *
- * External code used is used to calculate SHA-256 hashes, and can be found in sha256.js.
+ * External code used is used to calculate SHA-256 hashes (sha256.js).
  *
  * This JavaScript code is loaded into the "background page" Chrome sets up for the extension. 
  *
