@@ -69,12 +69,3 @@ axes.set_xticklabels(time_labels)
 
 plt.savefig(OUTPUT_BASEDIR + "/entries-over-time.png")
 
-
-
-### NEW ENTRIES PER DAY
-
-plt.ylabel("New observations per day")
-axes = figure().add_subplot(111)
-plt.savefig(OUTPUT_BASEDIR + "/new-entries-per-day.png")
-
-
