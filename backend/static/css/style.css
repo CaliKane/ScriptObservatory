@@ -99,7 +99,7 @@ table {
   background-color: #000000;
   background-position: right;  
   background-repeat: no-repeat;
-  background-image: url(header.jpg);
+  background-image: url(../img/header.jpg);
 }
 .bs-header h1 {
   font-size: 320%;
