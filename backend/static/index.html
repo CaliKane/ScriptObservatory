@@ -19,70 +19,57 @@
   </header>
 
 <div class="bodycontainer">
-<div class="querybox" align="center">
-  <form class="form-inline" ng-submit="submitQueryForm()">
-    <label>Submit a query:</label>
-    <div class="form-group">
-      <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256">
-    </div>
-    <!---
-    <div class="form-group">
-      <select ng-model="dateRangeChoice">
-        <option selected value="all">All time</option>
-        <option value="day">Last 24h</option>
-        <option value="week">Last 1w</option>
-        <option value="month">Last 1mo</option>
-        <option value="year">Last 1y</option>
-      </select>
-    </div>
-    -->
-    <div class="form-group">    
-      <input type="submit" id="submit" value="Submit" class="btn"></input>
-    </div>
-  </form>
-</div>
+  <div class="querybox" align="center">
+    <form class="form-inline" ng-submit="submitQueryForm()">
+      <label>Submit a query:</label>
+      <div class="form-group">
+        <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256">
+      </div>
+      <div class="form-group">    
+        <input type="submit" id="submit" value="Submit" class="btn"></input>
+      </div>
+    </form>
+  </div>
 
+  <script class="modal" type="text/ng-template" id="websiteModalContent.html">
+      <div class="modal-header">
+          <h3 class="modal-title">Website: <a target="_blank">{{ currentObj.url }}</a></h3>
+      </div>
 
-
-    <script class="modal" type="text/ng-template" id="websiteModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Website: <a target="_blank">{{ currentObj.url }}</a></h3>
-        </div>
-
-        <div class="modal-body">
-            <h4><u>Basic Information</u></h4>
-            <ul>
-              <li> Full URL: <a href="{{ currentObj.url }}" target="_blank">{{ currentObj.url }}</a>  </li>
-              <li> Current IP Address: 192.100.20.40 [flag]</li>
-              <li> Registration Organization: OrgName </li>
-              <li> Registration Date: Date </li>
-            </ul>
-            <br>
-            <h4><u>Associated Scripts</u></h4>
-            <table class="table-condensed table-hover" style="background-color:inherit;">
-            <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
-                <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
-                <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
-                <td style="width:25%;">
-                    <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                        <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
-                    </span>
-                </td>
-            </tr>
-          </table>
-          <br>
-          <h4><u>Actions</u></h4>
+      <div class="modal-body">
+          <h4><u>Basic Information</u></h4>
           <ul>
-            <!---<li> Scan this website now-->
-            <li> View on URLQuery </li>
-            <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
-            <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url }}">BuiltWith.com</a></li>
+            <li> Full URL: <a href="{{ currentObj.url }}" target="_blank">{{ currentObj.url }}</a>  </li>
+            <li> Current IP Address: 192.100.20.40 [flag]</li>
+            <li> Registration Organization: OrgName </li>
+            <li> Registration Date: Date </li>
           </ul>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" ng-click="ok()">OK</button>
-        </div>
-    </script>
+          <br>
+          <h4><u>Associated Scripts</u></h4>
+          <table class="table-condensed table-hover" style="background-color:inherit;">
+          <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
+              <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
+              <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
+              <td style="width:25%;">
+                  <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
+                      <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+                  </span>
+              </td>
+          </tr>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <!---<li> Scan this website now-->
+          <li> View on URLQuery </li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
+          <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url }}">BuiltWith.com</a></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+          <button class="btn" ng-click="ok()">OK</button>
+      </div>
+  </script>
 
 
   <script class="modal" type="text/ng-template" id="scriptModalContent.html">
@@ -95,7 +82,7 @@
             <ul>
               <li> Parent Webpage: <a target="_blank" href="{{ webpageUrl }}" onclick="this.select();">{{ webpageUrl }}</a></li>
               <li> Full Script URL: <a target="_blank" href="{{ currentObj.url }}" onclick="this.select();">{{ currentObj.url }}</a></li>
-              <li> Percent of Pageloads: {{ currentObj.occur }}% </li>
+              <li> This script has been seen {{ currentObj.occur }}% of the time this webpage has been loaded </li>
             </ul>
             <br>
             <h4><u>Observed Hashes</u></h4>
@@ -126,10 +113,10 @@
         <div class="modal-body">
           <h4><u>Basic Information</u></h4>
           <ul>
-            <li> Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
-            <li> Script URL: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
             <li> Full SHA-256: <a href="#" onclick="this.select();">{{ currentObj.hash }}</a></li>
-            <li> Percent of Scriptloads: {{ currentObj.occur.toFixed(1) }}%</li>
+            <li> Script URL: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
+            <li> Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
+            <li> This hash has been seen {{ currentObj.occur.toFixed(1) }}% of the time this Script URL has been loaded</li>
           </ul>
           <br>
           <h4><u>Actions</u></h4>
@@ -161,6 +148,7 @@
         <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a>
         <li><a href="#" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
         <li><a href="#" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
+        <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a>
         </ul>
     </p>
 </div>
