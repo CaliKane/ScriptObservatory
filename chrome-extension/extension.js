@@ -1,11 +1,12 @@
 /*
  *
- * This file (extension.js) implements all non-crypto functionality for the ScriptObservatory
- * Chrome extension. 
+ * This file (extension.js) implements all non-crypto functionality for the 
+ * ScriptObservatory Chrome extension. 
  *
  * External code used is used to calculate SHA-256 hashes (sha256.js).
  *
- * This JavaScript code is loaded into the "background page" Chrome sets up for the extension. 
+ * This JavaScript code is loaded into the "background page" Chrome sets up 
+ * for the extension. 
  *
  */
 
@@ -21,9 +22,10 @@ API_BASE_URL = "https://scriptobservatory.org/api/pageview";
 /*
  * Global Data Structures
  * ----------------------
- * (1) SCRIPTS: Maps the tabId to a list of all scripts loaded for the given tab. Cleared 
- *              every time a request for a main_frame is made. Used & cleared every time
- *              the chrome.tabs.onUpdated listener fires and data is POSTed to the API.
+ * (1) SCRIPTS: Maps the tabId to a list of all scripts loaded for the given tab. 
+ *              Cleared every time a request for a main_frame is made. Used and
+ *              cleared every time the chrome.tabs.onUpdated listener fires and
+ *              data is POSTed to the API.
  */
 SCRIPTS = {};
 
