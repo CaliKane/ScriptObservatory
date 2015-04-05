@@ -23,6 +23,21 @@ body {
   padding-bottom: 30px;
 }
 
+.nav>li>a {
+  position: relative;
+  display: block;
+  padding: 4px 25px;
+  background: inherit;
+  color: black;
+}
+
+.nav-tabs>li>a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+}
+
 table {
   font-size:14px;
 }
@@ -33,11 +48,6 @@ table {
     overflow-y: auto;
 }
 
-.querybox {
-  border-bottom: 2px solid #000000;
-  padding-top: 12px;
-  padding-bottom: 12px;
-}
 
 .bodycontainer{
   width: 90%;

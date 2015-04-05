@@ -14,22 +14,114 @@
 
 <div role="main">
   <header class="bs-header text-center" id="overview">
-      <h1><a href="#" onclick="show_about(); return false;">ScriptObservatory</a></h1> 
+      <h1><a href="/">ScriptObservatory</a></h1> 
       <p>a project to collect, record, and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
   </header>
 
 <div class="bodycontainer">
-  <div class="querybox" align="center">
-    <form class="form-inline" ng-submit="submitQueryForm()">
-      <label>Submit a query:</label>
-      <div class="form-group">
-        <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256">
+      <div class="container">
+      <tabset>
+        <tab heading="Home">
+
+  <p> <br>
+        The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a> by recording information about the <b><i>live content</b></i> people are seeing on the internet.
+        <br><br>
+        Initially, the only objects that will be analyzed are JavaScript files. Eventually, it might be extended to include other types of content like flash objects and iframes. 
+        <br><br>
+        The long-term goal of this website is for it to be a place where anyone can analyze the record of what snippets of code people have been sent while on the internet. The long-term goal for the Chrome extension is to crowdsource the data collection and to (optionally) act as a <b><i>content-aware</i></b> script blocker, letting you have finer control over what runs on your computer.
+        <br><br>
+        You can find more info on the <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">GitHub page</a>. 
+            </p>
+
+        </tab>
+        
+        <tab  heading="Explore the Data">
+          <br>
+          <form align="center" class="form-inline" ng-submit="submitQueryForm(parentQueryText)">
+            <div class="form-group">
+              <p style="margin: 0 0 0 0;">Enter a query here:</p>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256">
+            </div>
+            <div class="form-group">    
+              <input type="submit" id="submit" value="Submit" class="btn"></input>
+            </div>
+          </form>
+        <br>
+        <div id="info_section">
+        Some sample queries:
+        <ul>
+        <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a>
+        <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a>
+        <li><a href="#" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
+        <li><a href="#" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
+        <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a>
+        </ul>
+        </div>
+        </p>
+        <div id="website_section" style="display:none;" >
+          <table class="table table-bordered table-condensed">
+                <th style="width:30%; text-align:center;"> 
+                    Site URL 
+                    <!--<input ng-model="search.url" placeholder="Filter by URL"> -->
+                </th>
+                <th style="width:5%; text-align:center;"> N </th>
+                <th style="width:65%; text-align:center;"> Scripts </th>
+                <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
+                    <td style="text-align: center;">
+                      <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
+                    </td>
+                    <td style="text-align: center;">{{ site.occur }}</td>
+                    <td>
+                        <table class="table-condensed table-hover" style="background-color:inherit;">
+                        <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
+                            <td style="width:85%;"> <a href="#" ng-click="openScript(script, site.url);"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
+                            <td style="width:15%;"> {{ script.occur.toFixed(1) }}% </td>
+                            <!--
+                            <td style="width:25%;">
+                                <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
+                                    <a href="#" ng-click="submitQuery(hash.hash);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+                                </span>
+                            </td>
+                            -->
+                        </tr>
+                        </table>
+                    </td>
+                <tr>
+            </table>
+        </div>
+      </tab>
+
+
+
+        <tab heading="Documentation">
+          <br> 
+          <p>
+            Coming soon.
+          </p>
+        </tab>
+        
+        <tab heading="Graphs">
+          <br>
+          <p> 
+            Coming soon.
+          </p>
+        </tab>
+        <tab heading="About">
+          <br>
+          <p>
+            Coming soon.
+  
+
+        </tab>
+      
+
+     
+
+
+      </tabset>
       </div>
-      <div class="form-group">    
-        <input type="submit" id="submit" value="Submit" class="btn"></input>
-      </div>
-    </form>
-  </div>
 
   <script class="modal" type="text/ng-template" id="websiteModalContent.html">
       <div class="modal-header">
@@ -37,14 +129,6 @@
       </div>
 
       <div class="modal-body">
-          <h4><u>Basic Information</u></h4>
-          <ul>
-            <li> Full URL: <a href="{{ currentObj.url }}" target="_blank">{{ currentObj.url }}</a>  </li>
-            <li> Current IP Address: 192.100.20.40 [flag]</li>
-            <li> Registration Organization: OrgName </li>
-            <li> Registration Date: Date </li>
-          </ul>
-          <br>
           <h4><u>Associated Scripts</u></h4>
           <table class="table-condensed table-hover" style="background-color:inherit;">
           <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
@@ -130,60 +214,6 @@
         </div>
     </script>
 
-
-
-<div class="container" id="about_section">
-  <p> 
-        The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a> by recording information about the <b><i>live content</b></i> people are seeing on the internet.
-        <br><br>
-        Initially, the only objects that will be analyzed are JavaScript files. Eventually, it might be extended to include other types of content like flash objects and iframes. 
-        <br><br>
-        The long-term goal of this website is for it to be a place where anyone can analyze the record of what snippets of code people have been sent while on the internet. The long-term goal for the Chrome extension is to crowdsource the data collection and to (optionally) act as a <b><i>content-aware</i></b> script blocker, letting you have finer control over what runs on your computer.
-        <br><br>
-        You can find more info on the <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">GitHub page</a>. 
-        <br><br>
-        Some sample queries:
-        <ul>
-        <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a>
-        <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a>
-        <li><a href="#" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
-        <li><a href="#" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
-        <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a>
-        </ul>
-    </p>
-</div>
-
-<div id="website_section" style="display:none; font-size:11px;" >
-  <table class="table table-bordered table-condensed">
-        <th style="width:30%; text-align:center;"> 
-            Site URL 
-            <!--<input ng-model="search.url" placeholder="Filter by URL"> -->
-        </th>
-        <th style="width:5%; text-align:center;"> N </th>
-        <th style="width:65%; text-align:center;"> Scripts </th>
-        <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
-            <td style="text-align: center;">
-              <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
-            </td>
-            <td style="text-align: center;">{{ site.occur }}</td>
-            <td>
-                <table class="table-condensed table-hover" style="background-color:inherit;">
-                <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
-                    <td style="width:85%;"> <a href="#" ng-click="openScript(script, site.url);"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
-                    <td style="width:15%;"> {{ script.occur.toFixed(1) }}% </td>
-                    <!--
-                    <td style="width:25%;">
-                        <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                            <a href="#" ng-click="submitQuery(hash.hash);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
-                        </span>
-                    </td>
-                    -->
-                </tr>
-                </table>
-            </td>
-        <tr>
-    </table>
-</div>
 </div>
 </div>
 </body>

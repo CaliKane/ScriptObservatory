@@ -8,12 +8,12 @@
  *  (these should be deleted when the page moves to bootstrap)
  */
 function show_about(){
-    document.getElementById('about_section').style.display="block";
+    document.getElementById('info_section').style.display="block";
     document.getElementById('website_section').style.display="none";
 }
 
 function show_website(){    
-    document.getElementById('about_section').style.display="none";
+    document.getElementById('info_section').style.display="none";
     document.getElementById('website_section').style.display="block";
 }
 
@@ -161,8 +161,8 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     // make "all" the default time range choice
     $scope.dateRangeChoice = "all";
 
-    $scope.submitQueryForm = function(){
-        var query = $scope.parentQueryText;
+    $scope.submitQueryForm = function(queryText){
+        var query = queryText;
         $scope.submitQuery(query);
     }
 
