@@ -1,12 +1,11 @@
 /*
  *
- * This file (extension.js) implements the main functionality for the ScriptObservatory
- * Chrome extension.
+ * This file (extension.js) implements all non-crypto functionality for the ScriptObservatory
+ * Chrome extension. 
  *
- * This JavaScript code is loaded in the background within the "background page" Chrome 
- * sets up for the extension. The main functionality is implemented within the 
- * chrome.webRequest.onBeforeRequest listener, which is called by the browser whenever 
- * a request is about to be made.
+ * External code used is used to calculate SHA-256 hashes, and can be found in sha256.js.
+ *
+ * This JavaScript code is loaded into the "background page" Chrome sets up for the extension. 
  *
  */
 
