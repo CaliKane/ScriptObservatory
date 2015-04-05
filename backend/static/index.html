@@ -1,220 +1,203 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>ScriptObservatory</title>
-    <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
-    <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
-    <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
-    <script src="https://scriptobservatory.org/js/app.js"></script>
-    <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <meta charset="UTF-8">
+  <title>ScriptObservatory</title>
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
+  <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
+  <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <script src="https://scriptobservatory.org/js/app.js"></script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
-
 <div role="main">
   <header class="bs-header text-center" id="overview">
-      <h1><a href="/">ScriptObservatory</a></h1> 
-      <p>a project to collect, record, and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
+    <h1><a href="/">ScriptObservatory</a></h1> 
+    <p>a project to collect, record, and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
   </header>
 
-<div class="bodycontainer">
-      <div class="container">
+  <div class="bodycontainer">
+    <div class="container">
       <tabset>
-        <tab heading="Home">
-
-  <p> <br>
-        The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a> by recording information about the <b><i>live content</b></i> people are seeing on the internet.
+      <tab heading="Home">
+        <br>
+        <p> 
+        The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a>
+        by recording information about the <b><i>live content</b></i> people are seeing on the internet.
         <br><br>
-        Initially, the only objects that will be analyzed are JavaScript files. Eventually, it might be extended to include other types of content like flash objects and iframes. 
+        Initially, the only objects that will be analyzed are JavaScript files. Eventually, it might be extended to include other types of content like flash 
+        objects and iframes. 
         <br><br>
-        The long-term goal of this website is for it to be a place where anyone can analyze the record of what snippets of code people have been sent while on the internet. The long-term goal for the Chrome extension is to crowdsource the data collection and to (optionally) act as a <b><i>content-aware</i></b> script blocker, letting you have finer control over what runs on your computer.
+        The long-term goal of this website is for it to be a place where anyone can analyze the record of what snippets of code people have been sent while on 
+        the internet. The long-term goal for the Chrome extension is to crowdsource the data collection and to (optionally) act as a <b><i>content-aware</i></b>
+        script blocker, letting you have finer control over what runs on your computer.
         <br><br>
         You can find more info on the <a href="https://github.com/andy11/ScriptObservatory/" target="_blank">GitHub page</a>. 
-            </p>
-
-        </tab>
-        
-        <tab  heading="Explore the Data">
-          <br>
-          <form align="center" class="form-inline" ng-submit="submitQueryForm(parentQueryText)">
-            <div class="form-group">
-              <p style="margin: 0 0 0 0;">Enter a query here:</p>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256">
-            </div>
-            <div class="form-group">    
-              <input type="submit" id="submit" value="Submit" class="btn"></input>
-            </div>
-          </form>
+        </p>
+      </tab>
+ 
+      <tab heading="How Does It Work?">
+        <br> 
+        <p>
+          Coming soon.
+        </p>
+      </tab>
+       
+      <tab  heading="Explore the Data">
+        <br>
+        <form align="center" class="form-inline" ng-submit="submitQueryForm(parentQueryText)">
+          <div class="form-group"> <p style="margin: 0 0 0 0;">Enter a query here:</p> </div>
+          <div class="form-group"> <input type="text" class="form-control" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256"> </div>
+          <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
+        </form>
         <br>
         <div id="info_section">
-        Some sample queries:
-        <ul>
-        <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a>
-        <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a>
-        <li><a href="#" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
-        <li><a href="#" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
-        <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a>
-        </ul>
+          Some sample queries:
+          <ul>
+            <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a>
+            <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a>
+            <li><a href="#" ng-click='submitQuery("http://www.google-analytics.com/ga.js");'>http://www.google-analytics.com/ga.js</a>
+            <li><a href="#" ng-click='submitQuery("54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89");'>54210e4001e71dc204bdd71ff0a24f5c5526d5a9d652053464af3f270593eb89</a>
+            <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a>
+          </ul>
         </div>
-        </p>
         <div id="website_section" style="display:none;" >
           <table class="table table-bordered table-condensed">
-                <th style="width:30%; text-align:center;"> 
-                    Site URL 
-                    <!--<input ng-model="search.url" placeholder="Filter by URL"> -->
-                </th>
-                <th style="width:5%; text-align:center;"> N </th>
-                <th style="width:65%; text-align:center;"> Scripts </th>
-                <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
-                    <td style="text-align: center;">
-                      <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
-                    </td>
-                    <td style="text-align: center;">{{ site.occur }}</td>
-                    <td>
-                        <table class="table-condensed table-hover" style="background-color:inherit;">
-                        <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
-                            <td style="width:85%;"> <a href="#" ng-click="openScript(script, site.url);"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
-                            <td style="width:15%;"> {{ script.occur.toFixed(1) }}% </td>
-                            <!--
-                            <td style="width:25%;">
-                                <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                                    <a href="#" ng-click="submitQuery(hash.hash);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
-                                </span>
-                            </td>
-                            -->
-                        </tr>
-                        </table>
-                    </td>
-                <tr>
-            </table>
+            <th style="width:30%; text-align:center;"> Site URL <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
+            <th style="width:5%; text-align:center;"> N </th>
+            <th style="width:65%; text-align:center;"> Scripts </th>
+            <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
+                <td style="text-align: center;">
+                  <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
+                </td>
+                <td style="text-align: center;">
+                  {{ site.occur }}
+                </td>
+                <td>
+                  <table class="table-condensed table-hover" style="background-color:inherit;">
+                    <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
+                      <td style="width:85%;"> <a href="#" ng-click="openScript(script, site.url);"> {{ script.url | limitTo:75 }}{{ script.url.length > 75 ? '...':'' }} </a> </td>
+                      <td style="width:15%;"> {{ script.occur.toFixed(1) }}% </td>
+                    </tr>
+                  </table>
+                </td>
+            </tr>
+          </table>
         </div>
       </tab>
 
+      <tab heading="Graphs">
+        <br>
+        <p> 
+          Coming soon.
+        </p>
+      </tab>
 
-
-        <tab heading="Documentation">
-          <br> 
-          <p>
-            Coming soon.
-          </p>
-        </tab>
-        
-        <tab heading="Graphs">
-          <br>
-          <p> 
-            Coming soon.
-          </p>
-        </tab>
-        <tab heading="About">
-          <br>
-          <p>
-            Coming soon.
-  
-
-        </tab>
-      
-
-     
-
+      <tab heading="About">
+        <br>
+        <p>
+          Coming soon.
+        </p>
+      </tab>
 
       </tabset>
-      </div>
+    </div>
 
-  <script class="modal" type="text/ng-template" id="websiteModalContent.html">
+
+    <!-- TODO these modal templates are horrible and should be fixed soon -->
+    <script class="modal" type="text/ng-template" id="websiteModalContent.html">
       <div class="modal-header">
-          <h3 class="modal-title">Website: <a target="_blank">{{ currentObj.url }}</a></h3>
+        <h3 class="modal-title">Website: <a target="_blank">{{ currentObj.url }}</a></h3>
       </div>
 
       <div class="modal-body">
-          <h4><u>Associated Scripts</u></h4>
-          <table class="table-condensed table-hover" style="background-color:inherit;">
+        <h4><u>Associated Scripts</u></h4>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
           <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
-              <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
-              <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
-              <td style="width:25%;">
-                  <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                      <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
-                  </span>
-              </td>
+            <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
+            <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
+            <td style="width:25%;">
+              <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
+                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+              </span>
+            </td>
           </tr>
         </table>
         <br>
         <h4><u>Actions</u></h4>
         <ul>
-          <!---<li> Scan this website now-->
           <li> View on URLQuery </li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
           <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url }}">BuiltWith.com</a></li>
         </ul>
       </div>
+
       <div class="modal-footer">
-          <button class="btn" ng-click="ok()">OK</button>
+        <button class="btn" ng-click="ok()">OK</button>
       </div>
-  </script>
-
-
-  <script class="modal" type="text/ng-template" id="scriptModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Script: <a target="_blank">{{ currentObj.url.slice(currentObj.url.lastIndexOf('/')+1) }}</a></h3>
-        </div>
-
-        <div class="modal-body">
-            <h4><u>Basic Information</u></h4>
-            <ul>
-              <li> Parent Webpage: <a target="_blank" href="{{ webpageUrl }}" onclick="this.select();">{{ webpageUrl }}</a></li>
-              <li> Full Script URL: <a target="_blank" href="{{ currentObj.url }}" onclick="this.select();">{{ currentObj.url }}</a></li>
-              <li> This script has been seen {{ currentObj.occur }}% of the time this webpage has been loaded </li>
-            </ul>
-            <br>
-            <h4><u>Observed Hashes</u></h4>
-            <table class="table-condensed table-hover" style="background-color:inherit;">
-                    <span ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
-                        <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, scriptUrl);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
-                    </span>
-            </table>
-          <br>
-          <h4><u>Actions</u></h4>
-          <ul>
-            <li> See all other webpages that have included this script by its URL</li>
-            <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" ng-click="ok()">OK</button>
-        </div>
     </script>
 
+    <!-- TODO these modal templates are horrible and should be fixed soon -->
+    <script class="modal" type="text/ng-template" id="scriptModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Script: <a target="_blank">{{ currentObj.url.slice(currentObj.url.lastIndexOf('/')+1) }}</a></h3>
+      </div>
 
-
-  <script class="modal" type="text/ng-template" id="hashModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Script: <a href="#">{{ currentObj.hash | limitTo:10 }}</a></h3>
-        </div>
-
-        <div class="modal-body">
-          <h4><u>Basic Information</u></h4>
-          <ul>
-            <li> Full SHA-256: <a href="#" onclick="this.select();">{{ currentObj.hash }}</a></li>
-            <li> Script URL: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
-            <li> Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
-            <li> This hash has been seen {{ currentObj.occur.toFixed(1) }}% of the time this Script URL has been loaded</li>
-          </ul>
-          <br>
-          <h4><u>Actions</u></h4>
-          <ul>
-            <li> See all other websites that have included a script with this hash value </li>
-            <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj }}">VirusTotal</a> </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" ng-click="ok()">OK</button>
-        </div>
+      <div class="modal-body">
+        <h4><u>Basic Information</u></h4>
+        <ul>
+          <li> Parent Webpage: <a target="_blank" href="{{ webpageUrl }}" onclick="this.select();">{{ webpageUrl }}</a></li>
+          <li> Full Script URL: <a target="_blank" href="{{ currentObj.url }}" onclick="this.select();">{{ currentObj.url }}</a></li>
+          <li> This script has been seen {{ currentObj.occur }}% of the time this webpage has been loaded </li>
+        </ul>
+        <br>
+        <h4><u>Observed Hashes</u></h4>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
+          <span ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
+            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, scriptUrl);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+          </span>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> See all other webpages that have included this script by its URL</li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
     </script>
 
-</div>
-</div>
+    <!-- TODO these modal templates are horrible and should be fixed soon -->
+    <script class="modal" type="text/ng-template" id="hashModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Script: <a href="#">{{ currentObj.hash | limitTo:10 }}</a></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Basic Information</u></h4>
+        <ul>
+          <li> Full SHA-256: <a href="#" onclick="this.select();">{{ currentObj.hash }}</a></li>
+          <li> Script URL: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
+          <li> Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
+          <li> This hash has been seen {{ currentObj.occur.toFixed(1) }}% of the time this Script URL has been loaded</li>
+        </ul>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> See all other websites that have included a script with this hash value </li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj }}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+  </div>
+  </div>
 </body>
 </html>
