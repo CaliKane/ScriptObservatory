@@ -207,7 +207,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 if (query.slice(-1) == '/'){
                     query = query.slice(0, -1);
                 }
-                queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+                queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '%"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
             }
             //queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
             //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
