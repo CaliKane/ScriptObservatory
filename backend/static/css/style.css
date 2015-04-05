@@ -13,33 +13,18 @@ a {
   border-color: #FF0000;
 }
 
-textarea {
-  border:none;
-    overflow: auto;
-    outline: none;
-
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    resize: none;
-            vertical-align:middle;
-
-}
-
 body {
   min-height: 100%;
   font-family: Helvetica, sans-serif;
   margin-left: auto;
   margin-right: auto;
   background-color: #8F9FAD; 
-  font-size: 15px;
+  font-size: 18px;
   padding-bottom: 30px;
-            vertical-align:middle;
 }
 
 table {
-  font-family: Courier, monospace;
-  font-size:11px;
+  font-size:14px;
 }
 
 .modal .modal-body {
@@ -67,8 +52,8 @@ table {
 .container{
   padding-top: 12px;
   padding-bottom: 12px;
-  width: 90%;
-  max-width: 950px;
+  width: 95%;
+  max-width: 1000px;
 }
 
 .btn {
@@ -114,8 +99,8 @@ table {
   margin-right: 50%;
 }
 .bs-header a {
-    text-decoration: inherit;
-    color: inherit;
-    visited: inherit;
+  text-decoration: inherit;
+  color: inherit;
+  visited: inherit;
 }
 
