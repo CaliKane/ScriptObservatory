@@ -141,7 +141,7 @@ chrome.tabs.onUpdated.addListener(
                 for (var i = 0; i < arrayLength; i++) {
                     data = String(scripts[i]);
                     hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-                    var url = "inline_script_tag_" + hash.slice(0,16);
+                    var url = "inline_script_" + hash.slice(0,18);
                     SCRIPTS[tabId].push({"url": url, "hash": hash});
                 }
 
