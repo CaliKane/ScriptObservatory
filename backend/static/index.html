@@ -129,7 +129,7 @@
         <ul>
           <li> View on URLQuery </li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
-          <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url }}">BuiltWith.com</a></li>
+          <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url.substr(currentObj.url.indexOf('://')+3) }}">BuiltWith.com</a></li>
         </ul>
       </div>
 
