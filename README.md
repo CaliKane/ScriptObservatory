@@ -70,7 +70,7 @@ Roadmap
 -------
 
 v0.2:
- - Set up / teardown the Xvfb display within the Python script 
+ - Have robo-browser set up / teardown the Xvfb display within the Python script 
  - ~~~Move to bootstrap (https://angular-ui.github.io/bootstrap/)~~~
  - ~~Add small menu for clicking on results within stats:~~
     - Site URL: 
@@ -91,6 +91,9 @@ v0.2:
  - Add ability to archive content for hash values
 
 v0.3:
+ - Add typeahead to autocomplete search queries for common sites
+ - Create bookmarklet for jumping to results for current site
+ - Add pagination to results window
  - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
  - Autoscan queried websites with no prior results
  - Add button to chrome extension to toggle reporting on and off
@@ -99,6 +102,7 @@ v0.3:
  - Make Chrome extension public
 
 v0.4:
+ - Add way to quickly visualize which scripts are most actively included (use this as sort key?)
  - Add tests for chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
  - Build a VM-based solution to sandbox the robobrowser
