@@ -108,11 +108,11 @@
     <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="websiteModalContent.html">
       <div class="modal-header">
-        <h3 class="modal-title">Website: <a target="_blank">{{ currentObj.url }}</a></h3>
+        <h3 class="modal-title">Website: <span class="modal-url">{{ currentObj.url }}</span></h3>
       </div>
 
       <div class="modal-body">
-        <h4><u>Associated Scripts</u></h4>
+        <h4><u>Observed Scripts</u></h4>
         <table class="table-condensed table-hover" style="background-color:inherit;">
           <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
             <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
@@ -127,7 +127,7 @@
         <br>
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View on URLQuery </li>
+          <li> View on <a target="_blank" href="https://urlquery.net/">URLQuery</a> </li>  <!-- TODO: make direct link -->
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
           <li> View on <a target="_blank" href="https://builtwith.com/{{ currentObj.url.substr(currentObj.url.indexOf('://')+3) }}">BuiltWith.com</a></li>
         </ul>
@@ -141,17 +141,10 @@
     <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="scriptModalContent.html">
       <div class="modal-header">
-        <h3 class="modal-title">Script: <a target="_blank">{{ currentObj.url.slice(currentObj.url.lastIndexOf('/')+1) }}</a></h3>
+        <h3 class="modal-title">Script: <span class="modal-url">{{ currentObj.url.slice(currentObj.url.lastIndexOf('/')+1) }}</span></h3>
       </div>
 
       <div class="modal-body">
-        <h4><u>Basic Information</u></h4>
-        <ul>
-          <li> Parent Webpage: <a target="_blank" href="{{ webpageUrl }}" onclick="this.select();">{{ webpageUrl }}</a></li>
-          <li> Full Script URL: <a target="_blank" href="{{ currentObj.url }}" onclick="this.select();">{{ currentObj.url }}</a></li>
-          <li> This script has been seen {{ currentObj.occur }}% of the time this webpage has been loaded </li>
-        </ul>
-        <br>
         <h4><u>Observed Hashes</u></h4>
         <table class="table-condensed table-hover" style="background-color:inherit;">
           <span ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
@@ -161,6 +154,8 @@
         <br>
         <h4><u>Actions</u></h4>
         <ul>
+          <li> View Parent Webpage: <a target="_blank" href="{{ webpageUrl }}">{{ webpageUrl }}</a></li>
+          <li> View Script: <a target="_blank" href="{{ currentObj.url }}">{{ currentObj.url }}</a></li>
           <li> See all other webpages that have included this script by its URL</li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
@@ -174,20 +169,14 @@
     <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="hashModalContent.html">
       <div class="modal-header">
-        <h3 class="modal-title">Script: <a href="#">{{ currentObj.hash | limitTo:10 }}</a></h3>
+        <h3 class="modal-title">Hash: <span class="modal-url">{{ currentObj.hash }}</span></h3>
       </div>
 
       <div class="modal-body">
-        <h4><u>Basic Information</u></h4>
-        <ul>
-          <li> Full SHA-256: <a href="#" onclick="this.select();">{{ currentObj.hash }}</a></li>
-          <li> Script URL: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
-          <li> Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
-          <li> This hash has been seen {{ currentObj.occur.toFixed(1) }}% of the time this Script URL has been loaded</li>
-        </ul>
-        <br>
         <h4><u>Actions</u></h4>
         <ul>
+          <li> View Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
+          <li> View Script: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
           <li> See all other websites that have included a script with this hash value </li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj }}">VirusTotal</a> </li>
         </ul>

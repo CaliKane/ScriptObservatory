@@ -1,30 +1,8 @@
 html {
-  min-height: 100%;
-  overflow-y: scroll;
-}
-
-a {
-  color: #990000;
-  text-decoration: none;
-  visited: #990000;
-}
-
-
-.unselectable {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.form-control:focus {
-  border-color: #FF0000;
+  overflow-y: scroll;  /* make there always be a scrollbar */
 }
 
 body {
-  min-height: 100%;
   font-family: Helvetica, sans-serif;
   margin-left: auto;
   margin-right: auto;
@@ -33,31 +11,15 @@ body {
   padding-bottom: 30px;
 }
 
-.nav>li>a {
-  position: relative;
-  display: block;
-  padding: 4px 25px;
-  background: inherit;
-  color: black;
-}
-
-.nav-tabs>li>a {
-  margin-right: 2px;
-  line-height: 1.42857143;
-  border: 1px solid transparent;
-  border-radius: 4px 4px 0 0;
+a {
+  color: #990000;
+  visited: #990000;
+  text-decoration: none;
 }
 
 table {
   font-size:14px;
 }
-
-.modal .modal-body {
-    width: 100%;
-    max-height: 650px;
-    overflow-y: auto;
-}
-
 
 .bodycontainer{
   width: 90%;
@@ -70,32 +32,19 @@ table {
 }
 
 .container{
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
   width: 95%;
   max-width: 1000px;
 }
 
-.btn {
-  background-color: #FFFFFF;
-  border: 1px solid #000;
-}
-
-.btn:focus{
-  border-color: #FF0000;
-}
-
-/* Page headers */
 .bs-header {
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #000000;
-  padding: 30px 15px 40px; /* side padding builds on .container 15px, so 30px */
-  font-size: 16px;
-  font-family: Helvetica, sans-serif;
+  padding: 20px 10px 30px; 
   color: #FFF1DE;
   text-align: left;
-  text-shadow: 0 1px 0 rgba(0,0,0,.15);
   margin-left: auto;
   margin-right: auto;
   width: 90%;
@@ -107,20 +56,62 @@ table {
   background-image: url(../img/header.jpg);
 }
 .bs-header h1 {
-  font-size: 320%;
+  font-size: 48px;
   margin-left: 4%;
   font-weight: bold;
   font-family: Georgia, serif;
-}
-.bs-header p {
-  font-weight: 200;
-  line-height: 1.4;
-  margin-left: 4%;
-  margin-right: 50%;
 }
 .bs-header a {
   text-decoration: inherit;
   color: inherit;
   visited: inherit;
+}
+.bs-header p {
+  font-weight: 200;
+  line-height: 130%;
+  margin-left: 4%;
+  margin-right: 50%;
+}
+
+.modal .modal-body {
+  width: 100%;
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.modal-url {
+  color: #FF0000;
+}
+ 
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.nav>li>a {
+  position: relative;
+  display: block;
+  padding: 4px 25px;
+  background: inherit;
+  color: black;
+}
+.nav-tabs>li>a {
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+}
+
+.form-control:focus {
+  border-color: #FF0000;
+}
+.btn {
+  background-color: #FFFFFF;
+  border: 1px solid #000;
+}
+.btn:focus{
+  border-color: #FF0000;
 }
 
