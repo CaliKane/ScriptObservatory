@@ -54,7 +54,7 @@ four pieces of information to a remote server at regular intervals:
 Here are some steps that have been made to make this process as trustworthy as possible:
  - The connection from you to the remote upload server will always be 
    [encrypted using SSL/TLS](https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org). 
- - No IP addresses or User IDs are ever recorded in the database or logged on the server.
+ - No IP addresses or User IDs are ever recorded in the database.
  - The source code for both the client and the server will always be available for you to 
    review. (See the 
    [chrome-extension/](https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension) 

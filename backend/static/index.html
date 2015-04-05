@@ -40,8 +40,54 @@
       <tab heading="How Does It Work?">
         <br> 
         <p>
-          Coming soon.
+          <u><b>How does this site work?</b></u>
+          <br>
+          The data shown here was collected using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
+          If you'd like to help out by contributing your observations, install it!
+
+          <br><br>
+          <u><b>How does the Chrome Extension collect the data?</b></u>
+          <br>
+          The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
+          browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
+          back to the browser.
+          <br><br>
+          This way of grabbing the content isn't ideal and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
+          code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/extension.js" target="_blank">chrome-extension/extension.js</a>
+          would be a good place to start.)
+          <br><br>
+          With the Chrome Extension installed, your browser will send these four pieces of information to a remote server every time you view a webpage:
+          <ul>
+            <li>The full URL of the webpage</li>
+            <li>The full URL of each script included in or linked from the webpage</li>
+            <li>The SHA-256 hash of each script's content</li>
+            <li>The time you made this observation</li>
+          </ul>
+          <br>
+          <u><b>What does the Chrome Extension do to protect users' privacy?</b></u>
+          <br>
+          <ul>
+            <li>
+              The connection from you to the remote upload server will always be 
+              <a href="https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org" target="_blank">encrypted using SSL/TLS</a>. 
+            </li>
+            <li>
+              No IP addresses or User IDs are ever recorded in the database. Your observations will be immediately mixed in with those of everyone else. </li>
+            <li>
+              The source code for both the client and the server will always be available for you to review.
+              (See the <a href="https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension" target="_blank">chrome-extension/</a> and 
+              <a href="https://github.com/andy11/ScriptObservatory/tree/master/backend" target="_blank">backend/</a> directories to get started.)
+            </li>
+          </ul>
+          If you have suggestions for ways to further improve, get in touch!
+          <br><br>
+          <u><b>Can the ScriptObservatory Chrome Extension block any of these scripts before I run them?</b></u>
+          <br>
+          That's <a href="https://github.com/andy11/ScriptObservatory/blob/master/README.md#roadmap" target="_blank">on the roadmap</a>.
+          <br><br>
         </p>
+
+      
       </tab>
        
       <tab  heading="Explore the Data">
