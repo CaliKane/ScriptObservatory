@@ -13,7 +13,7 @@ axes = figure().add_subplot(111)
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/pageview"
 N_X_LABELS = 5
-N_DATA_POINTS = 50
+N_DATA_POINTS = 250
 OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 

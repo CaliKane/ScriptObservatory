@@ -19,6 +19,7 @@ OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 # get the list of all pageviews from the pageview API:
 response = requests.get(API_BASE_URL, 
+                        params=dict(q=json.dumps(dict(order_by=[dict(field='date', direction='asc')]))),
                         headers={'Content-Type': 'application/json'},
                         verify=False)
 

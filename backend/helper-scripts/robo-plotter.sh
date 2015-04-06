@@ -8,6 +8,6 @@ do
     ./plot-total-observations-over-time.py /home/andy/projects/ScriptObservatory/backend/static/img/
     ./plot-observations-per-hour.py /home/andy/projects/ScriptObservatory/backend/static/img/
 
-    sleep 86400
+    sleep 12000
 done
 
