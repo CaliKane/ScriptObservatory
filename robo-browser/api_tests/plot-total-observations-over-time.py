@@ -62,7 +62,7 @@ n_labels = len(axes.get_xticklabels())
 time_labels = range(t_first, t_last, t_elapsed/n_labels)
 
 for i in range(len(time_labels)):
-    time_labels[i] = datetime.datetime.fromtimestamp(time_labels[i]/1000).strftime('%m/%d/%Y')
+    time_labels[i] = datetime.datetime.fromtimestamp(time_labels[i]/1000).strftime('%m/%d')
 time_labels[0] = ""
 
 axes.set_xticklabels(time_labels)
