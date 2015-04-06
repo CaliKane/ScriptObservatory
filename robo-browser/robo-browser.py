@@ -12,12 +12,15 @@ import time
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from xvfbwrapper import Xvfb
 
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
-N_SECS_TO_WAIT_AFTER_ONLOAD = 15
+N_SECS_TO_WAIT_AFTER_ONLOAD = 60
 N_SECS_REQ_TIMEOUT = 60
 
+vdisplay = Xvfb()
+vdisplay.start()
 
 options = Options()
 options.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
@@ -68,4 +71,6 @@ while True:
         time.sleep(30)
     
     driver.quit()
+
+vdisplay.stop()
 
