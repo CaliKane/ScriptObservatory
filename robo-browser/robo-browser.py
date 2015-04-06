@@ -16,8 +16,8 @@ from xvfbwrapper import Xvfb
 
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
-N_SECS_TO_WAIT_AFTER_ONLOAD = 60
-N_SECS_REQ_TIMEOUT = 60
+N_SECS_TO_WAIT_AFTER_ONLOAD = 8
+N_SECS_REQ_TIMEOUT = 90
 
 vdisplay = Xvfb()
 vdisplay.start()
@@ -59,12 +59,14 @@ while True:
         # go fetch the page in the selenium webdriver
         driver = webdriver.Chrome(chrome_options=options)
         driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
-        web_addr = str(url)
-        driver.get(web_addr)
+        
+        time.sleep(2)
+        driver.get(url)
+        print("done!")
         time.sleep(N_SECS_TO_WAIT_AFTER_ONLOAD)
 
     except selenium.common.exceptions.TimeoutException:
-        print("the page load timed out for {0} - continuing on...".format(web_addr))
+        print("the page load timed out for {0} - continuing on...".format(url))
     
     except selenium.common.exceptions.WebDriverException:
         print("tab crashed!")
