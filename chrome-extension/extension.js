@@ -136,6 +136,7 @@ chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab){
         if (changeInfo.status == "complete"){
             inline_callback = function(scripts){
+                if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
                 scripts = scripts[0];
 
                 var arrayLength = scripts.length;
