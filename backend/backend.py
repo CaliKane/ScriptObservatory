@@ -39,11 +39,11 @@ db.create_all()
 api_manager = APIManager(app, flask_sqlalchemy_db=db)
 api_manager.create_api(Script,
                        max_results_per_page=0,
-                       methods=["GET", "POST", "DELETE", "PUT"])
+                       methods=["GET", "POST", "PUT"])
 
 api_manager.create_api(Pageview,
                        max_results_per_page=0,
-                       methods=["GET", "POST", "DELETE", "PUT"])
+                       methods=["GET", "POST", "PUT"])
 
 api_manager.create_api(RoboTask,
                        max_results_per_page=0,
