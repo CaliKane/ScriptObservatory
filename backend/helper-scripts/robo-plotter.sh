@@ -10,7 +10,7 @@ do
     ./plot-observations-per-hour.py /home/andy/projects/ScriptObservatory/backend/static/img/
 
 
-    sleep 28800  # 8 hours
+    sleep 3600  # 1 hour
 
 done
 
