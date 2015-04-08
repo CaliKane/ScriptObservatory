@@ -50,7 +50,7 @@ for n, pv in enumerate(pageviews):
         obs_so_far = 0
 
 plt.plot(range(len(y)), y, 'r-')
-plt.ylabel("Pageviews recorded per hour")
+plt.ylabel("Pageviews added per hour")
 
 xmin, xmax, ymin, ymax = plt.axis()
 plt.axis([xmin, xmax, 0, ymax+10])
