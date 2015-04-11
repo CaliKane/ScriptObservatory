@@ -18,7 +18,7 @@ OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 
 
-conn = sqlite3.connect('../database.db')
+conn = sqlite3.connect('../../backend/database.db')
 
 c = conn.cursor()
 
