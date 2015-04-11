@@ -78,16 +78,18 @@ Milestone 3 (target date= 4/20):
  - Allow blacklisting stats upload for websites in the chrome extension
 
 Milestone 4 (target date= 4/30):
+ - Improve visualizations for what scripts & versions of scripts have been included
  - Add tests for backend API & chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
  - Build a VM-based solution to sandbox the robobrowser
  - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
 
 Longer-term:
- - Support iframes
- - Support flash objects
- - Add interactive visualizations for collected data
+ - Let users view scripts in extension and choose whether or not to allow them to run
  - Make sure there's no interference with other extensions / ad-blockers
+ - Support iframes
+ - Add interactive visualizations for collected data
+ - Support flash objects
  - Allow users to import web traffic from PCAP
 
 
