@@ -15,7 +15,6 @@
  * Constants
  */
 PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
-SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/api/scriptcontent";
 
 
 /*
@@ -50,20 +49,6 @@ function httpGet(url){
 function httpPost(url, data){
     var request = new XMLHttpRequest();
     request.open("POST", url, true);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.send(JSON.stringify(data));
-    return;  // TODO: check return code
-}
-
-
-/*
- * httpPut(url, data)
- * -------------------
- * Send json-ified *data* with a HTTP PUT request to *url*
- */
-function httpPut(url, data){
-    var request = new XMLHttpRequest();
-    request.open("PUT", url, true);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
     return;  // TODO: check return code
@@ -116,10 +101,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                             " but main_frame not found!!");
             }
             
-            var put_data = {"sha256": hash, 
-                             "content": data};
+            var script_content_data = {"sha256": hash, 
+                                       "content": data};
             
-            httpPut(SCRIPTCONTENT_API_URL + "/" + hash, put_data);      
+            httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
       
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
