@@ -33,6 +33,11 @@ class RoboTask(db.Model):
     url = Column(Text, unique=False)
     priority = Column(Integer, unique=False)
 
+class ScriptContent(db.Model):
+    __tablename__ = "scriptcontent"
+    sha256 = Column(Text, primary_key=True)
+    content = Column(Text, unique=False)
+
 
 db.create_all()
 
@@ -46,6 +51,10 @@ api_manager.create_api(Pageview,
                        methods=["GET", "POST", "PUT"])
 
 api_manager.create_api(RoboTask,
+                       max_results_per_page=0,
+                       methods=["GET", "POST", "DELETE", "PUT"])
+
+api_manager.create_api(ScriptContent,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
 
@@ -67,5 +76,4 @@ def count_entries():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, use_reloader=False)
-
 
