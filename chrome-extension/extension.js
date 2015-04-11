@@ -102,11 +102,13 @@ chrome.webRequest.onBeforeRequest.addListener(
                             " but main_frame not found!!");
             }
             
-            var script_content_data = {"sha256": hash, 
-                                       "content": data};
-            
-            httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
-      
+            if (details.url.slice(0, 13) != "inline_script"){
+                var script_content_data = {"sha256": hash, 
+                                           "content": data};
+                
+                httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
+            }
+
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
@@ -149,6 +151,11 @@ chrome.tabs.onUpdated.addListener(
                     hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
                     var url = "inline_script_" + hash.slice(0,18);
                     SCRIPTS[tabId].push({"url": url, "hash": hash});
+                
+                    var script_content_data = {"sha256": hash, 
+                                               "content": data};
+            
+                    httpPost(SCRIPTCONTENT_API_URL, script_content_data);
                 }
 
                 var timeStamp = new Date().getTime();
@@ -160,7 +167,6 @@ chrome.tabs.onUpdated.addListener(
 
                 console.log("finished ->" + JSON.stringify(post_data));
                 httpPost(PAGEVIEW_API_URL, post_data);
-
             };
 
             injected_code = "var to_return = []; var scripts = " +
