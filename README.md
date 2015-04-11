@@ -70,12 +70,11 @@ Roadmap
 -------
 
 v0.2:
- - Have robo-browser set up / teardown the Xvfb display within the Python script 
- - ~~~Move to bootstrap (https://angular-ui.github.io/bootstrap/)~~~
+ - ~~Have robo-browser set up / teardown the Xvfb display within the Python script~~ 
+ - ~~Move to bootstrap (https://angular-ui.github.io/bootstrap/)~~
  - ~~Add small menu for clicking on results within stats:~~
     - Site URL: 
         - search for this website here
-        - scan this website again now
         - ~~view on URLQuery~~
         - ~~~view on VirusTotal~~~
         - ~~~builtwith.com~~~
@@ -85,7 +84,7 @@ v0.2:
         - ~~~view on VirusTotal~~~
     - Script Hash:
         - see all sites that have used this version of this script
-        - view archived script content (eventually)
+        - view archived script content
         - ~~~view on VirusTotal~~~
  - Make queries link-able
  - Add ability to archive content for hash values
