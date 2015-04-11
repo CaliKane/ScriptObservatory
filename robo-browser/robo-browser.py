@@ -16,7 +16,7 @@ from xvfbwrapper import Xvfb
 
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
-N_SECS_TO_WAIT_AFTER_ONLOAD = 8
+N_SECS_TO_WAIT_AFTER_ONLOAD = 18
 N_SECS_REQ_TIMEOUT = 90
 
 vdisplay = Xvfb()
