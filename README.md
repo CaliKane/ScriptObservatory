@@ -23,7 +23,9 @@ over what runs on your computer.
 Usage
 -----
 
-(check back later)
+(Check back later for more information on how to use the Chrome extension. You can 
+install it as [an unpacked extension](http://superuser.com/questions/247651/how-does-one-install-an-extension-for-chrome-browser-from-the-local-file-system)
+at your own risk for now.)
 
 
 How It Works
