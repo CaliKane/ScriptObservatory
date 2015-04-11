@@ -205,7 +205,7 @@
         <ul>
           <li> View Parent Webpage: <a target="_blank" href="{{ webpageUrl }}">{{ webpageUrl }}</a></li>
           <li> View Script: <a target="_blank" href="{{ currentObj.url }}">{{ currentObj.url }}</a></li>
-          <li> See all other webpages that have included this script by its URL</li>
+          <li> See <a href="https://scriptobservatory.org?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
       </div>
@@ -226,8 +226,8 @@
         <ul>
           <li> View Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
           <li> View Script: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
-          <li> See all other websites that have included a script with this hash value </li>
-          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj }}">VirusTotal</a> </li>
+          <li> See <a href="https://scriptobservatory.org?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
       </div>
       
