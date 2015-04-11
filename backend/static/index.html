@@ -203,8 +203,9 @@
         <br>
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View Parent Webpage: <a target="_blank" href="{{ webpageUrl }}">{{ webpageUrl }}</a></li>
-          <li> View Script: <a target="_blank" href="{{ currentObj.url }}">{{ currentObj.url }}</a></li>
+          <li> Click a hash value (above) to see archived versions of this script </li> 
+          <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a></li>
+          <li> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a></li>
           <li> See <a href="https://scriptobservatory.org?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
@@ -224,8 +225,9 @@
       <div class="modal-body">
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View Parent Webpage: <a href="#" onclick="this.select();">{{ webpageUrl }}</a></li>
-          <li> View Script: <a href="#" onclick="this.select();">{{ scriptUrl }}</a></li>
+          <li> View <a href="https://scriptobservatory.org/api/scriptcontent/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a></li>
+          <li> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a></li>
           <li> See <a href="https://scriptobservatory.org?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
