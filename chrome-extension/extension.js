@@ -13,10 +13,9 @@
 
 /* 
  * Constants
- * ---------
- * (1) API_BASE_URL: The base URL for the Pageview API.
  */
-API_BASE_URL = "https://scriptobservatory.org/api/pageview";
+PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
+SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/api/scriptcontent";
 
 
 /*
@@ -51,6 +50,20 @@ function httpGet(url){
 function httpPost(url, data){
     var request = new XMLHttpRequest();
     request.open("POST", url, true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send(JSON.stringify(data));
+    return;  // TODO: check return code
+}
+
+
+/*
+ * httpPut(url, data)
+ * -------------------
+ * Send json-ified *data* with a HTTP PUT request to *url*
+ */
+function httpPut(url, data){
+    var request = new XMLHttpRequest();
+    request.open("PUT", url, true);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
     return;  // TODO: check return code
@@ -103,6 +116,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                             " but main_frame not found!!");
             }
             
+            var put_data = {"sha256": hash, 
+                             "content": data};
+            
+            httpPut(SCRIPTCONTENT_API_URL + "/" + hash, put_data);      
+      
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
@@ -129,7 +147,7 @@ chrome.webRequest.onBeforeRequest.addListener(
  * inject javascript to scrape all inline script tags out of the document body.
  * We then grab those script bodies and calculate the SHA-256 hash of each of
  * them. Once we have this, we add these inline scripts to the scripts already
- * collected and send a POST request to the API_BASE_URL with the browsing data 
+ * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
 chrome.tabs.onUpdated.addListener(
@@ -155,7 +173,7 @@ chrome.tabs.onUpdated.addListener(
                 delete SCRIPTS[tabId];
 
                 console.log("finished ->" + JSON.stringify(post_data));
-                httpPost(API_BASE_URL, post_data);
+                httpPost(PAGEVIEW_API_URL, post_data);
 
             };
 
