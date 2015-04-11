@@ -15,6 +15,7 @@
  * Constants
  */
 PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
+SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/api/scriptcontent";
 
 
 /*
