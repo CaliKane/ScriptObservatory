@@ -51,6 +51,9 @@ four pieces of information to a remote server at regular intervals:
  3. The SHA-256 hash of the script's content
  4. The time you made this observation
 
+Optionally, you can have the Chrome extension send the full content of the scripts you
+download to the server too. This will be turned off by default in all released versions.
+
 Here are some steps that have been made to make this process as trustworthy as possible:
  - The connection from you to the remote upload server will always be 
    [encrypted using SSL/TLS](https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org). 
@@ -61,56 +64,30 @@ Here are some steps that have been made to make this process as trustworthy as p
    and [backend/](https://github.com/andy11/ScriptObservatory/tree/master/backend) 
    directories to get started.)
 
-If you still don't feel comfortable having the extension upload data to the server, 
-you can set up a server of your own and configure the extension to send data there
-instead.
-
 
 Roadmap
 -------
 
-v0.2:
- - ~~Have robo-browser set up / teardown the Xvfb display within the Python script~~ 
- - ~~Move to bootstrap (https://angular-ui.github.io/bootstrap/)~~
- - ~~Add small menu for clicking on results within stats:~~
-    - Site URL: 
-        - ~~view on URLQuery~~
-        - ~~~view on VirusTotal~~~
-        - ~~~builtwith.com~~~
-    - Script URL:
-        - ~~see all sites that have used this script~~
-        - ~~~view current script content~~~
-        - ~~~view on VirusTotal~~~
-    - Script Hash:
-        - ~~see all sites that have used this version of this script~~
-        - view archived script content
-        - ~~~view on VirusTotal~~~
- - ~~Make queries link-able~~
- - ~~Add ability to archive content for hash values~~
-
-v0.3:
- - Add typeahead to autocomplete search queries for common sites
+Milestone 3 (target date= 4/20):
  - Create bookmarklet for jumping to results for current site
+ - Rework/reorganize database structure to allow fast searching of script URLs/hashes
  - Add pagination to results window
- - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
  - Autoscan queried websites with no prior results
  - Add button to chrome extension to toggle reporting on and off
  - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for websites in the chrome extension
- - Make Chrome extension public
 
-v0.4:
- - Add way to quickly visualize which scripts are most actively included (use this as sort key?)
- - Add tests for chrome extension code
+Milestone 4 (target date= 4/30):
+ - Add tests for backend API & chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
  - Build a VM-based solution to sandbox the robobrowser
+ - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
 
-Long-term:
+Longer-term:
  - Support iframes
  - Support flash objects
  - Add interactive visualizations for collected data
  - Make sure there's no interference with other extensions / ad-blockers
- - Rework database structure to scale better
  - Allow users to import web traffic from PCAP
 
 
