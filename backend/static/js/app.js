@@ -17,6 +17,7 @@ function show_website(){
     document.getElementById('website_section').style.display="block";
 }
 
+
 /* 
  * add a repeat(n) method to String objects so we can get a String of 
  * a substring repeated *n* times.
@@ -157,6 +158,16 @@ app.controller("AppCtrl", function($http, $scope, $modal){
       });
     };
 
+    $scope.check_for_query_params = function(){
+        var queryDict = {}
+        location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+        
+        if ("query" in queryDict){
+            var q = queryDict["query"];
+            $scope.submitQueryForm(q);
+            $scope.explore_tab = true;
+        }
+    }
 
     // make "all" the default time range choice
     $scope.dateRangeChoice = "all";
@@ -278,6 +289,8 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             
         });
     }
+
+    setTimeout($scope.check_for_query_params, 100);
 });
 
 
