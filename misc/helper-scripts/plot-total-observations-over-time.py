@@ -44,12 +44,12 @@ for n, pv in enumerate(pageviews):
 
     if t > time_vals[time_vals_ind]:
         #print obs_so_far / hours_per_tv
-        y.append(obs_so_far)
+        y.append(obs_so_far/1000)
         labels.append(t)
         time_vals_ind += 1
 
 plt.plot(range(len(y)), y, 'r-')
-plt.ylabel("Total pageviews recorded")
+plt.ylabel("Total Pageviews in Database (1000s of views)")
 
 xmin, xmax, ymin, ymax = plt.axis()
 plt.axis([xmin, xmax, 0, ymax+10])
