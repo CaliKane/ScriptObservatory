@@ -72,8 +72,8 @@ Roadmap
 
 Milestone 3 (target date= 4/20):
  - ~~Create bookmarklet for jumping to results for current site~~
- - Rework/reorganize database structure to allow fast searching of script URLs/hashes
- - Add pagination to results window
+ - ~~Rework/reorganize database structure to allow fast searching of script URLs/hashes~~
+ - Allow specifying type of query (webpage or script) as part of the GET parameter
  - Add button to chrome extension to toggle reporting on and off
  - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for websites in the chrome extension
