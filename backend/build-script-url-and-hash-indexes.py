@@ -47,10 +47,10 @@ while True:
         
         # duplicates are not allowed downstream by angular
         if parent_url not in url_index[url]:
-            url_index[url] += "{0}, ".format(parent_url)
+            url_index[url] += "{0},".format(parent_url)
 
         if parent_url not in hash_index[hash]:
-            hash_index[hash] += "{0}, ".format(parent_url)
+            hash_index[hash] += "{0},".format(parent_url)
 
     print("adding script_urls & page_urls to url_index")
     for url in url_index.keys():
