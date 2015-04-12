@@ -1,4 +1,4 @@
-database.db
+*.db
 entries-over-time.png
 new-entries-per-hour.png
 unique-webpages-over-time.png
