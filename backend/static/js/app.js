@@ -9,12 +9,20 @@
  */
 function show_about(){
     document.getElementById('info_section').style.display="block";
-    document.getElementById('website_section').style.display="none";
+    document.getElementById('website_query_section').style.display="none";
+    document.getElementById('script_query_section').style.display="none";
 }
 
-function show_website(){    
+function showWebsiteQueryResults(){    
     document.getElementById('info_section').style.display="none";
-    document.getElementById('website_section').style.display="block";
+    document.getElementById('website_query_section').style.display="block";
+    document.getElementById('script_query_section').style.display="none";
+}
+
+function showScriptQueryResults(){
+    document.getElementById('info_section').style.display="none";
+    document.getElementById('website_query_section').style.display="none";
+    document.getElementById('script_query_section').style.display="block";
 }
 
 
@@ -201,11 +209,15 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         if (query != "") {
             if (query.length == 64 && isValidHash(query)){
                 // this is a hash query
-                queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]}]}';
+                queryString = '?q={"filters":[{"name":"script_hash","op":"eq","val":"' + query + '"}]}';
+                $scope.makeScriptQueryByHash(queryString);
+                showScriptQueryResults();
             }
-            else if (query.slice(-3) == ".js" || query.slice(0, 18) == "inline_script_tag_"){
+            else if (query.slice(-3) == ".js" || query.slice(0, 14) == "inline_script_"){
                 // this is a javascript query
-                queryString = '?q={"filters":[{"and":[{"name":"date","op":">=","val":"' + min_time + '"},{"name":"scripts__url","op":"any","val":"' + query + '"}]}]}';
+                queryString = '?q={"filters":[{"name":"script_url","op":"eq","val":"' + query + '"}]}';
+                $scope.makeScriptQueryByUrl(queryString);
+                showScriptQueryResults();
             }
             else {
                 // this is a webpage query
@@ -219,16 +231,27 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                     query = query.slice(0, -1);
                 }
                 queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '%"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+                $scope.makeWebpageQuery(queryString);
+                showWebsiteQueryResults();
             }
             //queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
             //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
         }
-
-        $scope.populateData(queryString);
-        show_website();
     }
 
-    $scope.populateData = function(queryString){
+    $scope.makeScriptQueryByUrl = function(queryString){
+        $http.get("/api/scripturlindex" + queryString).success(function (data){
+            app.scriptQueryResults = data.objects[0].page_urls.split(',');
+        });
+    }
+
+    $scope.makeScriptQueryByHash = function(queryString){
+        $http.get("/api/scripthashindex" + queryString).success(function (data){
+            app.scriptQueryResults = data.objects[0].page_urls.split(',');
+        });
+    }
+
+    $scope.makeWebpageQuery = function(queryString){
         $http.get("/api/pageview" + queryString).success(function (data){
             app.records = data.objects;
                
@@ -290,7 +313,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         });
     }
 
-    setTimeout($scope.check_for_query_params, 100);
+    setTimeout($scope.check_for_query_params, 50);
 });
 
 

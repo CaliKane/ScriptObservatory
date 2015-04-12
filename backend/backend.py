@@ -38,6 +38,16 @@ class ScriptContent(db.Model):
     sha256 = Column(Text, primary_key=True)
     content = Column(Text, unique=False)
 
+class ScriptUrlIndex(db.Model):
+    __tablename__ = "scripturlindex"
+    script_url = Column(Text, primary_key=True)
+    page_urls = Column(Text, unique=False)  # comma-separated list of URLs
+
+class ScriptHashIndex(db.Model):
+    __tablename__ = "scripthashindex"
+    script_hash = Column(Text, primary_key=True)
+    page_urls = Column(Text, unique=False)  # comma-separated list of URLs
+
 
 db.create_all()
 
@@ -57,6 +67,14 @@ api_manager.create_api(RoboTask,
 api_manager.create_api(ScriptContent,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
+
+api_manager.create_api(ScriptUrlIndex,
+                       max_results_per_page=0,
+                       methods=["GET"])
+
+api_manager.create_api(ScriptHashIndex,
+                       max_results_per_page=0,
+                       methods=["GET"])
 
 
 @app.route('/')

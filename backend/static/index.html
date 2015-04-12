@@ -131,7 +131,17 @@
             <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov/portal/dmv");'>https://www.dmv.ca.gov/portal/dmv</a>
           </ul>
         </div>
-        <div id="website_section" style="display:none;" >
+        
+        <div id="script_query_section" style="display:none;" >
+          <table class="table table-bordered table-condensed">
+            <th style="width:50%; text-align:center;"> Webpages <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
+            <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
+                <td> <a href="https://scriptobservatory.org/?query={{ site }}">{{ site }}</a> </td>
+            </tr>
+          </table>
+        </div>
+
+        <div id="website_query_section" style="display:none;" >
           <table class="table table-bordered table-condensed">
             <th style="width:30%; text-align:center;"> Site URL <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
             <th style="width:5%; text-align:center;"> N </th>
