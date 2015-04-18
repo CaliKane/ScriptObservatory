@@ -73,23 +73,24 @@ Roadmap
 Milestone 3 (target date= 4/20):
  - ~~Create bookmarklet for jumping to results for current site~~
  - ~~Rework/reorganize database structure to allow fast searching of script URLs/hashes~~
- - Have time value be added server-side
- - Allow specifying type of query (webpage or script) as part of the GET parameter
- - Add button to chrome extension to toggle reporting on and off
- - Add button to chrome extension to view current page's analysis page
- - Allow blacklisting stats upload for websites in the chrome extension
-
-Milestone 4 (target date= 4/30):
- - Improve visualizations for what scripts & versions of scripts have been included
+ - Allow specifying type of query (webpage or script) as part of the GET parameter when searching via webpage
+ - Make a "submit" page that lets people suggest webpages to scan
+ - Fully automate the process of adding tasks to the robotask lists
  - Add tests for backend API & chrome extension code
  - Have robobrowser automatically report all errors while browsing sites
- - Build a VM-based solution to sandbox the robobrowser
+
+Milestone 4 (target date= 4/30):
+ - Have time value be added server-side
+ - Improve visualizations for what scripts & versions of scripts have been included
  - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
+ - Add button to chrome extension to toggle reporting on and off
+ - Add button to chrome extension to view current page's analysis page
+ - Allow blacklisting stats upload for website regexes in the chrome extension
+ - Support iframes
 
 Longer-term:
  - Let users view scripts in extension and choose whether or not to allow them to run
  - Make sure there's no interference with other extensions / ad-blockers
- - Support iframes
  - Add interactive visualizations for collected data
  - Support flash objects
  - Allow users to import web traffic from PCAP
