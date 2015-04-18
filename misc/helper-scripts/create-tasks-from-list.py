@@ -11,6 +11,6 @@ priority = int(sys.argv[2])
 
 for line in open(list_filename, 'r'):
     line = line.strip()
-    os.system("python create-task.py {0} {1}".format(line, priority))
+    os.system("python2 create-task.py {0} {1}".format(line, priority))
     time.sleep(0.1)
 
