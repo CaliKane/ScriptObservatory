@@ -13,7 +13,7 @@ from pylab import *
 axes = figure().add_subplot(111)
 
 N_X_LABELS = 5
-N_DATA_POINTS = 250
+N_DATA_POINTS = 150
 OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 
@@ -53,7 +53,7 @@ plt.plot(range(len(y)), y, 'r-')
 plt.title("New Observations Added Per Hour")
 
 xmin, xmax, ymin, ymax = plt.axis()
-plt.axis([xmin, xmax, 0, ymax+10])
+plt.axis([xmin, xmax, 0, ymax+4])
 n_labels = len(axes.get_xticklabels())
 
 time_labels = range(t_first, t_last, t_elapsed/n_labels)

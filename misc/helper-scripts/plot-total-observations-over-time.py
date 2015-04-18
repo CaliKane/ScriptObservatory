@@ -53,7 +53,7 @@ plt.title("Total Pageview Observations in Database")
 plt.ylabel("1,000s of views")
 
 xmin, xmax, ymin, ymax = plt.axis()
-plt.axis([xmin, xmax, 0, ymax+10])
+plt.axis([xmin, xmax, 0, ymax+4])
 n_labels = len(axes.get_xticklabels())
 
 time_labels = range(t_first, t_last, t_elapsed/n_labels)
