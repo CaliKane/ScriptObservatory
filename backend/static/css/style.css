@@ -16,8 +16,7 @@ a {
   visited: #990000;
   text-decoration: none;
 }
-
-a.bookmarklet
+.bookmarklet
 { 
     background:#ffe; 
     border:1px dotted #aaa;
