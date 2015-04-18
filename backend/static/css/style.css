@@ -17,6 +17,15 @@ a {
   text-decoration: none;
 }
 
+a.bookmarklet
+{ 
+    background:#ffe; 
+    border:1px dotted #aaa;
+    color:#444;
+    padding:1px 2px 0px 2px;
+    font-size:90%;
+}
+
 table {
   font-size:14px;
 }
