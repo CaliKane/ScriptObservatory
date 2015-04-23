@@ -288,6 +288,8 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             //queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
             //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
         }
+
+        alert("Your query has been submitted. Please be patient -- it can take up to a minute to load the results.");
     }
 
     $scope.makeScriptQueryByUrl = function(queryString){
