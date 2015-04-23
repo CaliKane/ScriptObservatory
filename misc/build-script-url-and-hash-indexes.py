@@ -5,7 +5,7 @@ import sqlite3
 import time
 
 
-conn = sqlite3.connect('../../backend/database.db')
+conn = sqlite3.connect('../backend/database.db')
 
 print("clearing previous index tables...")
 cursor = conn.cursor()
