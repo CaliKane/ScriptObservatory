@@ -2,6 +2,7 @@
 #
 
 import json
+import os
 import requests
 import sqlite3
 
@@ -64,5 +65,6 @@ time_labels[0] = ""
 
 axes.set_xticklabels(time_labels)
 
+os.system("rm {0}/entries-over-time.png".format(OUTPUT_BASEDIR))
 plt.savefig(OUTPUT_BASEDIR + "/entries-over-time.png")
 
