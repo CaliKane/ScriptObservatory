@@ -67,12 +67,18 @@ while True:
 
     except selenium.common.exceptions.TimeoutException:
         print("the page load timed out for {0} - continuing on...".format(url))
-    
+        time.sleep(30)    
+
     except selenium.common.exceptions.WebDriverException:
         print("tab crashed!")
         time.sleep(30)
     
-    driver.quit()
+    try:
+        driver.quit()
+    except urllib2.URLError:
+        print("urllib2.URLError thrown while calling driver.quit(), trying to continue...")
+        time.sleep(30)
+
 
 vdisplay.stop()
 
