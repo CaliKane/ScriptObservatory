@@ -40,17 +40,20 @@ def add_list_file(list_filename, priority):
 def DAILY():
     print("running DAILY list!")
     pass
+    print("done DAILY list!")
 
 def BIWEEKLY():
     print("running BIWEEKLY list!")
     add_list_file("./website-lists/random.txt", 3)
     add_list_file("./website-lists/infosec-sites.txt", 3)
     add_list_file("./website-lists/fortune500.txt", 3)
+    print("done BIWEEKLY list!")
  
 def WEEKLY():
     print("running WEEKLY list!")
     add_list_file("./website-lists/universities.txt", 4)
     add_list_file("./website-lists/alexa-top-1k.txt", 4)
+    print("done WEEKLY list!")
 
 monthly_ctr = 0
 def MONTHLY():
@@ -62,6 +65,8 @@ def MONTHLY():
         print("running MONTHLY list!")
         add_list_file("./website-lists/alexa-top-10k.txt", 5)
         monthly_ctr = 0
+        print("done MONTHLY list!")
+
 
 schedule.every().day.do(DAILY)
 
