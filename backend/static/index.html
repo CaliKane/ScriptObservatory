@@ -172,18 +172,16 @@
             <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
           </form>
             <br>
-            <div align="center"><i>(should be crawled sometime in the minute after you click Submit)</i></div>
+            <div align="center"><i>(The site should be crawled sometime in the minute after you click Submit.)</i></div>
           <br><br>
-            <!--- coming soon
-          <h3><i>Want a website to be analyzed weekly?</i></h3>
+          <h3><i>Do you have a list of websites we should keep an eye on?</i></h3>
           <br>
-          <form class="form-inline">
-            <div class="form-group"> <p style="margin: 0 0 0 0;">Suggest a URL:</p> </div>
-            <div class="form-group"> <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL"> </div>
+          <form class="form-inline" align="center" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
+            <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText" placeholder="https://www.google.com,https://www.reddit.com,http://betterweather.net,https://scriptobservatory.org,https://www.vt.edu,http://www.example.com"></textarea>
             <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
-            <div class="form-group">(it will be reviewed and eventually added to the scheduling lists)</div>
           </form>
-            -->
+            <br>
+            <div align="center"><i>(These are manually reviewed, for now. Can be any format that's consistent and easy to parse.)</i></div>
         </p>
         <br><br>
       </tab>

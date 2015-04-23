@@ -48,6 +48,11 @@ class ScriptHashIndex(db.Model):
     script_hash = Column(Text, primary_key=True)
     page_urls = Column(Text, unique=False)  # comma-separated list of URLs
 
+class Suggestions(db.Model):
+    __tablename__ = "suggestions"
+    id = Column(Integer, primary_key=True)
+    content = Column(Text, unique=False)
+
 
 db.create_all()
 
@@ -75,6 +80,10 @@ api_manager.create_api(ScriptUrlIndex,
 api_manager.create_api(ScriptHashIndex,
                        max_results_per_page=0,
                        methods=["GET"])
+
+api_manager.create_api(Suggestions,
+                       max_results_per_page=0,
+                       methods=["GET", "POST", "PUT"])
 
 
 @app.route('/')

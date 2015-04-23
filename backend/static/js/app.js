@@ -166,6 +166,21 @@ app.controller("AppCtrl", function($http, $scope, $modal){
       });
     };
 
+    $scope.submitUrlSuggestionForm = function(urls){
+        console.log("got submission for " + urls);
+
+        var data = {'content': urls}
+        var request = new XMLHttpRequest();
+        request.open("POST", "/api/suggestions", false);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(data));
+        console.log(request.status);
+
+        alert("Your list has been submitted. Thank you!");
+        return;  // TODO: check return code
+    }
+
+
 
     $scope.submitUrlSubmissionForm = function(url){
         console.log("got submission for " + url);
@@ -182,7 +197,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         request.setRequestHeader("Content-Type", "application/json");
         request.send(JSON.stringify(data));
         console.log(request.status);
-
+        alert("Your URL has been submitted.");
         return;  // TODO: check return code
     }
 
