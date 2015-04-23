@@ -73,9 +73,9 @@ Roadmap
 Milestone 3 (target date= 4/20):
  - ~~Create bookmarklet for jumping to results for current site~~
  - ~~Rework/reorganize database structure to allow fast searching of script URLs/hashes~~
- - Make a "submit" page that lets people suggest webpages to scan
+ - ~~Make a "submit" page that lets people suggest webpages to scan~~
  - Allow specifying type of query (webpage or script) as part of the GET parameter when searching via webpage
- - Fully automate the process of adding tasks to the robotask lists
+ - ~~Fully automate the process of adding tasks to the robotask lists~~
  - Make robobrowser's timeout-checking be enforced even on creation of the driver object itself
  - Have robobrowser automatically report all errors while browsing sites
 
