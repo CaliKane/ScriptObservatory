@@ -21,8 +21,8 @@
     <div class="container">
       <tabset>
       <tab heading="Home">
-        <br>
         <p> 
+        <h3><i>Basic Information</i></h3>
         The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a>
         by recording information about the <b><i>live content</i></b> people are seeing on the internet.
         <br><br>
@@ -33,14 +33,12 @@
         the internet. The long-term goal for the <a href="https://github.com/andy11/ScriptObservatory#usage" target="_blank">Chrome extension</a> is to 
         crowdsource the data collection and to (optionally) act as a <b><i>content-aware</i></b> script blocker.
         <br><br>
-        <b><u>How to use ScriptObservatory</u></b>
-        <br>
+        <h3><i>Getting Started</i></h3>
         Click the <i>"Explore the Data"</i> tab to query the database. Or, drag this 
         <a href="javascript:q=location.href;open('https://scriptobservatory.org?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
         bookmarklet to your bookmarks bar to jump directly to the analysis page for whatever website you have open.
         <br><br>
-        <b><u>Get Involved:</u></b>
-        <br>
+        <h3><i>Get Involved</i></h3>
         Are you looking for a project to get involved with? Check out the page on <a target="_blank" href="https://github.com/andy11/ScriptObservatory">
         <!--<img src="img/octocat.png" alt="Github" width="42" height="42">-->GitHub</a> or <a href="mailto:andy@andymartin.cc">get in touch</a>.
         <br><br>
@@ -48,15 +46,12 @@
       </tab>
  
       <tab heading="How Does It Work?">
-        <br> 
         <p>
-          <u><b>Where did this data come from?</b></u>
-          <br>
+          <h3><i>Where did this data come from?</i></h3>
           The data shown here was collected from browsers and web-crawlers using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
           If you'd like the scripts you see to be automatically added to our database while you browse the web, the extension will be available for download soon.
           <br><br>
-          <u><b>How does the Chrome Extension collect the data?</b></u>
-          <br>
+          <h3><i>How does the Chrome Extension collect the data?</i></h3>
           The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
           browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
           back to the browser.
@@ -73,8 +68,7 @@
             <li>The time you made this observation</li>
           </ul>
           <br>
-          <u><b>What does the Chrome Extension do to protect its users' privacy?</b></u>
-          <br>
+          <h3><i>What does the Chrome Extension do to protect its users' privacy?</i></h3>
           <ul>
             <li>
               The connection from you to the remote upload server will always be 
@@ -90,14 +84,8 @@
           </ul>
           If you have suggestions for ways to further improve, get in touch!
           <br><br>
-          <u><b>Can the ScriptObservatory Chrome Extension block any of these scripts before I run them?</b></u>
-          <br>
+          <h3><i>Can the ScriptObservatory Chrome Extension block these scripts before I run them?</i></h3>
           That's <a href="https://github.com/andy11/ScriptObservatory/blob/master/README.md#roadmap" target="_blank">on the roadmap</a>.
-          <br><br>
-          <u><b>What if you don't have any information on a webpage I'm curious about?</b></u>
-          <br>
-          For now, you can <a href="mailto:andy@andymartin.cc">send me an email</a>. Eventually there'll be a better way to add sites to be automatically 
-          analyzed.
           <br><br>
         </p>
 
@@ -113,7 +101,7 @@
         </form>
         <br>
         <div id="info_section">
-          <b><u>Some sample webpage queries:</u></b>
+          <h3><i>Some sample webpage queries:</i></h3>
           <ul>
             <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a></li>
@@ -128,7 +116,7 @@
             <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov/portal/dmv");'>https://www.dmv.ca.gov/portal/dmv</a></li>
           </ul>
           <br>
-          <b><u>Some sample script queries:</u></b>
+          <h3><i>Some sample script queries:</i></h3>
           <ul>
             <li><a href="#" ng-click='submitQuery("https://ssl.google-analytics.com/ga.js");'>https://ssl.google-analytics.com/ga.js</a></li>
             <li><a href="#" ng-click='submitQuery("274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a");'>274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a</a></li>
@@ -179,12 +167,12 @@
         <p>
           <h3><i>Is there a website you want to see results for?</i></h3>
           <br>
-          <form class="form-inline" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
-            <div class="form-group"> <p style="margin: 0 0 0 0;">Submit a URL:</p> </div>
+          <form align="center" class="form-inline" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
             <div class="form-group"> <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> </div>
             <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
-            <div class="form-group">(should be crawled sometime in the next minute or so)</div>
           </form>
+            <br>
+            <div align="center"><i>(should be crawled sometime in the minute after you click Submit)</i></div>
           <br><br>
             <!--- coming soon
           <h3><i>Want a website to be analyzed weekly?</i></h3>
