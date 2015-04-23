@@ -1,5 +1,9 @@
 #!/usr/bin/env python2
 #
+# robo-browser.py gets the next website from the robotask API and browses to it using
+# a selenium webdriver with the scriptobservatory chrome extension installed. It repeats 
+# this forever, using a "fake" Xvfb display to run headlessly.
+#
 
 from __future__ import print_function
 
@@ -18,6 +22,7 @@ from xvfbwrapper import Xvfb
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 N_SECS_TO_WAIT_AFTER_ONLOAD = 30
 N_SECS_REQ_TIMEOUT = 90
+
 
 vdisplay = Xvfb()
 vdisplay.start()
