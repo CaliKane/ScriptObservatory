@@ -166,6 +166,27 @@ app.controller("AppCtrl", function($http, $scope, $modal){
       });
     };
 
+
+    $scope.submitUrlSubmissionForm = function(url){
+        console.log("got submission for " + url);
+     
+        if (url.slice(0,7) != "http://" && url.slice(0,8) != "https://") {
+            url = "http://" + url;
+        }
+   
+        console.log("url= " + url);
+
+        var data = {'url': url, 'priority': 1}
+        var request = new XMLHttpRequest();
+        request.open("POST", "/api/robotask", false);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(data));
+        console.log(request.status);
+
+        return;  // TODO: check return code
+    }
+
+
     $scope.check_for_query_params = function(){
         var queryDict = {}
         location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
