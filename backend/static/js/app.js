@@ -289,7 +289,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
         }
 
-        alert("Your query has been submitted. Please be patient -- it can take up to a minute to load the results.");
+        setTimeout(function() { alert("Your query has been submitted. Please be patient -- it can take up to a minute to load the results."); }, 100);
     }
 
     $scope.makeScriptQueryByUrl = function(queryString){
