@@ -197,6 +197,14 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         request.setRequestHeader("Content-Type", "application/json");
         request.send(JSON.stringify(data));
         console.log(request.status);
+
+        var data = {'content': url}
+        var request = new XMLHttpRequest();
+        request.open("POST", "/api/suggestions", false);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(data));
+        console.log(request.status);
+
         alert("Your URL has been submitted.");
         return;  // TODO: check return code
     }
@@ -218,6 +226,13 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 
     $scope.submitQueryForm = function(queryText){
         var query = queryText;
+
+        var data = {'content': query}
+        var request = new XMLHttpRequest();
+        request.open("POST", "/api/suggestions", false);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(data));
+
         $scope.submitQuery(query);
     }
 
