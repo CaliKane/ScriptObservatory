@@ -14,7 +14,7 @@ from pylab import *
 axes = figure().add_subplot(111)
 
 N_X_LABELS = 5
-N_DATA_POINTS = 150
+N_DATA_POINTS = 100
 OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 
