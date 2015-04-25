@@ -76,7 +76,7 @@ Milestone 3 (target date= 4/20):
  - ~~Make a "submit" page that lets people suggest webpages to scan~~
  - Allow specifying type of query (webpage or script) as part of the GET parameter when searching via webpage
  - ~~Fully automate the process of adding tasks to the robotask lists~~
- - Make robobrowser's timeout-checking be enforced even on creation of the driver object itself
+ - ~~Make robobrowser's timeout-checking be enforced even on creation of the driver object itself~~
  - Have robobrowser automatically report all errors while browsing sites
 
 Milestone 4 (target date= 4/30):
@@ -84,10 +84,14 @@ Milestone 4 (target date= 4/30):
  - Add tests for backend API & chrome extension code
  - Improve visualizations for what scripts & versions of scripts have been included
  - Make robobrowser's time of exit tied to when it POSTs the results, not onload()
+ - Support iframes
+ - Support YARA scanning full database archive + live alerting on new submissions
+ - Make robobrowser delete task only on success (or possibly add it back in on fail)
+
+Milstone 5 (target date= 5/15):
  - Add button to chrome extension to toggle reporting on and off
  - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for website regexes in the chrome extension
- - Support iframes
 
 Longer-term:
  - Let users view scripts in extension and choose whether or not to allow them to run
