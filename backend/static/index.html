@@ -49,18 +49,18 @@
         <p>
           <h3><i>Where did this data come from?</i></h3>
           The data shown here was collected from browsers and web-crawlers using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
-          If you'd like the scripts you see to be automatically added to our database while you browse the web, the extension will be available for download soon.
+          If you'd like what you see when you browse the web to automatically be added to our database, the extension will hopefully be available for download in the next few months.
           <br><br>
           <h3><i>How does the Chrome Extension collect the data?</i></h3>
           The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
           browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
           back to the browser.
           <br><br>
-          This way of grabbing the content isn't ideal and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
+          This way of grabbing the content isn't ideal performance-wise and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
           code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/extension.js" target="_blank">chrome-extension/extension.js</a>
-          would be a good place to start.)
+          contains all the non-crypto code for the extension.)
           <br><br>
-          With the Chrome Extension installed, your browser will send these four pieces of information to a remote server every time you view a webpage:
+          With the Chrome Extension installed, your browser will send these four pieces of information to a ScriptObservatory server every time you view a webpage:
           <ul>
             <li>The full URL of the webpage</li>
             <li>The full URL of each script included in or linked from the webpage</li>
@@ -165,7 +165,7 @@
       <tab heading="Suggest Websites to Observe">
         <br>
         <p>
-          <h3><i>Is there a website you want to be scanned right now?</i></h3>
+          <h3><i>Is there a website you want us to scan right now?</i></h3>
           <br>
           <form align="center" class="form-inline" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
             <div class="form-group"> <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> </div>
@@ -174,7 +174,7 @@
             <br>
             <div align="center">(A <a href="https://github.com/andy11/ScriptObservatory/blob/master/robo-browser/robo-browser.py" target="_blank">robo-browser</a> will visit it sometime soon, usually within 30 seconds.)</div>
           <br><br>
-          <h3><i>Is there a list of websites you want to be scanned regularly?</i></h3>
+          <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
           <br>
           <form class="form-inline" align="center" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
             <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText"></textarea>
