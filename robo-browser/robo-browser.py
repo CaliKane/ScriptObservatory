@@ -23,10 +23,10 @@ from xvfbwrapper import Xvfb
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 
-N_SECS_TO_WAIT_AFTER_ONLOAD = 25
+N_SECS_TO_WAIT_AFTER_ONLOAD = 12
 N_SECS_TO_WAIT_AFTER_ERR = 20
 N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
-N_SECS_REQ_TIMEOUT = 75
+N_SECS_REQ_TIMEOUT = 70
 N_SECS_HARD_REQ_TIMEOUT = 90
 
 OPTIONS = Options()
@@ -66,7 +66,7 @@ def delete_robotask(task_id):
     if response.status_code != 204:
         # a non-204 status is returned if someone else has already deleted the task, so 
         # this lets us be sure we won't run a given task more than once.
-        raise RoboBrowseException("GET returned non-200 response code! ...trying again...")
+        raise RoboBrowseException("DELETE returned non-200 response code! someone else likely already got this task.")
 
 
 def fetch_webpage(url):
