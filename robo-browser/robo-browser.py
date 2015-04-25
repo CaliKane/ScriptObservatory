@@ -23,10 +23,10 @@ from xvfbwrapper import Xvfb
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 
-N_SECS_TO_WAIT_AFTER_ONLOAD = 25
+N_SECS_TO_WAIT_AFTER_ONLOAD = 12
 N_SECS_TO_WAIT_AFTER_ERR = 20
 N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
-N_SECS_REQ_TIMEOUT = 75
+N_SECS_REQ_TIMEOUT = 70
 N_SECS_HARD_REQ_TIMEOUT = 90
 
 OPTIONS = Options()
