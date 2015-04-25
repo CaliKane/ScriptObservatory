@@ -4,11 +4,10 @@
 #
 
 import json
+import os
 import requests
 import sys
 import time
-
-import schedule
 
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
@@ -68,17 +67,23 @@ def MONTHLY():
         print("done MONTHLY list!")
 
 
-schedule.every().day.do(DAILY)
-
-schedule.every().monday.do(BIWEEKLY)
-schedule.every().thursday.do(BIWEEKLY)
-
-schedule.every().sunday.do(WEEKLY)
-
-schedule.every().week.do(MONTHLY)  # logic to force it to run monthly in MONTHLY() for now
-
-
 while True:
-    schedule.run_pending()
-    time.sleep(5)
+    for week in range(4):
+        os.system("date")
 
+        if week == 1 or week == 3:
+            BIMONTHLY()
+
+        if week == 2:
+            MONTHLY()
+
+        for day in range(7):
+            DAILY()
+                
+            if day == 1 or day == 4:
+                BIWEEKLY()
+
+            os.system("date")
+            time.sleep(24*60*60)
+
+        WEEKLY()
