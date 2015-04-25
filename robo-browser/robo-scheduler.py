@@ -43,5 +43,16 @@ def add_list_file(list_filename, priority):
 if __name__ == "__main__":
     logging.basicConfig(filename="/home/andy/projects/ScriptObservatory/robo-browser/scheduler-log.txt", level=logging.WARN)
     logging.warn("current time: {0}".format(time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())))
-    add_list_file(sys.argv[1], int(sys.argv[2]))
+    logging.warn("being called with: {0}".format(sys.argv))
+
+    priority = int(sys.argv[1])
+    
+    for arg in sys.argv[2:]:
+        # we make sure the file is really a domain list by checking for the .list ending
+        if not arg.endswith(".list"):
+            continue
+        
+        add_list_file(arg, priority)
+    
+    logging.warn("done!")
 
