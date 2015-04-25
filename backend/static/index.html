@@ -93,11 +93,20 @@
       </tab>
        
       <tab heading="Explore the Data" active="explore_tab">
-        <br>
-        <form align="center" class="form-inline" ng-submit="submitQueryForm(parentQueryText)">
-          <div class="form-group"> <p style="margin: 0 0 0 0;">Enter a query here:</p> </div>
-          <div class="form-group"> <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256"> </div>
-          <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
+        <h3><i>Query the database:</i></h3>
+        <form class="form-horizontal" ng-submit="submitQueryForm(parentQueryText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256"> 
+            </div>
+            <div class="col-sm-1">
+            <label for="queryField"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+            </label>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>   
         </form>
         <br>
         <div id="info_section">
@@ -167,21 +176,39 @@
         <p>
           <h3><i>Is there a website you want us to scan right now?</i></h3>
           <br>
-          <form align="center" class="form-inline" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
-            <div class="form-group"> <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> </div>
-            <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
+          <form class="form-horizontal" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6"> 
+              <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> 
+            </div>
+            <div class="col-sm-1">
+            <label for="urlSubmission"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input>
+            </label>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>
           </form>
-            <br>
             <div align="center">(A <a href="https://github.com/andy11/ScriptObservatory/blob/master/robo-browser/robo-browser.py" target="_blank">robo-browser</a> will visit it sometime soon, usually within 30 seconds.)</div>
           <br><br>
           <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
           <br>
-          <form class="form-inline" align="center" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
-            <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText"></textarea>
-            <div class="form-group"> <input type="submit" id="submit" value="Submit" class="btn"> </input> </div>
+          <form class="form-horizontal" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6">
+              <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText"></textarea>
+            </div>
+            <div class="col-sm-1"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+            </div>
+          </div>
           </form>
-            <br>
-            <div align="center">(These are manually reviewed before they're added to <a href="https://github.com/andy11/ScriptObservatory/tree/master/robo-browser/website-lists" target="_blank">a list</a>. Use any format that's consistent and easy to parse.)</div>
+           <br>
+          <div align="center">
+            (These are manually reviewed before they're added to <a href="https://github.com/andy11/ScriptObservatory/tree/master/robo-browser/website-lists" target="_blank">a list</a>. Use any format that's consistent and easy to parse.)
+          </div>
         </p>
         <br><br>
       </tab>
