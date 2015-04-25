@@ -78,6 +78,7 @@ def fetch_webpage(url):
         driver.get(url)
         time.sleep(N_SECS_TO_WAIT_AFTER_ONLOAD)
         logging.warn("done!")
+        driver.quit()
     
     except selenium.common.exceptions.WebDriverException:
         logging.error("tab crashed!")
@@ -101,7 +102,7 @@ if __name__ == "__main__":
             if p.is_alive():
                 p.terminate()
                 logging.error("hit HARD_REQ_TIMEOUT. terminating process....")
-                
+
         except RoboBrowseException, e:
             logging.error("ERROR: {0} -- continuing on...".format(e))
             time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
