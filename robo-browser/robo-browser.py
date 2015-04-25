@@ -35,7 +35,7 @@ OPTIONS.add_argument("--disable-application-cache")
 
 
 class RoboBrowseException(Exception):
-    # we can just inherit from Exception
+    # we can just inherit from the plain Exception class
     pass
 
 
@@ -55,7 +55,6 @@ def get_next_robotask():
         raise RoboBrowseException("no jobs currently in the queue")
 
     current_task = task["objects"][0]
-    logging.warn("got task for url: {0}".format(current_task["url"]))
     return (current_task["url"], current_task["priority"], current_task["id"])
 
 
@@ -66,7 +65,7 @@ def delete_robotask(task_id):
     if response.status_code != 204:
         # a non-204 status is returned if someone else has already deleted the task, so 
         # this lets us be sure we won't run a given task more than once.
-        raise RoboBrowseException("DELETE returned non-200 response code! someone else likely already got this task.")
+        raise RoboBrowseException("DELETE returned non-204 response code! someone else likely already got this task.")
 
 
 def fetch_webpage(url):
@@ -78,12 +77,12 @@ def fetch_webpage(url):
         driver.get(url)
         time.sleep(N_SECS_TO_WAIT_AFTER_ONLOAD)
         logging.warn("done!")
-        driver.quit()
     
     except selenium.common.exceptions.WebDriverException:
         logging.error("tab crashed!")
  
-
+    finally:
+        driver.quit()
 
 
 if __name__ == "__main__":
@@ -95,6 +94,7 @@ if __name__ == "__main__":
     while True:
         try:
             url, priority, task_id = get_next_robotask()
+            logging.warn("got task for url: {0}".format(url))
             delete_robotask(task_id)
             p = multiprocessing.Process(target=fetch_webpage, args=(url,))
             p.start()
