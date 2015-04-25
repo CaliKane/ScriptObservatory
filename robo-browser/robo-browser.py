@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # robo-browser.py gets the next website from the robotask API and browses to it using
 # a selenium webdriver with the scriptobservatory chrome extension installed. It repeats 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
                 p.terminate()
                 logging.error("hit HARD_REQ_TIMEOUT. terminating process....")
 
-        except RoboBrowseException, e:
+        except RoboBrowseException as e:
             logging.error("ERROR: {0} -- continuing on...".format(e))
             time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
 
