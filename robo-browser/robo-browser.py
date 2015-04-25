@@ -66,7 +66,7 @@ def delete_robotask(task_id):
     if response.status_code != 204:
         # a non-204 status is returned if someone else has already deleted the task, so 
         # this lets us be sure we won't run a given task more than once.
-        raise RoboBrowseException("GET returned non-200 response code! ...trying again...")
+        raise RoboBrowseException("DELETE returned non-200 response code! someone else likely already got this task.")
 
 
 def fetch_webpage(url):
