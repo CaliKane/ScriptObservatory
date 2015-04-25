@@ -1,0 +1,21 @@
+MAILTO=""
+
+# DAILY 
+0 0 * * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/random.txt 2 > /dev/null
+
+# THREE TIMES A WEEK
+0 0 * * 0,2,4 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/fortune500.txt 3 > /dev/null
+
+# TWICE A WEEK
+0 0 * * 1,4 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/infosec-sites.txt 4 > /dev/null
+0 0 * * 3,6 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/alexa-top-1k.txt 4 > /dev/null
+
+# WEEKLY
+0 0 * * 2 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/universities.txt 5 > /dev/null
+
+# EVERY OTHER WEEK
+#0 0 1,14 * * 
+
+# MONTHLY
+0 0 7 * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py /home/andy/projects/ScriptObservatory/robo-browser/website-lists/alexa-top-10k.txt 7 > /dev/null
+
