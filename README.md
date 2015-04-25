@@ -77,7 +77,7 @@ Milestone 3 (target date= 4/20):
  - Allow specifying type of query (webpage or script) as part of the GET parameter when searching via webpage
  - ~~Fully automate the process of adding tasks to the robotask lists~~
  - ~~Make robobrowser's timeout-checking be enforced even on creation of the driver object itself~~
- - Have robobrowser automatically report all errors while browsing sites
+ - ~~Fix/finalize scheduling mechanism~~
 
 Milestone 4 (target date= 4/30):
  - Have time value be added server-side
@@ -92,6 +92,7 @@ Milstone 5 (target date= 5/15):
  - Add button to chrome extension to toggle reporting on and off
  - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for website regexes in the chrome extension
+ - Have chrome extension automatically report all errors while browsing sites
 
 Longer-term:
  - Let users view scripts in extension and choose whether or not to allow them to run
