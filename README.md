@@ -73,9 +73,9 @@ Roadmap
 Milestone 4 (target date= 4/30):
  - Have time value be added server-side
  - Add tests for backend API & chrome extension code
+ - Support (optionally) keeping content of HTML
  - Support iframes
  - Support YARA scanning full database archive + live alerting on new submissions
- - Make robobrowser delete task only on success (or possibly add it back in on fail)
  - Make chrome extension check if a script already exists to avoid hammering POSTs to server
 
 Milstone 5 (target date= 5/15):
@@ -85,6 +85,7 @@ Milstone 5 (target date= 5/15):
  - Have chrome extension automatically report all errors while browsing sites
  - Improve visualizations for what scripts & versions of scripts have been included
  - Improve test cases 
+ - Make robobrowser delete task only on success (or possibly add it back in on fail)
 
 Longer-term:
  - Let users view scripts in extension and choose whether or not to allow them to run
