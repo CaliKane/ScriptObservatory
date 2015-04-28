@@ -51,14 +51,14 @@ def sigterm_handler(_signo, _stack_frame):
 
 
 def get_next_robotask():
-    """ returns the (url, priority, task_id) of next task, raises RoboBrowseException on error """
+    """ gets the (url, priority, task_id) of next task or raise a RoboBrowseException on error """
     response = requests.get(API_BASE_URL, 
                             params=dict(q=json.dumps(dict(order_by=[dict(field='priority', direction='asc')]))),
                             headers={'Content-Type': 'application/json'},
                             verify=False)
 
     if response.status_code != 200:
-        raise RoboBrowseException("GET returned non-200 response code! trying again...")
+        raise RoboBrowseException("GET returned non-200 response code!")
 
     task = response.json()
 
@@ -70,17 +70,17 @@ def get_next_robotask():
 
 
 def delete_robotask(task_id):
-    """ returns if *task_id* is successfully deleted, raises RoboBrowseException on error """
+    """ deletes the task with id *task_id* from the robotask API or raises a RoboBrowseException on error """
     response = requests.delete("{0}/{1}".format(API_BASE_URL, task_id), verify=False)
     
     if response.status_code != 204:
-        # a non-204 status is returned if someone else has already deleted the task, so 
-        # this lets us be sure we won't run a given task more than once.
-        raise RoboBrowseException("DELETE returned non-204 response code! someone else likely already got this task.")
+        # a non-204 status is most often returned if someone else has already deleted the task. We raise a 
+        # RoboBrowseException so we go and get the next task instead of running this one 
+        raise RoboBrowseException("DELETE returned non-204! someone else likely already got this task.")
 
 
 def fetch_webpage(url):
-    """ creates a chrome webdriver and navigates to *url* """
+    """ fetch_webpage creates a chrome webdriver and navigates to *url* """
     try:
         driver = webdriver.Chrome(chrome_options=OPTIONS) 
         driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
