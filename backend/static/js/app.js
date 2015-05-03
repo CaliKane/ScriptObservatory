@@ -1,5 +1,5 @@
 /*
- * app.js is the main JavaScript code for the website. It includes some generic
+ * app.js is the main JavaScript code for the website. It includes generic
  * JavaScript as well as some AngularJS code.
  */
 
@@ -281,12 +281,11 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 if (query.slice(-1) == '/'){
                     query = query.slice(0, -1);
                 }
-                queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '%"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
-                $scope.makeWebpageQuery(queryString);
+                
+                //queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '%"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
+                $scope.makeWebpageQuery(query);
                 showWebsiteQueryResults();
             }
-            //queryString = '?q={"filters":[{"and":[{"or":[{"name":"url","op":"like","val":"%' + query + '_"},{"name":"scripts__url","op":"any","val":"' + query + '"},{"name":"scripts__hash","op":"any","val":"' + query + '"}]},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
-            //queryString = '?q={"filters":[{"name":"url","op":"like","val":"%' + query + '_"}]}';
         }
 
         setTimeout(function() { alert("Your query has been submitted. Please be patient -- it can take up to a minute to load the results."); }, 100);
@@ -305,49 +304,47 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     }
 
     $scope.makeWebpageQuery = function(queryString){
-        $http.get("/api/pageview" + queryString).success(function (data){
-            app.records = data.objects;
-               
+        $http.get("/search?url=" + queryString).success(function (data){
+            app.records = data.sites;
+                
+            alert(JSON.stringify(app.records));
+       
             app.sites = [];
             seen_urls = [];
             already_seen = [];
 
             for (var i = 0; i < app.records.length; i++){
-                var cur_record = app.records[i];
+                var cur_site = app.records[i];
 
-                // TEMPORARY
-                if (already_seen.contains(cur_record.url)) continue;
-                already_seen.push(cur_record.url);
-                // end TEMPORARY
+                alert("cur_site --> " + JSON.stringify(cur_site));
 
-                var to_add = {"url": cur_record.url,
-                              "occur": 0,
+                var to_add = {"url": cur_site.url,
+                              "occur": cur_site.pageviews.length,
                               "scripts": {}};
                 
-                for (var j = i; j < app.records.length; j++){
-                    if (app.records[j].url == to_add.url){
-                        to_add.occur += 1;
-    
-                        for (var script_ind = 0; script_ind < app.records[j].scripts.length; script_ind++){
-                            var script_url = app.records[j].scripts[script_ind].url;
-                            var script_hash = app.records[j].scripts[script_ind].hash;
+                for (var pv_ind = 0; pv_ind < app.records[i].pageviews.length; pv_ind++){
+                    var cur_pageview = app.records[i].pageviews[pv_ind];
+                    alert("cur_pageview --> " + JSON.stringify(cur_pageview));
+            
+                    for (var script_ind = 0; script_ind < cur_pageview.scripts.length; script_ind++){
+                        var script_url = cur_pageview.scripts[script_ind].url;
+                        var script_hash = cur_pageview.scripts[script_ind].hash;
 
-                            if (!(script_url in to_add.scripts)){
-                                to_add.scripts[script_url] = {};
-                                to_add.scripts[script_url].url = script_url; // might not be necessary
-                                to_add.scripts[script_url].hashes = {};
-                                to_add.scripts[script_url].occur = 0;
-                            }
-                            
-                            if (!(script_hash in to_add.scripts[script_url].hashes)){
-                                to_add.scripts[script_url].hashes[script_hash] = {};
-                                to_add.scripts[script_url].hashes[script_hash].hash = script_hash; // might not be necessary
-                                to_add.scripts[script_url].hashes[script_hash].occur = 0;
-                            }
-                            
-                            to_add.scripts[script_url].occur += 1;
-                            to_add.scripts[script_url].hashes[script_hash].occur += 1;
+                        if (!(script_url in to_add.scripts)){
+                            to_add.scripts[script_url] = {};
+                            to_add.scripts[script_url].url = script_url; // might not be necessary
+                            to_add.scripts[script_url].hashes = {};
+                            to_add.scripts[script_url].occur = 0;
                         }
+                        
+                        if (!(script_hash in to_add.scripts[script_url].hashes)){
+                            to_add.scripts[script_url].hashes[script_hash] = {};
+                            to_add.scripts[script_url].hashes[script_hash].hash = script_hash; // might not be necessary
+                            to_add.scripts[script_url].hashes[script_hash].occur = 0;
+                        }
+                        
+                        to_add.scripts[script_url].occur += 1;
+                        to_add.scripts[script_url].hashes[script_hash].occur += 1;
                     }
                 }
 
@@ -360,6 +357,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                     to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
                 }
 
+                alert(to_add);
                 app.sites.push(to_add);
             }
             

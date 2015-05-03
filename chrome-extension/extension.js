@@ -14,8 +14,9 @@
 /* 
  * Constants
  */
-PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
-SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/api/scriptcontent";
+WEBPAGE_API_URL = "http://127.0.0.1:8080/api/webpage";
+PAGEVIEW_API_URL = "http://127.0.0.1:8080/api/pageview";
+SCRIPTCONTENT_API_URL = "http://127.0.0.1:8080/api/scriptcontent";
 
 
 /*
@@ -43,6 +44,41 @@ function httpGet(url){
 
 
 /*
+ * httpPatch(url, data)
+ * ------------------- TODO update
+ * Send json-ified *data* with a HTTP PATCH request to *url*
+ */
+function httpPatch(site_url, data){
+    var request = new XMLHttpRequest();
+    
+    var url_hash = CryptoJS.SHA256(site_url).toString(CryptoJS.enc.Base64);
+    var patch_data = {"pageviews": {"add": [data]} };
+    var patch_url = WEBPAGE_API_URL + "/" + url_hash;
+    
+    console.log("finished ->" + JSON.stringify(patch_data));
+
+    request.open("PATCH", patch_url, false);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send(JSON.stringify(patch_data));
+    alert("sending " + JSON.stringify(patch_data) + " to " + patch_url);
+    
+    if (request.status == 404){
+        alert("returned 404!");
+        
+        var post_data = {"id": url_hash,
+                         "url": site_url,
+                         "pageviews": [data]};
+
+        alert("sending " + JSON.stringify(post_data) + " to " + WEBPAGE_API_URL);
+        
+        httpPost(WEBPAGE_API_URL, post_data);
+    }
+
+    return;  // TODO: check return code
+}
+
+
+/*
  * httpPost(url, data)
  * -------------------
  * Send json-ified *data* with a HTTP POST request to *url*
@@ -52,6 +88,8 @@ function httpPost(url, data){
     request.open("POST", url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
+
+    alert("returned a " + request.status);
     return;  // TODO: check return code
 }
 
@@ -74,13 +112,13 @@ function httpPost(url, data){
  * injecting in this non-optimal way for now.
  * 
  * This functionality is discussed in the following issue: 
- *   https://code.google.com/p/chromium/issues/detail?id=104058
+ *   http://code.google.com/p/chromium/issues/detail?id=104058
  * 
  * A draft proposal for adding this functionality is here: 
- *   https://groups.google.com/a/chromium.org/forum/#!msg/apps-dev/v176iCmRgSs/iM-72Evf8JgJ
+ *   http://groups.google.com/a/chromium.org/forum/#!msg/apps-dev/v176iCmRgSs/iM-72Evf8JgJ
  *
  * More general information is available in the chrome.webRequest docs: 
- *   https://developer.chrome.com/extensions/webRequest
+ *   http://developer.chrome.com/extensions/webRequest
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
@@ -159,14 +197,12 @@ chrome.tabs.onUpdated.addListener(
                 }
 
                 var timeStamp = new Date().getTime();
-                var post_data = {"url": tab.url, 
-                                 "date": timeStamp,
-                                 "scripts": SCRIPTS[tabId]};
+                var pageview_data = {"scripts": SCRIPTS[tabId]};
 
+                
                 delete SCRIPTS[tabId];
 
-                console.log("finished ->" + JSON.stringify(post_data));
-                httpPost(PAGEVIEW_API_URL, post_data);
+                httpPatch(tab.url, pageview_data);
             };
 
             injected_code = "var to_return = []; var scripts = " +

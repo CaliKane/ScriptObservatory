@@ -3,11 +3,11 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>ScriptObservatory</title>
-  <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
-  <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
-  <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
-  <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
-  <script src="https://scriptobservatory.org/js/app.js"></script>
+  <link rel="stylesheet" href="http://127.0.0.1:8080/css/bootstrap-3.3.4.min.css">
+  <link rel="stylesheet" href="http://127.0.0.1:8080/css/style.css">
+  <script src="http://127.0.0.1:8080/js/angular-1.2.16.js"></script>
+  <script src="http://127.0.0.1:8080/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <script src="http://127.0.0.1:8080/js/app.js"></script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
@@ -35,7 +35,7 @@
         <br><br>
         <h3><i>Getting Started</i></h3>
         Click the <i>"Explore the Data"</i> tab to query the database. Or, drag this 
-        <a href="javascript:q=location.href;open('https://scriptobservatory.org?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
+        <a href="javascript:q=location.href;open('http://127.0.0.1:8080?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
         bookmarklet to your bookmarks bar to jump directly to the analysis page for whatever website you have open.
         <br><br>
         <h3><i>Get Involved</i></h3>
@@ -112,7 +112,7 @@
         <div id="info_section">
           <h3><i>Some sample webpage queries:</i></h3>
           <ul>
-            <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
+            <li><a href="#" ng-click='submitQuery("http://127.0.0.1:8080");'>https://scriptobservatory.org</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
             <li><a href="#" ng-click='submitQuery("http://www.hrichina.org/en");'>http://www.hrichina.org/en</a></li>
@@ -141,7 +141,7 @@
           <table class="table table-bordered table-condensed">
             <th style="width:50%; text-align:center;"> Webpages <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/?query={{ site }}">{{ site }}</a> </td>
+                <td> <a href="http://127.0.0.1:8080/?query={{ site }}">{{ site }}</a> </td>
             </tr>
           </table>
         </div>
@@ -215,11 +215,11 @@
       <tab heading="Graphs">
         <br>
         <p align="center"> 
-          <img src="https://scriptobservatory.org/img/entries-over-time.png"></img>
+          <img src="http://127.0.0.1:8080/img/entries-over-time.png"></img>
           <br><br>
-          <img src="https://scriptobservatory.org/img/new-entries-per-hour.png"></img>
+          <img src="http://127.0.0.1:8080/img/new-entries-per-hour.png"></img>
           <br><br>
-          <img src="https://scriptobservatory.org/img/unique-webpages-over-time.png"></img>
+          <img src="http://127.0.0.1:8080/img/unique-webpages-over-time.png"></img>
           <br><br>
         </p>
       </tab>
@@ -279,7 +279,7 @@
           <li> Click a hash value (above) to see archived versions of this script </li> 
           <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a></li>
           <li> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a></li>
-          <li> See <a href="https://scriptobservatory.org?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
+          <li> See <a href="http://127.0.0.1:8080?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
       </div>
@@ -298,10 +298,10 @@
       <div class="modal-body">
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View <a href="https://scriptobservatory.org/api/scriptcontent/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li> View <a href="http://127.0.0.1:8080/api/scriptcontent/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
           <li> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a></li>
           <li> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a></li>
-          <li> See <a href="https://scriptobservatory.org?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
+          <li> See <a href="http://127.0.0.1:8080?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
       </div>
