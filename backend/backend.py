@@ -29,13 +29,7 @@ class Pageview(db.Model):
     
     def __init__(self, **kwargs):
         super(Pageview, self).__init__(**kwargs)
-        
-        # do custom initialization here
-        print("woohoo we're in the constructor")
-        print(self.date)
-        cur_time = int(1000*time.time())
-        print(cur_time)
-        self.date = cur_time
+        self.date = int(1000*time.time())
 
 class Script(db.Model):
     __tablename__ = "script"

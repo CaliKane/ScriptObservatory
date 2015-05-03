@@ -307,7 +307,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         $http.get("/search?url=" + queryString).success(function (data){
             app.records = data.sites;
                 
-            alert(JSON.stringify(app.records));
+            //alert(JSON.stringify(app.records));
        
             app.sites = [];
             seen_urls = [];
@@ -316,7 +316,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             for (var i = 0; i < app.records.length; i++){
                 var cur_site = app.records[i];
 
-                alert("cur_site --> " + JSON.stringify(cur_site));
+                //alert("cur_site --> " + JSON.stringify(cur_site));
 
                 var to_add = {"url": cur_site.url,
                               "occur": cur_site.pageviews.length,
@@ -324,7 +324,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 
                 for (var pv_ind = 0; pv_ind < app.records[i].pageviews.length; pv_ind++){
                     var cur_pageview = app.records[i].pageviews[pv_ind];
-                    alert("cur_pageview --> " + JSON.stringify(cur_pageview));
+                    //alert("cur_pageview --> " + JSON.stringify(cur_pageview));
             
                     for (var script_ind = 0; script_ind < cur_pageview.scripts.length; script_ind++){
                         var script_url = cur_pageview.scripts[script_ind].url;
@@ -357,7 +357,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                     to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
                 }
 
-                alert(to_add);
+                //alert(to_add);
                 app.sites.push(to_add);
             }
             
