@@ -238,7 +238,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 
     $scope.submitQuery = function(query){
         var date_option = $scope.dateRangeChoice;
-
+        /*
         var current_time = (new Date()).getTime();
         var min_time = 0;
         
@@ -254,20 +254,18 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         else if (date_option == "day"){
             min_time = current_time - (1000*60*60*24);
         }
- 
+        */
         var query_string = "";
 
         if (query != "") {
             if (query.length == 64 && isValidHash(query)){
                 // this is a hash query
-                queryString = '?q={"filters":[{"name":"script_hash","op":"eq","val":"' + query + '"}]}';
-                $scope.makeScriptQueryByHash(queryString);
+                $scope.makeScriptQueryByHash(query);
                 showScriptQueryResults();
             }
             else if (query.slice(-3) == ".js" || query.slice(0, 14) == "inline_script_"){
                 // this is a javascript query
-                queryString = '?q={"filters":[{"name":"script_url","op":"eq","val":"' + query + '"}]}';
-                $scope.makeScriptQueryByUrl(queryString);
+                $scope.makeScriptQueryByUrl(query);
                 showScriptQueryResults();
             }
             else {
@@ -292,20 +290,20 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     }
 
     $scope.makeScriptQueryByUrl = function(queryString){
-        $http.get("/api/scripturlindex" + queryString).success(function (data){
-            app.scriptQueryResults = data.objects[0].page_urls.split(',');
+        $http.get("/search?script_by_url=" + queryString).success(function (data){
+            app.scriptQueryResults = data.objects;
         });
     }
 
     $scope.makeScriptQueryByHash = function(queryString){
-        $http.get("/api/scripthashindex" + queryString).success(function (data){
-            app.scriptQueryResults = data.objects[0].page_urls.split(',');
+        $http.get("/search?script_by_hash=" + queryString).success(function (data){
+            app.scriptQueryResults = data.objects;
         });
     }
 
     $scope.makeWebpageQuery = function(queryString){
         $http.get("/search?url=" + queryString).success(function (data){
-            app.records = data.sites;
+            app.records = data.objects;
                 
             //alert(JSON.stringify(app.records));
        

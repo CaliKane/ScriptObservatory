@@ -19,13 +19,14 @@ class Webpage(db.Model):
     __tablename__ = "webpage"
     id = Column(Text, primary_key=True)
     url = Column(Text, unique=True)
-    pageviews = relationship("Pageview", backref="webpage", lazy="joined")
+    pageviews = relationship("Pageview", backref="webpage", lazy='subquery')
 
 class Pageview(db.Model):
     __tablename__ = "pageview"
-    date = Column(Integer, primary_key=True)
-    webpage_url = Column(Integer, ForeignKey("webpage.url"))
-    scripts = relationship("Script", backref="pageview", lazy="joined")
+    id = Column(Integer, primary_key=True)
+    url = Column(Integer, ForeignKey("webpage.url"))
+    date = Column(Integer, unique=False)
+    scripts = relationship("Script", backref=db.backref("pageview", lazy='subquery'), lazy='subquery')
     
     def __init__(self, **kwargs):
         super(Pageview, self).__init__(**kwargs)
@@ -34,7 +35,7 @@ class Pageview(db.Model):
 class Script(db.Model):
     __tablename__ = "script"
     id = Column(Integer, primary_key=True)
-    pageview_id = Column(Integer, ForeignKey("pageview.date"))
+    pageview_id = Column(Integer, ForeignKey("pageview.id"))
     url = Column(Text, unique=False)
     hash = Column(Text, unique=False)
 
@@ -44,25 +45,10 @@ class RoboTask(db.Model):
     url = Column(Text, unique=False)
     priority = Column(Integer, unique=False)
 
-class ScriptContent(db.Model):
-    __tablename__ = "scriptcontent"
-    sha256 = Column(Text, primary_key=True)
-    content = Column(Text, unique=False)
-
 class Suggestions(db.Model):
     __tablename__ = "suggestions"
     id = Column(Integer, primary_key=True)
     content = Column(Text, unique=False)
-
-class ScriptUrlIndex(db.Model):
-    __tablename__ = "scripturlindex"
-    script_url = Column(Text, primary_key=True)
-    page_urls = Column(Text, unique=False)  # comma-separated list of URLs
-
-class ScriptHashIndex(db.Model):
-    __tablename__ = "scripthashindex"
-    script_hash = Column(Text, primary_key=True)
-    page_urls = Column(Text, unique=False)  # comma-separated list of URLs
 
 
 db.create_all()
@@ -84,18 +70,6 @@ api_manager.create_api(RoboTask,
                        max_results_per_page=0,
                        methods=["GET", "POST", "DELETE", "PUT"])
 
-api_manager.create_api(ScriptContent,
-                       max_results_per_page=0,
-                       methods=["GET", "POST", "PUT"])
-
-api_manager.create_api(ScriptUrlIndex,
-                       max_results_per_page=0,
-                       methods=["GET"])
-
-api_manager.create_api(ScriptHashIndex,
-                       max_results_per_page=0,
-                       methods=["GET"])
-
 api_manager.create_api(Suggestions,
                        max_results_per_page=0,
                        methods=["GET", "POST", "PUT"])
@@ -103,36 +77,53 @@ api_manager.create_api(Suggestions,
 
 @app.route('/search', methods=["GET"])
 def search():
+    start = time.time()
     url = request.args.get('url')
+    url_hash = request.args.get('hash')
+    script_by_url = request.args.get('script_by_url')
+    script_by_hash = request.args.get('script_by_hash')
+
+    if url_hash is not None:
+        websites = [db.session.query(Webpage).get(url_hash)]
+    elif url is not None:   
+        websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
+    elif script_by_url is not None:   
+        scripts = db.session.query(Script).filter(Script.url == script_by_url).all()
+    elif script_by_hash is not None:   
+        scripts = db.session.query(Script).filter(Script.hash == script_by_hash).all()
+    else:
+        return "enter a query parameter! {url, hash, script_by_url, script_by_hash}"
+
+    json = {'objects': []}
     
-    if id is None:
-        return "enter a ?url=___ parameter!"
+    if url_hash or url:
+        for site in websites:
+            json_site = {}
+            json_site['url'] = site.url
+            json_site['id'] = site.id
+            json_site['pageviews'] = []
 
-    # to do an exact query --> query(Webpage).get(__primary_key__).all()
-    websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
-    json = {'sites': []}
+            for pv in site.pageviews:
+                json_pv = {}
+                json_pv['date'] = pv.date
+                json_pv['scripts'] = []
 
-    for site in websites:
-        json_site = {}
-        json_site['url'] = site.url
-        json_site['id'] = site.id
-        json_site['pageviews'] = []
+                for script in pv.scripts:
+                    json_script = {}
+                    json_script['url'] = script.url
+                    json_script['hash'] = script.hash
+                    json_pv['scripts'].append(json_script)
 
-        for pv in site.pageviews:
-            json_pv = {}
-            json_pv['date'] = pv.date
-            json_pv['scripts'] = []
+                json_site['pageviews'].append(json_pv)
 
-            for script in pv.scripts:
-                json_script = {}
-                json_script['url'] = script.url
-                json_script['hash'] = script.hash
-                json_pv['scripts'].append(json_script)
+            json['objects'].append(json_site)    
+    
+    if script_by_url or script_by_hash:
+        json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
 
-            json_site['pageviews'].append(json_pv)
-
-        json['sites'].append(json_site)    
-
+    end = time.time()
+    print(end - start)
+    
     return jsonify(json)
 
 
@@ -141,6 +132,5 @@ def index():
     return app.send_static_file("index.html")
 
 if __name__ == '__main__':
-    app.debug = True
     app.run(host="0.0.0.0", port=8080, use_reloader=False)
 

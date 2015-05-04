@@ -1,8 +1,0 @@
-{% for site in websites %}
-<h2>{{ site.url }}</h2>
-    <br>
-    {% for script in site.scripts %}
-        {{ script.url }}, 
-    {% endfor %}
-    <br><br>
-{% endfor %}
