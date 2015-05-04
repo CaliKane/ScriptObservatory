@@ -144,7 +144,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 var script_content_data = {"sha256": hash, 
                                            "content": data};
                 
-                httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
+                //httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
             }
 
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
@@ -193,7 +193,7 @@ chrome.tabs.onUpdated.addListener(
                     var script_content_data = {"sha256": hash, 
                                                "content": data};
             
-                    httpPost(SCRIPTCONTENT_API_URL, script_content_data);
+                    //httpPost(SCRIPTCONTENT_API_URL, script_content_data);
                 }
 
                 var timeStamp = new Date().getTime();
