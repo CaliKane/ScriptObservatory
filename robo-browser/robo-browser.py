@@ -123,12 +123,6 @@ if __name__ == "__main__":
                 # There really isn't anything we can do to recover, so we destroy all processes with the given
                 # PGID. To avoid destroying ourselves, we catch SIGTERM in our main thread and try to continue after
                 # recreating the Xvfb display.
-                logging.error("hit HARD_REQ_TIMEOUT. terminating process....")
-                
-                p.terminate()  # this may be unneccessary because of the kill call below. this terminate() call is not
-                               # sufficient because it does not destroy the chromedriver & chrome processes, leading to 
-                               # a slow memory leak that will eventually bring down the system
-
                 logging.error("running: kill -TERM -{0}".format(MY_PID))
                 out = subprocess.check_output("kill -TERM -{0}".format(MY_PID), shell=True)
                 logging.error("result: {0}".format(out))
