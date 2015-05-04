@@ -70,22 +70,22 @@ Here are some steps that have been made to make this process as trustworthy as p
 Roadmap
 -------
 
-Milestone 4 (target date= 4/30):
- - Have time value be added server-side
- - Add tests for backend API & chrome extension code
- - Support (optionally) keeping content of HTML
- - Support iframes
+Milestone 4:
+ - ~~ Have time value be added server-side ~~
+ - Support uploading content of HTML (main frame & subframes)
+ - Support uploading of iframe tags
+ - Finish offloading scriptcontent server to a different server
  - Support YARA scanning full database archive + live alerting on new submissions
- - Make chrome extension check if a script already exists to avoid hammering POSTs to server
+ - Add tests for backend API & chrome extension code
 
-Milstone 5 (target date= 5/15):
+Milestone 5:
  - Add button to chrome extension to toggle reporting on and off
  - Add button to chrome extension to view current page's analysis page
  - Allow blacklisting stats upload for website regexes in the chrome extension
  - Have chrome extension automatically report all errors while browsing sites
  - Improve visualizations for what scripts & versions of scripts have been included
- - Improve test cases 
  - Make robobrowser delete task only on success (or possibly add it back in on fail)
+ - Harden backend APIs
 
 Longer-term:
  - Let users view scripts in extension and choose whether or not to allow them to run
