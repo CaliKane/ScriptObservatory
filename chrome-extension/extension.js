@@ -14,9 +14,9 @@
 /* 
  * Constants
  */
-WEBPAGE_API_URL = "http://127.0.0.1:8080/api/webpage";
-PAGEVIEW_API_URL = "http://127.0.0.1:8080/api/pageview";
-SCRIPTCONTENT_API_URL = "http://127.0.0.1:8080/api/scriptcontent";
+WEBPAGE_API_URL = "https://scriptobservatory.org/api/webpage";
+PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
+SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/api/scriptcontent";
 
 
 /*
@@ -60,16 +60,11 @@ function httpPatch(site_url, data){
     request.open("PATCH", patch_url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(patch_data));
-    alert("sending " + JSON.stringify(patch_data) + " to " + patch_url);
     
     if (request.status == 404){
-        alert("returned 404!");
-        
         var post_data = {"id": url_hash,
                          "url": site_url,
                          "pageviews": [data]};
-
-        alert("sending " + JSON.stringify(post_data) + " to " + WEBPAGE_API_URL);
         
         httpPost(WEBPAGE_API_URL, post_data);
     }
@@ -88,8 +83,6 @@ function httpPost(url, data){
     request.open("POST", url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
-
-    alert("returned a " + request.status);
     return;  // TODO: check return code
 }
 
