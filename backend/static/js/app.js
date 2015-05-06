@@ -286,7 +286,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             }
         }
 
-        setTimeout(function() { alert("Your query has been submitted. Please be patient -- it can take up to a minute to load the results."); }, 100);
+        setTimeout(function() { alert("Your query has been submitted. Please be patient -- most queries take less than 10 seconds but some can take up to a minute."); }, 100);
     }
 
     $scope.makeScriptQueryByUrl = function(queryString){
