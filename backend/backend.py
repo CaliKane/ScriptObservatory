@@ -13,6 +13,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, Text, ForeignKey
 
 
+SCRIPT_CONTENT_FOLDER = "/home/andy/projects/ScriptObservatory/backend/static/script-content/" # TODO: config option
+
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
 db = SQLAlchemy(app)
@@ -78,8 +80,6 @@ api_manager.create_api(Suggestions,
                        methods=["GET", "POST", "PUT"])
 
 
-SCRIPT_CONTENT_FOLDER = "/home/andy/projects/ScriptObservatory/backend/static/script-content/"
-
 @app.route('/script-content/<path:filename>', methods=["GET"])
 def get_script_content(filename):
     return send_from_directory(SCRIPT_CONTENT_FOLDER, "{0}.txt".format(filename), as_attachment=False)
@@ -112,8 +112,8 @@ def post_script_content():
 
     # ok, now we can finally write the file
     filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256))
-    with open(filename, 'w') as f:
-        f.write(content)
+    with open(filename, 'wb') as f:
+        f.write(content.encode('utf-8'))
 
     return 'thanks!'
 
