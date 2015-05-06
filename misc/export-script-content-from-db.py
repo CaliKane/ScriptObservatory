@@ -1,7 +1,9 @@
 #!/usr/bin/env python2
 #
 
+import json  # import simplejson as json, if on Python 2.5
 import os
+import requests  # python-requests is installable from PyPI...
 import sqlite3
 import time
 
@@ -9,23 +11,30 @@ import time
 conn = sqlite3.connect('../backend/database.db')
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM scriptcontent")
-scripts = cursor.fetchall()
 
 SCRIPT_CONTENT_FOLDER = "/home/andy/projects/ScriptObservatory/backend/static/script-content/"
 
-i = 0
-for p in scripts:
-    i += 1
-    h = p[0]
-    print(h)
-    content = p[1]
-    
-    with open(os.path.join(SCRIPT_CONTENT_FOLDER, "{0}.txt".format(h)), 'w') as f:
-        f.write(content.encode('utf8'))
 
-    if i > 1000: 
-        break
+while True:
+    scripts = cursor.fetchmany(1000)
+    print(len(scripts))
+    if len(scripts) == 0: break
+
+    for p in scripts:
+        h = p[0]
+        content = p[1]
+        
+        sc = {'sha256': h, 'content': content}
+
+        print("posting {0}".format(h))
+
+        r = requests.post('https://scriptobservatory.org/script-content', 
+                          data=json.dumps(sc),
+                          headers={'content-type': 'application/json'},
+                          verify=False)
+
+        assert r.status_code == 200
+        time.sleep(0.3)
 
 conn.close()
-
 
