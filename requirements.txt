@@ -4,9 +4,6 @@ Flask-SQLAlchemy==2.0
 itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
-matplotlib==1.4.3
-mimerender==0.5.5
-numpy==1.9.2
 pyparsing==2.0.3
 python-dateutil==2.4.2
 python-mimeparse==0.1.4

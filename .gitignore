@@ -1,6 +1,7 @@
 scheduler-log.txt
 log-robobrowse*
 *.db
+*.pyc
 entries-over-time.png
 new-entries-per-hour.png
 unique-webpages-over-time.png
