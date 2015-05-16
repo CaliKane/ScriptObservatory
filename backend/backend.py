@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, Text, ForeignKey
 
 
-SCRIPT_CONTENT_FOLDER = "/home/andy/projects/ScriptObservatory/backend/static/script-content/" # TODO: config option
+SCRIPT_CONTENT_FOLDER = os.environ['PATH_TO_STORE_SCRIPTCONTENT']
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -87,59 +87,52 @@ def get_script_content(filename):
 
 @app.route('/script-content', methods=["POST"])
 def post_script_content():
-    # first we check to see if the file exists for the hash the client provides (let's
-    # avoid spending the effort to hash the user's data in the 99% case where the user 
-    # isn't lying. we'll eventually check their hash calculation later)
+    # first we check to see if the file exists for the hash the client provides 
+    # (let's avoid spending the effort to hash the user's data in the 99% case 
+    # where the user isn't lying. we'll eventually check their hash later)
     req = json.loads(str(request.data, 'utf-8'))
-
     sha256_c = req.get('sha256')
     filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256_c))
+    
     if os.path.isfile(filename):
-        # TODO sanitize this filepath from path traversals... ok for now because we're just 
-        # checking for the existance of a file, but longer-term we should not allow this information 
-        # disclosure
-        print('we already have this content')
         return 'we already have this content'
 
+    # we double check that the hash we've calculated matches the hash provided by the client
+    # and then write the file to disk
     content = req.get('content')
     sha256 = hashlib.sha256(content.encode('utf-8')).hexdigest()
-
-    # we double check that the hash we've calculated matches the hash provided by the client
-    # before writing the file to disk
-    # TODO: auto-report cases where this check fails? something strange is going on if we get here...
+    
     if sha256_c != sha256:
+        # TODO: auto-report cases where this check fails? this should never happen
         return "content / hash mismatch"
 
-    # ok, now we can finally write the file
     filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256))
     with open(filename, 'wb') as f:
         f.write(content.encode('utf-8'))
 
     return 'thanks!'
+    # TODO: eventually, we can have the chrome extension track hashes the server already has
+    # and not try to upload them to save bandwidth.
 
 
 @app.route('/search', methods=["GET"])
 def search():
-    start = time.time()
     url = request.args.get('url')
     url_hash = request.args.get('hash')
     script_by_url = request.args.get('script_by_url')
     script_by_hash = request.args.get('script_by_hash')
 
-    if url_hash is not None:
-        websites = [db.session.query(Webpage).get(url_hash)]
-    elif url is not None:   
-        websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
-    elif script_by_url is not None:   
-        scripts = db.session.query(Script).filter(Script.url == script_by_url).all()
-    elif script_by_hash is not None:   
-        scripts = db.session.query(Script).filter(Script.hash == script_by_hash).all()
-    else:
+    if not any([url, url_hash, script_by_url, script_by_hash]):
         return "enter a query parameter! {url, hash, script_by_url, script_by_hash}"
 
     json = {'objects': []}
     
     if url_hash or url:
+        if url_hash is not None:
+            websites = [db.session.query(Webpage).get(url_hash)]
+        elif url is not None:   
+            websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
+        
         for site in websites:
             json_site = {}
             json_site['url'] = site.url
@@ -161,12 +154,14 @@ def search():
 
             json['objects'].append(json_site)    
     
-    if script_by_url or script_by_hash:
+    elif script_by_url or script_by_hash:
+        if script_by_url is not None:   
+            scripts = db.session.query(Script).filter(Script.url == script_by_url).all()
+        elif script_by_hash is not None:   
+            scripts = db.session.query(Script).filter(Script.hash == script_by_hash).all()
+        
         json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
 
-    end = time.time()
-    print(end - start)
-    
     return jsonify(json)
 
 
