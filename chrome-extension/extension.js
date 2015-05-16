@@ -45,8 +45,10 @@ function httpGet(url){
 
 /*
  * httpPatch(url, data)
- * ------------------- TODO update
- * Send json-ified *data* with a HTTP PATCH request to *url*
+ * -------------------
+ * Send json-ified *data* with a HTTP PATCH request to *url*. If the PATCH request
+ * fails with an error code of 404, we automatically send a POST request to 
+ * initialize the webpage in the ScriptObservatory API.
  */
 function httpPatch(site_url, data){
     var request = new XMLHttpRequest();
@@ -198,6 +200,8 @@ chrome.tabs.onUpdated.addListener(
                 httpPatch(tab.url, pageview_data);
             };
 
+            // TODO: review this injected code for possible security issues before making
+            //       release. OK for now as it's just the robo-browser using this code.
             injected_code = "var to_return = []; var scripts = " +
                     "document.getElementsByTagName('script'); for (var i=0; " +
                     "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
