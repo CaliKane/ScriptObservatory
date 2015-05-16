@@ -24,7 +24,7 @@ from xvfbwrapper import Xvfb
 
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 
-N_SECS_TO_WAIT_AFTER_ONLOAD = 16
+N_SECS_TO_WAIT_AFTER_ONLOAD = 18
 N_SECS_TO_WAIT_AFTER_ERR = 20
 N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
 N_SECS_REQ_TIMEOUT = 70
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                 logging.error("running: kill -TERM -{0}".format(MY_PID))
                 out = subprocess.check_output("kill -TERM -{0}".format(MY_PID), shell=True)
                 logging.error("result: {0}".format(out))
-
+                p.terminate()
         except RoboBrowseException as e:
             logging.error("ERROR: {0} -- continuing on...".format(e))
             time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
