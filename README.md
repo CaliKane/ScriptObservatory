@@ -2,7 +2,7 @@ ScriptObservatory [![Build Status](https://api.travis-ci.org/andy11/ScriptObserv
 =================
 
 The goal of the ScriptObservatory project is to extend the idea behind the 
-[SSL Observatory](https://www.eff.org/observatory) by recording and 
+[SSL Observatory](https://www.eff.org/observatory) by recording and organizing
 information about the **_live content_** people are seeing on
 the internet.
 
