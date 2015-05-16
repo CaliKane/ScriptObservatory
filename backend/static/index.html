@@ -109,7 +109,7 @@
           </div>   
         </form>
         <br>
-        <div id="info_section">
+        <div ng-show="QRY_STATUS == 'WAITING_FOR_QRY'" id="info_section">
           <h3><i>Some sample webpage queries:</i></h3>
           <ul>
             <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
@@ -133,11 +133,10 @@
             <li><a href="#" ng-click='submitQuery("c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3");'>c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3</a></li>
             <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.google.com/js/bg/71ikiLcMrGYIGyvMYn7ZsljFfaS4wGaxf80-aqUxjBw.js");'>https://www.google.com/js/bg/71ikiLcMrGYIGyvMYn7ZsljFfaS4wGaxf80-aqUxjBw.js</a></li>
-            <br>
           </ul>
         </div>
         
-        <div id="script_query_section" style="display:none;" >
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS'" id="script_query_section">
           <table class="table table-bordered table-condensed">
             <th style="width:50%; text-align:center;"> Webpages <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
@@ -146,7 +145,7 @@
           </table>
         </div>
 
-        <div id="website_query_section" style="display:none;" >
+        <div ng-show="QRY_STATUS == 'HAVE_WEBPAGE_RESULTS'" id="website_query_section">
           <table class="table table-bordered table-condensed">
             <th style="width:30%; text-align:center;"> Site URL <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
             <th style="width:5%; text-align:center;"> N </th>
@@ -169,6 +168,20 @@
             </tr>
           </table>
         </div>
+
+        <div ng-show="QRY_STATUS == 'PROCESSING_QRY'" align="center">
+          <span> Your query is in progress... <br> Most queries take less than 10 seconds but some can take up to a minute. </span>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
+          <span> Something went wrong :-( ... An error report has been logged.</span>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
+          <span> No results were found. </span>
+        </div>
+
+        <br>
       </tab>
 
       <tab heading="Suggest Websites to Observe">

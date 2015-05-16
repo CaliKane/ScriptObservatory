@@ -3,28 +3,6 @@
  * JavaScript as well as some AngularJS code.
  */
 
-/* 
- * visualization helper functions
- *  (these should be deleted when the page moves to bootstrap)
- */
-function show_about(){
-    document.getElementById('info_section').style.display="block";
-    document.getElementById('website_query_section').style.display="none";
-    document.getElementById('script_query_section').style.display="none";
-}
-
-function showWebsiteQueryResults(){    
-    document.getElementById('info_section').style.display="none";
-    document.getElementById('website_query_section').style.display="block";
-    document.getElementById('script_query_section').style.display="none";
-}
-
-function showScriptQueryResults(){
-    document.getElementById('info_section').style.display="none";
-    document.getElementById('website_query_section').style.display="none";
-    document.getElementById('script_query_section').style.display="block";
-}
-
 
 /* 
  * add a repeat(n) method to String objects so we can get a String of 
@@ -81,6 +59,7 @@ app.filter('object2Array', function() {
 
 app.controller("AppCtrl", function($http, $scope, $modal){
     var app = this;
+
     $scope.openWebsite = function (site) {
       var modalInstance = $modal.open({
         templateUrl: 'websiteModalContent.html',
@@ -261,12 +240,10 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             if (query.length == 64 && isValidHash(query)){
                 // this is a hash query
                 $scope.makeScriptQueryByHash(query);
-                showScriptQueryResults();
             }
             else if (query.slice(-3) == ".js" || query.slice(0, 14) == "inline_script_"){
                 // this is a javascript query
                 $scope.makeScriptQueryByUrl(query);
-                showScriptQueryResults();
             }
             else {
                 // this is a webpage query
@@ -282,31 +259,63 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 
                 //queryString = '?q={"filters":[{"and":[{"name":"url","op":"like","val":"%' + query + '%"},{"name":"date","op":">=","val":"' + min_time + '"}]}]}';
                 $scope.makeWebpageQuery(query);
-                showWebsiteQueryResults();
+                //showWebsiteQueryResults();
             }
         }
-
-        setTimeout(function() { alert("Your query has been submitted. Please be patient -- most queries take less than 10 seconds but some can take up to a minute."); }, 100);
     }
 
+    // STATUS OPTIONS:
+    //  WAITING_FOR_QRY, PROCESSING_QRY, NO_RESULTS, HAVE_WEBPAGE_RESULTS, HAVE_SCRIPT_RESULTS, QRY_ERROR
+    $scope.QRY_STATUS = "WAITING_FOR_QRY";
+
+    $scope.SCRIPT_QRY_TIMEOUT = 10*1000;
+    $scope.WEBPAGE_QRY_TIMEOUT = 30*1000;
+
     $scope.makeScriptQueryByUrl = function(queryString){
-        $http.get("/search?script_by_url=" + queryString).success(function (data){
+        $scope.QRY_STATUS = "PROCESSING_QRY";
+
+        $http.get("/search?script_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+            if (data.objects.length == 0){
+                $scope.QRY_STATUS = "NO_RESULTS";
+            }
+            else {
+                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS";
+            }
+
             app.scriptQueryResults = data.objects;
+        }).error(function(data){
+            $scope.QRY_STATUS = "QRY_ERROR";
         });
     }
 
     $scope.makeScriptQueryByHash = function(queryString){
-        $http.get("/search?script_by_hash=" + queryString).success(function (data){
+        $scope.QRY_STATUS = "PROCESSING_QRY";
+        
+        $http.get("/search?script_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+            if (data.objects.length == 0){
+                $scope.QRY_STATUS = "NO_RESULTS";
+            }
+            else {
+                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS";
+            }
+
             app.scriptQueryResults = data.objects;
         });
     }
 
     $scope.makeWebpageQuery = function(queryString){
-        $http.get("/search?url=" + queryString).success(function (data){
+        $scope.QRY_STATUS = "PROCESSING_QRY";
+        
+        $http.get("/search?url=" + queryString, {timeout: $scope.WEBPAGE_QRY_TIMEOUT}).success(function (data){
+            if (data.objects.length == 0){
+                $scope.QRY_STATUS = "NO_RESULTS";
+            }
+            else {
+                $scope.QRY_STATUS = "HAVE_WEBPAGE_RESULTS";
+            }
+
             app.records = data.objects;
                 
-            //alert(JSON.stringify(app.records));
-       
             app.sites = [];
             seen_urls = [];
             already_seen = [];
