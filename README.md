@@ -1,4 +1,4 @@
-ScriptObservatory [![Build Status](https://api.travis-ci.org/andy11/ScriptObservatory.svg?branch=master)](https://travis-ci.org/andy11/ScriptObservatory)
+ScriptObservatory [![Build Status](https://api.travis-ci.org/andy11/ScriptObservatory.svg?branch=master)](https://travis-ci.org/andy11/ScriptObservatory) [![Coverage Status](https://coveralls.io/repos/andy11/ScriptObservatory/badge.svg)](https://coveralls.io/r/andy11/ScriptObservatory)
 =================
 
 The goal of the ScriptObservatory project is to extend the idea behind the 
