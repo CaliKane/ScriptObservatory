@@ -1,1 +1,11 @@
 language: python
+
+# require python3.4
+python:
+  - "3.4"
+
+# install dependencies
+install:
+  - "pip install -r requirements.txt"
+
+script: nosetests
