@@ -4,6 +4,8 @@ addons:
   hosts:
     - scriptobservatory.org
 
+env: PATH_TO_STORE_SCRIPTCONTENT=/tmp/
+
 python:
   - "3.4"
 
