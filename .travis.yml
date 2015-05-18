@@ -1,5 +1,9 @@
 language: python
 
+addons:
+  hosts:
+    - scriptobservatory.org
+
 python:
   - "3.4"
 
