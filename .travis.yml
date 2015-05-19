@@ -14,4 +14,4 @@ python:
 install:
   - "pip install -r requirements.txt"
 
-script: nosetests misc/tests/
+script: sudo nosetests misc/tests/
