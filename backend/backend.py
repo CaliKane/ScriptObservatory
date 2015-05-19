@@ -4,6 +4,7 @@
 import json
 import os
 import hashlib
+import sys
 import time
 
 from flask import Flask, request, jsonify, send_from_directory
@@ -170,5 +171,6 @@ def index():
     return app.send_static_file("index.html")
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, use_reloader=False)
+    port = int(os.environ['BACKEND_PORT'])
+    app.run(host="0.0.0.0", port=port, use_reloader=False)
 
