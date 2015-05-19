@@ -4,6 +4,8 @@ addons:
   hosts:
     - scriptobservatory.org
 
+sudo: required
+
 env: PATH_TO_STORE_SCRIPTCONTENT=/tmp/ BACKEND_PORT=443
 
 python:
