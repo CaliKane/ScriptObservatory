@@ -33,10 +33,14 @@ import subprocess
 import time
 
 
-FILEPATH = os.path.dirname(os.path.realpath(__file__))
-
+# relative paths from tests/ directory
 PATH_TO_BACKEND = "../backend/backend.py"
 PATH_TO_ROBO_BROWSER = "../robo-browser/robo-browser.py"
+PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
+
+# set environment variables
+FILEPATH = os.path.dirname(os.path.realpath(__file__))
+os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
 
 def launch_backend():
