@@ -68,7 +68,10 @@ def test_all():
     logging.basicConfig(level=logging.WARN)
 
     backend = launch_backend()
+    assert backend.poll() is not None
+
     robobrowser = launch_robobrowser()
+    assert robobrowser.poll() is not None
 
     check_api_up("webpage")
     check_api_up("pageview")
