@@ -44,6 +44,7 @@ FILEPATH = os.path.dirname(os.path.realpath(__file__))
 os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
 TEST_API_SUGGESTIONS = "http://127.0.0.1:8080/api/suggestions"
+TEST_API_ROBOTASK = "http://127.0.0.1:8080/api/robotask"
 
 
 def launch_backend():
@@ -70,9 +71,23 @@ def check_api_up_and_empty(api_name):
     logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
     assert r.status_code == 200
     response = r.json()
-    print(response)
     assert int(response["num_results"]) == 0
     time.sleep(0.1)
+
+
+def json_post(url, content):
+    r = requests.post(url,
+                      data=json.dumps(content),
+                      headers={'content-type': 'application/json'})
+    assert r.status_code == 201 
+    return r
+
+
+def json_get(url):
+    r = requests.get(url,
+                     headers={'content-type': 'application/json'})
+    assert r.status_code == 200
+    return r.json()
 
 
 def test_all():
@@ -92,17 +107,12 @@ def test_all():
 
     # test POST to suggestions API
     suggestion = {'content': 'blah blah test content'}
-    r = requests.post(TEST_API_SUGGESTIONS, data=json.dumps(suggestion),
-                      headers={'content-type': 'application/json'})
-    assert r.status_code == 201 
+    response = json_post(TEST_API_SUGGESTIONS, suggestion)
 
     # test GET of new data on suggestions API 
-    r = requests.get(TEST_API_SUGGESTIONS,
-                     headers={'content-type': 'application/json'})
-    assert r.status_code == 200
-    response = r.json()
-    print(response)
+    response = json_get(TEST_API_SUGGESTIONS)
     assert int(response["num_results"]) == 1
+
 
     backend.terminate()
     #robobrowser.terminate()
