@@ -66,10 +66,11 @@ def check_api_up_and_empty(api_name):
     r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
                      headers={'content-type': 'application/json'})
     
-    logging.warn("returned {0}: {1}".format(r.status_code, r.text))
+    logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
     assert r.status_code == 200
-    print(r.text)
-    assert r.text == ""
+    response = r.json()
+    print(response)
+    assert int(response["num_results"]) == 0
 
 
 
@@ -99,8 +100,9 @@ def test_all():
     r = requests.get(TEST_API_SUGGESTIONS,
                      headers={'content-type': 'application/json'})
     assert r.status_code == 200
-    print(r.text)
-    assert r.text != ""
+    response = r.json()
+    print(response)
+    assert int(response["num_results"]) == 1
 
     backend.terminate()
     #robobrowser.terminate()
