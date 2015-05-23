@@ -42,6 +42,8 @@ PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 FILEPATH = os.path.dirname(os.path.realpath(__file__))
 os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
+TEST_API_SUGGESTIONS = "http://127.0.0.1:8080/api/suggestions"
+
 
 def launch_backend():
     """ launches backend.py and returns the subprocess handle so it can be later terminated """
@@ -59,13 +61,16 @@ def launch_robobrowser():
     return s
 
 
-def check_api_up(api_name):
+def check_api_up_and_empty(api_name):
     """ test that the *api_name* API is up """
     r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
                      headers={'content-type': 'application/json'})
     
     logging.warn("returned {0}: {1}".format(r.status_code, r.text))
     assert r.status_code == 200
+    print(r.text)
+    assert r.text == ""
+
 
 
 def test_all():
@@ -74,24 +79,30 @@ def test_all():
     backend = launch_backend()
     assert backend.poll() is None
 
-    robobrowser = launch_robobrowser()
-    assert robobrowser.poll() is None
+    #robobrowser = launch_robobrowser()
+    #assert robobrowser.poll() is None
 
-    check_api_up("webpage")
-    check_api_up("pageview")
-    check_api_up("script")
-    check_api_up("robotask")
-    check_api_up("suggestions")
+    check_api_up_and_empty("webpage")
+    check_api_up_and_empty("pageview")
+    check_api_up_and_empty("script")
+    check_api_up_and_empty("robotask")
+    check_api_up_and_empty("suggestions")
 
-    
-    """
-    newperson = {'name': u'Lincoln', 'age': 23}
-    r = requests.post('/api/person', data=json.dumps(newperson),
+    # test POST to suggestions API
+    suggestion = {'content': 'blah blah test content'}
+    r = requests.post(TEST_API_SUGGESTIONS, data=json.dumps(suggestion),
                       headers={'content-type': 'application/json'})
     r.status_code, r.headers['content-type'], r.data
-    """
-    
+    assert r.status_code = 204
+
+    # test GET of new data on suggestions API 
+    r = requests.get(TEST_API_SUGGESTIONS,
+                     headers={'content-type': 'application/json'})
+    assert r.status_code == 200
+    print(r.text)
+    assert r.text != ""
+
     backend.terminate()
-    robobrowser.terminate()
+    #robobrowser.terminate()
 
 
