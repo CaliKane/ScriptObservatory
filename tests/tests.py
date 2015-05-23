@@ -114,6 +114,16 @@ def test_all():
     assert int(response["num_results"]) == 1
 
 
+    # test POST to robotask API
+    task = {'url': 'https://scriptobservatory.org/', 
+            'priority': 10}
+    response = json_post(TEST_API_ROBOTASK, task)
+
+    # test GET of new data on suggestions API 
+    response = json_get(TEST_API_ROBOTASK)
+    assert int(response["num_results"]) == 1
+    
+    
     backend.terminate()
     #robobrowser.terminate()
 
