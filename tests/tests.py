@@ -46,7 +46,7 @@ def check_api_up(api_name):
     r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
                      headers={'content-type': 'application/json'})
     
-    logging.warn(r.status_code, r.text)
+    logging.warn("returned {0}: {1}".format(r.status_code, r.text))
     assert r.status_code == 200
 
 
