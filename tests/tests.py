@@ -45,34 +45,9 @@ os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSIO
 
 TEST_API_SUGGESTIONS = "http://127.0.0.1:8080/api/suggestions"
 TEST_API_ROBOTASK = "http://127.0.0.1:8080/api/robotask"
-
-
-def launch_backend():
-    """ launches backend.py and returns the subprocess handle so it can be later terminated """
-    logging.warn("launching backend.py")
-    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)])
-    time.sleep(1)
-    return s
-
-
-def launch_robobrowser():
-    """ launches robo-browser.py and returns the subprocess handle so it can be later terminated """
-    logging.warn("launching robo-browser.py")
-    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER)])
-    time.sleep(1)
-    return s
-
-
-def check_api_up_and_empty(api_name):
-    """ test that the *api_name* API is up """
-    r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
-                     headers={'content-type': 'application/json'})
-    
-    logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
-    assert r.status_code == 200
-    response = r.json()
-    assert int(response["num_results"]) == 0
-    time.sleep(0.1)
+TEST_API_WEBPAGE = "http://127.0.0.1:8080/api/webpage"
+TEST_API_PAGEVIEW = "http://127.0.0.1:8080/api/pageview"
+TEST_API_SCRIPT = "http://127.0.0.1:8080/api/script"
 
 
 def json_post(url, content):
@@ -90,14 +65,77 @@ def json_get(url):
     return r.json()
 
 
+def launch_backend():
+    """ launches backend.py and returns the subprocess handle so it can be later terminated """
+    logging.warn("launching backend.py")
+    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)])
+    time.sleep(1)
+    assert s.poll() is None
+    return s
+
+
+def launch_robobrowser():
+    """ launches robo-browser.py and returns the subprocess handle so it can be later terminated """
+    logging.warn("launching robo-browser.py")
+    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER)])
+    time.sleep(1)
+    assert s.poll() is None
+    return s
+
+
+def check_api_up_and_empty(api_name):
+    """ test that the *api_name* API is up """
+    r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
+                     headers={'content-type': 'application/json'})
+    
+    logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
+    assert r.status_code == 200
+    response = r.json()
+    assert int(response["num_results"]) == 0
+    time.sleep(0.1)
+
+
+def check_sanity_suggestion_api():
+    """ sanity-check suggestions API """
+    suggestion = {'content': 'blah blah test content'}
+    json_post(TEST_API_SUGGESTIONS, suggestion)
+    response = json_get(TEST_API_SUGGESTIONS)
+    assert int(response["num_results"]) == 1
+
+
+def check_sanity_robotask_api():
+    """ sanity-check robotask API """
+    task = {'url': 'https://scriptobservatory.org/', 
+            'priority': 10}
+    json_post(TEST_API_ROBOTASK, task)
+    response = json_get(TEST_API_ROBOTASK)
+    assert int(response["num_results"]) == 1
+     
+
+def check_sanity_webpage_pageview_script_api():
+    """ sanity-check webpage, pageview, script APIs """
+    webpage = {"url": "https://scriptobservatory.org/",
+               "pageviews": {'date': 888888888,
+                             'scripts': {'url': 'https://scriptobservatory.org/test.js',
+                                         'hash': '274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a'}
+                            }
+              }
+    json_post(TEST_API_WEBPAGE, webpage)
+    
+    response = json_get(TEST_API_WEBPAGE)
+    assert int(response["num_results"]) == 1
+
+    response = json_get(TEST_API_PAGEVIEW)
+    assert int(response["num_results"]) == 1
+
+    response = json_get(TEST_API_SCRIPT)
+    assert int(response["num_results"]) == 1
+
+
 def test_all():
     logging.basicConfig(level=logging.WARN)
 
     backend = launch_backend()
-    assert backend.poll() is None
-
-    #robobrowser = launch_robobrowser()
-    #assert robobrowser.poll() is None
 
     check_api_up_and_empty("webpage")
     check_api_up_and_empty("pageview")
@@ -105,26 +143,14 @@ def test_all():
     check_api_up_and_empty("robotask")
     check_api_up_and_empty("suggestions")
 
-    # test POST to suggestions API
-    suggestion = {'content': 'blah blah test content'}
-    response = json_post(TEST_API_SUGGESTIONS, suggestion)
+    # TODO: make these work even if the starting value isn't 1
+    # TODO: make these delete the content they add
+    check_sanity_suggestion_api()
+    check_sanity_robotask_api()
+    check_sanity_webpage_pageview_script_api()
 
-    # test GET of new data on suggestions API 
-    response = json_get(TEST_API_SUGGESTIONS)
-    assert int(response["num_results"]) == 1
-
-
-    # test POST to robotask API
-    task = {'url': 'https://scriptobservatory.org/', 
-            'priority': 10}
-    response = json_post(TEST_API_ROBOTASK, task)
-
-    # test GET of new data on suggestions API 
-    response = json_get(TEST_API_ROBOTASK)
-    assert int(response["num_results"]) == 1
-    
-    
-    backend.terminate()
+    #robobrowser = launch_robobrowser()
     #robobrowser.terminate()
 
+    backend.terminate()
 
