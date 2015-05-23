@@ -20,9 +20,8 @@ def test_get_robotasks():
     
     time.sleep(1)
 
-    r = requests.get("https://scriptobservatory.org:8080/api/robotask",
-                     headers={'content-type': 'application/json'},
-                     verify=False)
+    r = requests.get("http://127.0.0.1:8080/api/robotask",
+                     headers={'content-type': 'application/json'})
 
     print(r.status_code, r.text)
     assert r.status_code == 200
