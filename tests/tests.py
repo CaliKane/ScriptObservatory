@@ -39,6 +39,7 @@ def launch_backend():
     filepath = os.path.dirname(os.path.realpath(__file__))
     s = subprocess.Popen(["python3.4", "{0}".format(os.path.join(filepath, "../backend/backend.py"))])
     time.sleep(1)
+    return s
 
 
 def check_api_up(api_name):
