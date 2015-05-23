@@ -72,7 +72,7 @@ def check_api_up_and_empty(api_name):
     response = r.json()
     print(response)
     assert int(response["num_results"]) == 0
-
+    time.sleep(0.1)
 
 
 def test_all():
