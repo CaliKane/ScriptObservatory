@@ -27,28 +27,34 @@
 
 
 import os
+import logging
 import requests
 import subprocess
 import time
 
+
+def launch_backend():
+    """ launches backend.py and returns the subprocess handle so it can be later terminated """
+    logging.warn("launching backend.py")
+    filepath = os.path.dirname(os.path.realpath(__file__))
+    s = subprocess.Popen(["python3.4", "{0}".format(os.path.join(filepath, "../backend/backend.py"))])
+    time.sleep(1)
 
 
 def check_api_up(api_name):
     """ test that the *api_name* API is up """
     r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
                      headers={'content-type': 'application/json'})
-    print(r.status_code, r.text)
+    
+    logging.warn(r.status_code, r.text)
     assert r.status_code == 200
 
 
 def test_all():
-    # eventually, this backend-launching code should be put somewhere where it's guaranteed
-    # to be run before anything else.
-    print("launching backend.py")
-    filepath = os.path.dirname(os.path.realpath(__file__))
-    s = subprocess.Popen(["python3.4", "{0}".format(os.path.join(filepath, "../backend/backend.py"))])
-    time.sleep(1)
+    logging.basicConfig(level=logging.WARN)
 
+    s = launch_backend()
+    
     check_api_up("webpage")
     check_api_up("pageview")
     check_api_up("script")
@@ -63,6 +69,5 @@ def test_all():
     """
     
     s.terminate()
-
 
 
