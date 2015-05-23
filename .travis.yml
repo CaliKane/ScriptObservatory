@@ -13,4 +13,9 @@ install:
   - "pip install -r requirements.txt"
 
 script: 
+  - ls
+  - pwd
+  - ls chrome-extension/
+  - mv chrome-extension/extension.js chrome-extension/extension.js-arch
+  - ls chrome-extension/
   - nosetests tests/
