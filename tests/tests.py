@@ -16,7 +16,7 @@ def test_test():
 def test_get_robotasks():
     print("launching backend.py")
     filepath = os.path.dirname(os.path.realpath(__file__))
-    s = subprocess.Popen(["python3.4", "{0}".format(os.path.join(filepath, "../../backend/backend.py"))])
+    s = subprocess.Popen(["python3.4", "{0}".format(os.path.join(filepath, "../backend/backend.py"))])
     
     time.sleep(1)
 
