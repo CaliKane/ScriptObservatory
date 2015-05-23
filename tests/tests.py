@@ -94,7 +94,7 @@ def test_all():
     suggestion = {'content': 'blah blah test content'}
     r = requests.post(TEST_API_SUGGESTIONS, data=json.dumps(suggestion),
                       headers={'content-type': 'application/json'})
-    assert r.status_code == 204
+    assert r.status_code == 201 
 
     # test GET of new data on suggestions API 
     r = requests.get(TEST_API_SUGGESTIONS,
