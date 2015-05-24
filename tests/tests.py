@@ -110,7 +110,7 @@ def check_sanity_robotask_api():
     response = json_get(TEST_API_ROBOTASK)
     n_robotasks = int(response["num_results"])
     
-    task = {'url': 'https://scriptobservatory.org/', 
+    task = {'url': 'https://andymartin.cc/', 
             'priority': 10}
     json_post(TEST_API_ROBOTASK, task)
     
