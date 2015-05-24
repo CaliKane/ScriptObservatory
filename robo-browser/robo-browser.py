@@ -22,7 +22,7 @@ from selenium.webdriver.chrome.options import Options
 from xvfbwrapper import Xvfb
 
 
-API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
+API_BASE_URL = "https://scriptobservatory.org/api/robotask"
 
 N_SECS_TO_WAIT_AFTER_ONLOAD = 18
 N_SECS_TO_WAIT_AFTER_ERR = 20
