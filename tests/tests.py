@@ -53,6 +53,7 @@ def json_post(url, content):
                       data=json.dumps(content),
                       headers={'content-type': 'application/json'})
     assert r.status_code == 201 
+    time.sleep(0.01)
     return r
 
 
@@ -60,6 +61,7 @@ def json_get(url):
     r = requests.get(url,
                      headers={'content-type': 'application/json'})
     assert r.status_code == 200
+    time.sleep(0.01)
     return r.json()
 
 
@@ -80,19 +82,6 @@ def launch_robobrowser():
     assert s.poll() is None
     return s
 
-
-def check_api_up_and_empty(api_name):
-    """ test that the *api_name* API is up """
-    r = requests.get("http://127.0.0.1:8080/api/{0}".format(api_name),
-                     headers={'content-type': 'application/json'})
-    
-    logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
-    assert r.status_code == 200
-    response = r.json()
-    time.sleep(0.1)
-    return int(response["num_results"]) == 0
-
-
 def get_number_entries(api):
     r = json_get(api)
     return int(r["num_results"])
@@ -107,7 +96,7 @@ def check_sanity_suggestion_api():
     assert get_number_entries(api) == n + 1
 
 
-def schedule_webpage_task(url, priority):
+def schedule_robotask(url, priority):
     task = {'url': url, 'priority': priority}
     json_post(TEST_API_ROBOTASK, task)
 
@@ -116,7 +105,7 @@ def check_sanity_robotask_api():
     """ sanity-check robotask API """
     api = TEST_API_ROBOTASK
     n = get_number_entries(api)
-    schedule_webpage_task("https://andymartin.cc", 5)
+    schedule_robotask("https://andymartin.cc", 5)
     assert get_number_entries(api) == n + 1
      
 
@@ -145,13 +134,12 @@ def test_all():
 
     backend = launch_backend()
 
-    assert check_api_up_and_empty("webpage")
-    assert check_api_up_and_empty("pageview")
-    assert check_api_up_and_empty("script")
-    assert check_api_up_and_empty("robotask")
-    assert check_api_up_and_empty("suggestions")
-
-    # TODO: make these delete the content they add
+    assert get_number_entries(TEST_API_WEBPAGE) == 0
+    assert get_number_entries(TEST_API_PAGEVIEW) == 0
+    assert get_number_entries(TEST_API_SCRIPT) == 0
+    assert get_number_entries(TEST_API_ROBOTASK) == 0
+    assert get_number_entries(TEST_API_SUGGESTIONS) == 0
+    
     check_sanity_suggestion_api()
     check_sanity_robotask_api()
     check_sanity_webpage_pageview_script_api()
