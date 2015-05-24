@@ -33,6 +33,7 @@ N_SECS_HARD_REQ_TIMEOUT = 90
 OPTIONS = Options()
 OPTIONS.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
 OPTIONS.add_argument("--disable-application-cache")
+OPTIONS.add_argument("--no-sandbox")
 
 
 class SigtermException(Exception):
