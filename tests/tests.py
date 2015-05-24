@@ -115,7 +115,7 @@ def schedule_webpage_task(url, priority):
 def check_sanity_robotask_api():
     """ sanity-check robotask API """
     api = TEST_API_ROBOTASK
-    n = get_number_entires(api)
+    n = get_number_entries(api)
     schedule_webpage_task("https://andymartin.cc", 5)
     assert get_number_entries(api) == n + 1
      
