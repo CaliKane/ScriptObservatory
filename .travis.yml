@@ -1,9 +1,38 @@
 language: python
 
+addons:
+  hosts:
+    - scriptobservatory.org
+
+env: PATH_TO_STORE_SCRIPTCONTENT=/tmp/ BACKEND_PORT=8080
+
 python:
   - "3.4"
 
 install:
   - "pip install -r requirements.txt"
 
-script: nosetests
+script: 
+  - echo "downloading chromedriver (64-bit, linux)"
+  - wget https://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - echo "appending current directory to PATH"
+  - export PATH=$(pwd):$PATH
+  - echo "archiving robo-browser.py & extension.js before we patch them to point to the local backend"
+  - mv chrome-extension/extension.js chrome-extension/extension.js-arch
+  - mv robo-browser/robo-browser.py robo-browser/robo-browser.py-arch
+  - ls chrome-extension/
+  - ls robo-browser/
+  - echo "patching extension.js"
+  - sed 's/https:\/\/scriptobservatory.org/http:\/\/127.0.0.1:8080/g' chrome-extension/extension.js-arch > chrome-extension/extension.js
+  - ls chrome-extension/
+  - echo "patching robo-browser.py"
+  - sed 's/https:\/\/scriptobservatory.org/http:\/\/127.0.0.1:8080/g' robo-browser/robo-browser.py-arch > robo-browser/robo-browser.py
+  - ls robo-browser/
+  - nosetests tests/
+  - echo "restoring extension.js"
+  - mv chrome-extension/extension.js-arch chrome-extension/extension.js
+  - ls chrome-extension/
+  - echo "restoring robo-browser.py"
+  - mv robo-browser/robo-browser.py-arch robo-browser/robo-browser.py
+  - ls robo-browser/

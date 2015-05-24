@@ -22,7 +22,7 @@ from selenium.webdriver.chrome.options import Options
 from xvfbwrapper import Xvfb
 
 
-API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
+API_BASE_URL = "https://scriptobservatory.org/api/robotask"
 
 N_SECS_TO_WAIT_AFTER_ONLOAD = 18
 N_SECS_TO_WAIT_AFTER_ERR = 20
@@ -101,7 +101,11 @@ def fetch_webpage(url):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
+    if 'ROBOBROWSER_LOG_TO_FILE' in os.environ.keys():
+        logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
+    else:
+        logging.basicConfig(level=logging.WARN)
+        
     signal.signal(signal.SIGTERM, sigterm_handler)
 
     vdisplay = Xvfb()
@@ -128,6 +132,7 @@ if __name__ == "__main__":
                 out = subprocess.check_output("kill -TERM -{0}".format(MY_PID), shell=True)
                 logging.error("result: {0}".format(out))
                 p.terminate()
+        
         except RoboBrowseException as e:
             logging.error("ERROR: {0} -- continuing on...".format(e))
             time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
