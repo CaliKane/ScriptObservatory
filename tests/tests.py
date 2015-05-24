@@ -114,7 +114,8 @@ def check_sanity_robotask_api():
 
 def check_sanity_webpage_pageview_script_api():
     """ sanity-check webpage, pageview, script APIs """
-    webpage = {"url": "https://scriptobservatory.org/",
+    webpage = {"id": "b0852f543b380fd1515112b0a4943cd4ab890d476698598e6b98357784901d1d",
+               "url": "https://scriptobservatory.org/",
                "pageviews": {'date': 888888888,
                              'scripts': {'url': 'https://scriptobservatory.org/test.js',
                                          'hash': '274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a'}
