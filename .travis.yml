@@ -15,7 +15,7 @@ install:
   - "pip install -r requirements.txt"
 
 script: 
-  - echo "trying insane chrome install (https://github.com/travis-ci/travis-ci/issues/938)"
+  - echo "trying chrome install (https://github.com/travis-ci/travis-ci/issues/938)"
   - ./tests/.travis.chrome.sh
   - google-chrome -h
   - echo "downloading chromedriver (64-bit, linux)"
