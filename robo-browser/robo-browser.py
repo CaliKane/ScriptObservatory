@@ -100,7 +100,7 @@ def fetch_webpage(url):
 
 
 if __name__ == "__main__":
-    if os.environ['ROBOBROWSER_LOG_TO_FILE'] is not None:
+    if 'ROBOBROWSER_LOG_TO_FILE' in os.environ.keys():
         logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
     else:
         logging.basicConfig(level=logging.WARN)
