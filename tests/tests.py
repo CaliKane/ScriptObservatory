@@ -97,23 +97,40 @@ def check_api_up_and_empty(api_name):
 
 def check_sanity_suggestion_api():
     """ sanity-check suggestions API """
+    response = json_get(TEST_API_SUGGESTIONS)
+    n_suggestions = int(response["num_results"])
+    
     suggestion = {'content': 'blah blah test content'}
     json_post(TEST_API_SUGGESTIONS, suggestion)
+    
     response = json_get(TEST_API_SUGGESTIONS)
-    assert int(response["num_results"]) == 1
+    assert int(response["num_results"]) == n_suggestions + 1
 
 
 def check_sanity_robotask_api():
     """ sanity-check robotask API """
+    response = json_get(TEST_API_ROBOTASK)
+    n_robotasks = int(response["num_results"])
+    
     task = {'url': 'https://scriptobservatory.org/', 
             'priority': 10}
     json_post(TEST_API_ROBOTASK, task)
+    
     response = json_get(TEST_API_ROBOTASK)
-    assert int(response["num_results"]) == 1
+    assert int(response["num_results"]) == n_robotasks + 1
      
 
 def check_sanity_webpage_pageview_script_api():
     """ sanity-check webpage, pageview, script APIs """
+    response = json_get(TEST_API_WEBPAGE)
+    n_webpages = int(response["num_results"])
+
+    response = json_get(TEST_API_PAGEVIEW)
+    n_pageviews = int(response["num_results"]) 
+
+    response = json_get(TEST_API_SCRIPT)
+    n_scripts = int(response["num_results"])
+
     webpage = {"id": "b0852f543b380fd1515112b0a4943cd4ab890d476698598e6b98357784901d1d",
                "url": "https://scriptobservatory.org/",
                "pageviews": [{'date': 888888888,
@@ -124,13 +141,13 @@ def check_sanity_webpage_pageview_script_api():
     json_post(TEST_API_WEBPAGE, webpage)
     
     response = json_get(TEST_API_WEBPAGE)
-    assert int(response["num_results"]) == 1
+    assert int(response["num_results"]) == n_webpages + 1
 
     response = json_get(TEST_API_PAGEVIEW)
-    assert int(response["num_results"]) == 1
+    assert int(response["num_results"]) == n_pageviews + 1
 
     response = json_get(TEST_API_SCRIPT)
-    assert int(response["num_results"]) == 1
+    assert int(response["num_results"]) == n_scripts + 1
 
 
 def test_all():
