@@ -13,6 +13,11 @@ install:
   - "pip install -r requirements.txt"
 
 script: 
+  - echo "downloading chromedriver (64-bit, linux)"
+  - wget https://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - echo "appending current directory to PATH"
+  - export PATH=$(pwd):$PATH
   - echo "archiving extension.js before we patch it to point to the local backend"
   - mv chrome-extension/extension.js chrome-extension/extension.js-arch
   - ls chrome-extension/
