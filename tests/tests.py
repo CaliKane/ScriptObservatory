@@ -93,41 +93,39 @@ def check_api_up_and_empty(api_name):
     return int(response["num_results"]) == 0
 
 
+def get_number_entries(api):
+    r = json_get(api)
+    assert r.status_code == 200
+    return int(r["num_results"])
+    
+
 def check_sanity_suggestion_api():
     """ sanity-check suggestions API """
-    response = json_get(TEST_API_SUGGESTIONS)
-    n_suggestions = int(response["num_results"])
-    
+    api = TEST_API_SUGGESTIONS
     suggestion = {'content': 'blah blah test content'}
-    json_post(TEST_API_SUGGESTIONS, suggestion)
-    
-    response = json_get(TEST_API_SUGGESTIONS)
-    assert int(response["num_results"]) == n_suggestions + 1
+    n = get_number_entries(api)
+    json_post(api, suggestion)
+    assert get_number_entries(api) == n + 1
+
+
+def schedule_webpage_task(url, priority):
+    task = {'url': url, 'priority': priority}
+    json_post(TEST_API_ROBOTASK, task)
 
 
 def check_sanity_robotask_api():
     """ sanity-check robotask API """
-    response = json_get(TEST_API_ROBOTASK)
-    n_robotasks = int(response["num_results"])
-    
-    task = {'url': 'https://andymartin.cc/', 
-            'priority': 10}
-    json_post(TEST_API_ROBOTASK, task)
-    
-    response = json_get(TEST_API_ROBOTASK)
-    assert int(response["num_results"]) == n_robotasks + 1
+    api = TEST_API_ROBOTASK
+    n = get_number_entires(api)
+    schedule_webpage_task("https://andymartin.cc", 5)
+    assert get_number_entries(api) == n + 1
      
 
 def check_sanity_webpage_pageview_script_api():
     """ sanity-check webpage, pageview, script APIs """
-    response = json_get(TEST_API_WEBPAGE)
-    n_webpages = int(response["num_results"])
-
-    response = json_get(TEST_API_PAGEVIEW)
-    n_pageviews = int(response["num_results"]) 
-
-    response = json_get(TEST_API_SCRIPT)
-    n_scripts = int(response["num_results"])
+    n_webpages = get_number_entries(TEST_API_WEBPAGE)
+    n_pageviews = get_number_entries(TEST_API_PAGEVIEW)
+    n_scripts = get_number_entries(TEST_API_SCRIPT)
 
     webpage = {"id": "b0852f543b380fd1515112b0a4943cd4ab890d476698598e6b98357784901d1d",
                "url": "https://scriptobservatory.org/",
@@ -138,14 +136,9 @@ def check_sanity_webpage_pageview_script_api():
               }
     json_post(TEST_API_WEBPAGE, webpage)
     
-    response = json_get(TEST_API_WEBPAGE)
-    assert int(response["num_results"]) == n_webpages + 1
-
-    response = json_get(TEST_API_PAGEVIEW)
-    assert int(response["num_results"]) == n_pageviews + 1
-
-    response = json_get(TEST_API_SCRIPT)
-    assert int(response["num_results"]) == n_scripts + 1
+    assert get_number_entries(TEST_API_WEBPAGE) == n_webpages + 1
+    assert get_number_entries(TEST_API_PAGEVIEW) == n_pageviews + 1
+    assert get_number_entries(TEST_API_SCRIPT) == n_scripts + 1
 
 
 def test_all():
@@ -164,15 +157,16 @@ def test_all():
     check_sanity_robotask_api()
     check_sanity_webpage_pageview_script_api()
 
-    robobrowser = launch_robobrowser()
+    assert get_number_entries(TEST_API_ROBOTASK) > 0  # our robotask API is already empty!
 
-    initial_t = time.time()
     TIMEOUT = 15
-    while not check_api_up_and_empty("robotask"):
+    initial_t = time.time()
+    robobrowser = launch_robobrowser()
+    while get_number_entries(TEST_API_ROBOTASK) != 0:
         if time.time() - initial_t > TIMEOUT:
             assert False  # robobrowser failed to clear out robotask API!
         time.sleep(3)
-
+    
     robobrowser.terminate()
     backend.terminate()
 
