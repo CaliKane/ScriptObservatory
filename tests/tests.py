@@ -131,7 +131,7 @@ def check_sanity_webpage_pageview_script_api():
     assert get_number_entries(TEST_API_SCRIPT) == n_scripts + 1
 
 
-def wait_for_robotask_to_be_emptied(timeout) 
+def wait_for_robotask_to_be_emptied(timeout):
     """ keep polling the robotask API until it's empty, assert-ing False if *timeout* reached """
     initial_t = time.time()
     while get_number_entries(TEST_API_ROBOTASK) != 0:
