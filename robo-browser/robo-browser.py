@@ -81,6 +81,7 @@ def delete_robotask(task_id):
 
 def fetch_webpage(url):
     """ fetch_webpage creates a chrome webdriver and navigates to *url* """
+    driver = ''
     try:
         driver = webdriver.Chrome(chrome_options=OPTIONS) 
         driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
@@ -127,6 +128,7 @@ if __name__ == "__main__":
                 out = subprocess.check_output("kill -TERM -{0}".format(MY_PID), shell=True)
                 logging.error("result: {0}".format(out))
                 p.terminate()
+        
         except RoboBrowseException as e:
             logging.error("ERROR: {0} -- continuing on...".format(e))
             time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
