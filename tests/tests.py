@@ -41,11 +41,11 @@ PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 FILEPATH = os.path.dirname(os.path.realpath(__file__))
 os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
-TEST_API_SUGGESTIONS = "http://127.0.0.1:8080/api/suggestions"
-TEST_API_ROBOTASK = "http://127.0.0.1:8080/api/robotask"
-TEST_API_WEBPAGE = "http://127.0.0.1:8080/api/webpage"
-TEST_API_PAGEVIEW = "http://127.0.0.1:8080/api/pageview"
-TEST_API_SCRIPT = "http://127.0.0.1:8080/api/script"
+TEST_SUGGESTIONS_API = "http://127.0.0.1:8080/api/suggestions"
+TEST_ROBOTASK_API = "http://127.0.0.1:8080/api/robotask"
+TEST_WEBPAGE_API = "http://127.0.0.1:8080/api/webpage"
+TEST_PAGEVIEW_API = "http://127.0.0.1:8080/api/pageview"
+TEST_SCRIPT_API = "http://127.0.0.1:8080/api/script"
 
 
 def json_post(url, content):
@@ -90,7 +90,7 @@ def get_number_entries(api):
 
 def check_sanity_suggestion_api():
     """ sanity-check suggestions API """
-    api = TEST_API_SUGGESTIONS
+    api = TEST_SUGGESTIONS_API
     suggestion = {'content': 'blah blah test content'}
     n = get_number_entries(api)
     json_post(api, suggestion)
@@ -99,12 +99,12 @@ def check_sanity_suggestion_api():
 
 def schedule_robotask(url, priority):
     task = {'url': url, 'priority': priority}
-    json_post(TEST_API_ROBOTASK, task)
+    json_post(TEST_ROBOTASK_API, task)
 
 
 def check_sanity_robotask_api():
     """ sanity-check robotask API """
-    api = TEST_API_ROBOTASK
+    api = TEST_ROBOTASK_API
     n = get_number_entries(api)
     schedule_robotask("https://andymartin.cc", 5)
     assert get_number_entries(api) == n + 1
@@ -112,9 +112,9 @@ def check_sanity_robotask_api():
 
 def check_sanity_webpage_pageview_script_api():
     """ sanity-check webpage, pageview, script APIs """
-    n_webpages = get_number_entries(TEST_API_WEBPAGE)
-    n_pageviews = get_number_entries(TEST_API_PAGEVIEW)
-    n_scripts = get_number_entries(TEST_API_SCRIPT)
+    n_webpages = get_number_entries(TEST_WEBPAGE_API)
+    n_pageviews = get_number_entries(TEST_PAGEVIEW_API)
+    n_scripts = get_number_entries(TEST_SCRIPT_API)
 
     webpage = {"id": "b0852f543b380fd1515112b0a4943cd4ab890d476698598e6b98357784901d1d",
                "url": "https://scriptobservatory.org/",
@@ -124,17 +124,17 @@ def check_sanity_webpage_pageview_script_api():
                             }]
               }
     
-    json_post(TEST_API_WEBPAGE, webpage)
+    json_post(TEST_WEBPAGE_API, webpage)
     
-    assert get_number_entries(TEST_API_WEBPAGE) == n_webpages + 1
-    assert get_number_entries(TEST_API_PAGEVIEW) == n_pageviews + 1
-    assert get_number_entries(TEST_API_SCRIPT) == n_scripts + 1
+    assert get_number_entries(TEST_WEBPAGE_API) == n_webpages + 1
+    assert get_number_entries(TEST_PAGEVIEW_API) == n_pageviews + 1
+    assert get_number_entries(TEST_SCRIPT_API) == n_scripts + 1
 
 
 def wait_for_robotask_to_be_emptied(timeout):
     """ keep polling the robotask API until it's empty, assert-ing False if *timeout* reached """
     initial_t = time.time()
-    while get_number_entries(TEST_API_ROBOTASK) != 0:
+    while get_number_entries(TEST_ROBOTASK_API) != 0:
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to clear out robotask API!
         time.sleep(timeout/5)
@@ -143,7 +143,7 @@ def wait_for_robotask_to_be_emptied(timeout):
 def wait_for_additions_to_webpage_api(webpage_entries, timeout):
     """ keep polling the webpage API until there are *webpage_entries* entries, assert-ing False if *timeout* is reached """
     initial_t = time.time()
-    while get_number_entries(TEST_API_WEBPAGE) != webpage_entries:
+    while get_number_entries(TEST_WEBPAGE_API) != webpage_entries:
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to increase size of webpage API!
         time.sleep(timeout/10)
@@ -156,11 +156,11 @@ def test_all():
 
 
     # Test that all APIs are up and empty:
-    assert get_number_entries(TEST_API_WEBPAGE) == 0
-    assert get_number_entries(TEST_API_PAGEVIEW) == 0
-    assert get_number_entries(TEST_API_SCRIPT) == 0
-    assert get_number_entries(TEST_API_ROBOTASK) == 0
-    assert get_number_entries(TEST_API_SUGGESTIONS) == 0
+    assert get_number_entries(TEST_WEBPAGE_API) == 0
+    assert get_number_entries(TEST_PAGEVIEW_API) == 0
+    assert get_number_entries(TEST_SCRIPT_API) == 0
+    assert get_number_entries(TEST_ROBOTASK_API) == 0
+    assert get_number_entries(TEST_SUGGESTIONS_API) == 0
     
 
     # Do a quick sanity check that they're taking POSTs correctly:
@@ -170,21 +170,24 @@ def test_all():
 
 
     # Test to see if the robo-browser empties the robotask API and adds to the webpage API:
-    initial_n_webpages = get_number_entries(TEST_API_WEBPAGE)
+    initial_n_webpages = get_number_entries(TEST_WEBPAGE_API)
     robobrowser = launch_robobrowser()
     wait_for_robotask_to_be_emptied(12)
     wait_for_additions_to_webpage_api(initial_n_webpages + 1, 60)
 
 
     # Submit a test pages to the robotask API & verify it's correctly recorded:
-    initial_n_webpages = get_number_entries(TEST_API_WEBPAGE)
+    initial_n_webpages = get_number_entries(TEST_WEBPAGE_API)
     schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
-
+    
+    r = json_get(TEST_WEBPAGE_API)
+    print(r)
+    logging.warn(r)
 
     # We're done!
     robobrowser.terminate()
