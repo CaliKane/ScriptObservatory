@@ -17,6 +17,7 @@ install:
 script: 
   - echo "trying insane chrome install (https://github.com/travis-ci/travis-ci/issues/938)"
   - ./tests/.travis.chrome.sh
+  - google-chrome -h
   - echo "downloading chromedriver (64-bit, linux)"
   - wget https://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip
