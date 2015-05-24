@@ -177,10 +177,13 @@ def test_all():
 
 
     # Submit a test pages to the robotask API & verify it's correctly recorded:
+    initial_n_webpages = get_number_entries(TEST_API_WEBPAGE)
     schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    wait_for_robotask_to_be_emptied(120)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
 
 
     # We're done!
