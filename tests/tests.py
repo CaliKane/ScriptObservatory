@@ -164,7 +164,7 @@ def test_all():
     
     initial_t = time.time()
     while get_number_entries(TEST_API_WEBPAGE) == initial_n_webpages:
-        if time.time() - initial_t > 30:
+        if time.time() - initial_t > 60:
             assert False  # robobrowser failed to increase size of webpage API!
         time.sleep(5)
 

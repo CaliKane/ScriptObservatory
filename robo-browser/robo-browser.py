@@ -83,7 +83,9 @@ def delete_robotask(task_id):
 def fetch_webpage(url):
     """ fetch_webpage creates a chrome webdriver and navigates to *url* """
     try:
+        logging.warn("in fetch_webpage()")
         driver = webdriver.Chrome(chrome_options=OPTIONS) 
+        logging.warn("finished creating webdriver")
         driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
         time.sleep(N_SECS_TO_WAIT_FOR_CHROME_EXT)
         driver.get(url)
