@@ -82,6 +82,7 @@ def launch_robobrowser():
     assert s.poll() is None
     return s
 
+
 def get_number_entries(api):
     r = json_get(api)
     return int(r["num_results"])
@@ -122,6 +123,7 @@ def check_sanity_webpage_pageview_script_api():
                                          'hash': '274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a'}]
                             }]
               }
+    
     json_post(TEST_API_WEBPAGE, webpage)
     
     assert get_number_entries(TEST_API_WEBPAGE) == n_webpages + 1
@@ -131,29 +133,46 @@ def check_sanity_webpage_pageview_script_api():
 
 def test_all():
     logging.basicConfig(level=logging.WARN)
-
     backend = launch_backend()
 
+
+    # Test that all APIs are up and empty:
     assert get_number_entries(TEST_API_WEBPAGE) == 0
     assert get_number_entries(TEST_API_PAGEVIEW) == 0
     assert get_number_entries(TEST_API_SCRIPT) == 0
     assert get_number_entries(TEST_API_ROBOTASK) == 0
     assert get_number_entries(TEST_API_SUGGESTIONS) == 0
     
+
+    # Do a quick sanity check that they're taking POSTs correctly:
     check_sanity_suggestion_api()
     check_sanity_robotask_api()
     check_sanity_webpage_pageview_script_api()
 
-    assert get_number_entries(TEST_API_ROBOTASK) > 0  # our robotask API is already empty!
 
-    TIMEOUT = 15
-    initial_t = time.time()
-    robobrowser = launch_robobrowser()
-    while get_number_entries(TEST_API_ROBOTASK) != 0:
-        if time.time() - initial_t > TIMEOUT:
-            assert False  # robobrowser failed to clear out robotask API!
-        time.sleep(3)
+    # Test to see if the robo-browser empties the robotask API:
+    assert get_number_entries(TEST_API_ROBOTASK) > 0  # robotask API already empty!
+    initial_n_webpages = get_number_entries(TEST_API_WEBPAGE)
     
+    robobrowser = launch_robobrowser()
+    
+    initial_t = time.time()
+    while get_number_entries(TEST_API_ROBOTASK) != 0:
+        if time.time() - initial_t > 10:
+            assert False  # robobrowser failed to clear out robotask API!
+        time.sleep(2)
+    
+    initial_t = time.time()
+    while get_number_entries(TEST_API_WEBPAGE) == initial_n_webpages:
+        if time.time() - initial_t > 30:
+            assert False  # robobrowser failed to increase size of webpage API!
+        time.sleep(5)
+
+
+    # Submit our first test page to the robotask API & verify it's correctly recorded:
+    pass
+
+
     robobrowser.terminate()
     backend.terminate()
 
