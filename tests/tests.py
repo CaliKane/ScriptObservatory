@@ -131,6 +131,25 @@ def check_sanity_webpage_pageview_script_api():
     assert get_number_entries(TEST_API_SCRIPT) == n_scripts + 1
 
 
+def wait_for_robotask_to_be_emptied(timeout) 
+    """ keep polling the robotask API until it's empty, assert-ing False if *timeout* reached """
+    initial_t = time.time()
+    while get_number_entries(TEST_API_ROBOTASK) != 0:
+        if time.time() - initial_t > timeout:
+            assert False  # robobrowser failed to clear out robotask API!
+        time.sleep(timeout/5)
+
+
+def wait_for_additions_to_webpage_api(webpage_entries, timeout):
+    """ keep polling the webpage API until there are *webpage_entries* entries, assert-ing False if *timeout* is reached """
+    initial_t = time.time()
+    while get_number_entries(TEST_API_WEBPAGE) != webpage_entries:
+        if time.time() - initial_t > timeout:
+            assert False  # robobrowser failed to increase size of webpage API!
+        time.sleep(timeout/10)
+
+
+
 def test_all():
     logging.basicConfig(level=logging.WARN)
     backend = launch_backend()
@@ -150,29 +169,21 @@ def test_all():
     check_sanity_webpage_pageview_script_api()
 
 
-    # Test to see if the robo-browser empties the robotask API:
-    assert get_number_entries(TEST_API_ROBOTASK) > 0  # robotask API already empty!
+    # Test to see if the robo-browser empties the robotask API and adds to the webpage API:
     initial_n_webpages = get_number_entries(TEST_API_WEBPAGE)
-    
     robobrowser = launch_robobrowser()
-    
-    initial_t = time.time()
-    while get_number_entries(TEST_API_ROBOTASK) != 0:
-        if time.time() - initial_t > 10:
-            assert False  # robobrowser failed to clear out robotask API!
-        time.sleep(2)
-    
-    initial_t = time.time()
-    while get_number_entries(TEST_API_WEBPAGE) == initial_n_webpages:
-        if time.time() - initial_t > 60:
-            assert False  # robobrowser failed to increase size of webpage API!
-        time.sleep(5)
+    wait_for_robotask_to_be_emptied(12)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 1, 60)
 
 
-    # Submit our first test page to the robotask API & verify it's correctly recorded:
-    pass
+    # Submit a test pages to the robotask API & verify it's correctly recorded:
+    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
 
 
+    # We're done!
     robobrowser.terminate()
     backend.terminate()
 
