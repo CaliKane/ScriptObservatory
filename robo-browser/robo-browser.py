@@ -81,7 +81,6 @@ def delete_robotask(task_id):
 
 def fetch_webpage(url):
     """ fetch_webpage creates a chrome webdriver and navigates to *url* """
-    driver = ''
     try:
         driver = webdriver.Chrome(chrome_options=OPTIONS) 
         driver.set_page_load_timeout(N_SECS_REQ_TIMEOUT)
@@ -101,7 +100,11 @@ def fetch_webpage(url):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
+    if os.environ['ROBOBROWSER_LOG_TO_FILE'] is not None:
+        logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
+    else:
+        logging.basicConfig(level=logging.WARN)
+        
     signal.signal(signal.SIGTERM, sigterm_handler)
 
     vdisplay = Xvfb()
