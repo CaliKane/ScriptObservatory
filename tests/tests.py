@@ -185,9 +185,17 @@ def test_all():
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
     
-    r = json_get(TEST_WEBPAGE_API)
+    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    r = json_get("{0}/search?url={1}".format(TEST_WEBPAGE_API, url))
     print(r)
     logging.warn(r)
+    assert len(r["objects"]) == 1
+    assert len(r["objects"][0]["pageviews"]) == 1
+    scripts = r["objects"][0]["pageviews"][0]["scripts"]
+    print(scripts)
+    print(len(scripts))
+    assert scripts[0]["hash"] == 'x'  # will fail
+
 
     # We're done!
     robobrowser.terminate()
