@@ -186,16 +186,40 @@ def test_all():
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
     
-    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    url = "https://andymartin.cc/test-pages/simple.html"
     r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
     print(r)
-    logging.warn(r)
+    assert len(r["objects"]) == 1
+    assert len(r["objects"][0]["pageviews"]) == 1
+    assert len(r["objects"][0]["pageviews"][0]["scripts"]) == 0
+
+    url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
+    print(r)
     assert len(r["objects"]) == 1
     assert len(r["objects"][0]["pageviews"]) == 1
     scripts = r["objects"][0]["pageviews"][0]["scripts"]
-    print(scripts)
-    print(len(scripts))
-    assert scripts[0]["hash"] == 'x'  # will fail
+    assert len(scripts) == 1
+    assert scripts[0]["hash"] == "b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab"
+       
+    url = "https://andymartin.cc/test-pages/one-script-by-link.html"
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
+    print(r)
+    assert len(r["objects"]) == 1
+    assert len(r["objects"][0]["pageviews"]) == 1
+    scripts = r["objects"][0]["pageviews"][0]["scripts"]
+    assert len(scripts) == 1
+    assert scripts[0]["hash"] == "fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e"
+
+    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
+    print(r)
+    assert len(r["objects"]) == 1
+    assert len(r["objects"][0]["pageviews"]) == 1
+    scripts = r["objects"][0]["pageviews"][0]["scripts"]
+    assert len(scripts) == 2
+    assert scripts[0]["hash"] == "fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e"
+    assert scripts[1]["hash"] == "b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab"
 
 
     # We're done!
