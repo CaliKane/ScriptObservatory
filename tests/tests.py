@@ -95,7 +95,6 @@ def check_api_up_and_empty(api_name):
 
 def get_number_entries(api):
     r = json_get(api)
-    assert r.status_code == 200
     return int(r["num_results"])
     
 
