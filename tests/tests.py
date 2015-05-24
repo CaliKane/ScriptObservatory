@@ -41,6 +41,7 @@ PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 FILEPATH = os.path.dirname(os.path.realpath(__file__))
 os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
+TEST_BASE_URL = "http://127.0.0.1:8080"
 TEST_SUGGESTIONS_API = "http://127.0.0.1:8080/api/suggestions"
 TEST_ROBOTASK_API = "http://127.0.0.1:8080/api/robotask"
 TEST_WEBPAGE_API = "http://127.0.0.1:8080/api/webpage"
@@ -186,7 +187,7 @@ def test_all():
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
     
     url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
-    r = json_get("{0}/search?url={1}".format(TEST_WEBPAGE_API, url))
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
     print(r)
     logging.warn(r)
     assert len(r["objects"]) == 1
