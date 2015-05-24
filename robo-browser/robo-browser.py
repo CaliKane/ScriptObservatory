@@ -105,10 +105,10 @@ def fetch_webpage(url):
 
 
 if __name__ == "__main__":
-    if 'ROBOBROWSER_LOG_TO_FILE' in os.environ.keys():
-        logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
-    else:
+    if 'TRAVIS' in os.environ:
         logging.basicConfig(level=logging.WARN)
+    else:
+        logging.basicConfig(filename="log-robobrowse-{0}.txt".format(time.time()), level=logging.WARN)
         
     signal.signal(signal.SIGTERM, sigterm_handler)
 
