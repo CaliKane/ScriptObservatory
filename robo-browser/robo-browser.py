@@ -67,6 +67,7 @@ def get_next_robotask():
 
     current_task = task["objects"][0]
     return (current_task["url"], current_task["priority"], current_task["id"])
+    # TODO: may need to catch requests.exceptions.ConnectionError
 
 
 def delete_robotask(task_id):
