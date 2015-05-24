@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 #
-# This is our first attempt at an automated test suite for ScriptObservatory. 
+# This is the first attempt at an end-to-end test suite for ScriptObservatory. 
 #
 # For now, everything will be in one file and triggered with 'nose'. Eventually, it
 # can be made more modular.
 #
-# In some ways, this will be the anti-unit test. 
-# 
 # Full end-to-end functionality will be tested: we'll start up the backend, test out 
 # some basic API operations, and then use the robo-browser with the chrome extension 
 # installed to test the accuracy of what's reported.
@@ -91,8 +89,8 @@ def check_api_up_and_empty(api_name):
     logging.warn("returned {0}: {1}".format(r.status_code, r.json()))
     assert r.status_code == 200
     response = r.json()
-    assert int(response["num_results"]) == 0
     time.sleep(0.1)
+    return int(response["num_results"]) == 0
 
 
 def check_sanity_suggestion_api():
@@ -155,20 +153,26 @@ def test_all():
 
     backend = launch_backend()
 
-    check_api_up_and_empty("webpage")
-    check_api_up_and_empty("pageview")
-    check_api_up_and_empty("script")
-    check_api_up_and_empty("robotask")
-    check_api_up_and_empty("suggestions")
+    assert check_api_up_and_empty("webpage")
+    assert check_api_up_and_empty("pageview")
+    assert check_api_up_and_empty("script")
+    assert check_api_up_and_empty("robotask")
+    assert check_api_up_and_empty("suggestions")
 
-    # TODO: make these work even if the starting value isn't 1
     # TODO: make these delete the content they add
     check_sanity_suggestion_api()
     check_sanity_robotask_api()
     check_sanity_webpage_pageview_script_api()
 
-    #robobrowser = launch_robobrowser()
-    #robobrowser.terminate()
+    robobrowser = launch_robobrowser()
 
+    initial_t = time.time()
+    TIMEOUT = 15
+    while not check_api_up_and_empty("robotask"):
+        if time.time() - initial_t > TIMEOUT:
+            assert False  # robobrowser failed to clear out robotask API!
+        time.sleep(3)
+
+    robobrowser.terminate()
     backend.terminate()
 
