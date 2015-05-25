@@ -155,7 +155,7 @@ def check_search_data(url, expected):
     print(url)
     print(r)
     print(ordered(r))
-    #assert ordered(r) == ordered(expected)
+    assert ordered(r) == ordered(expected)
 
 
 def ordered(obj):
@@ -218,15 +218,16 @@ def test_all():
     check_search_data(url, correct)
     
     url = "https://andymartin.cc/test-pages/simple.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
     check_search_data(url, correct)
     
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e', 'url': 'https://andymartin.cc/test-pages/hello-world.js'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/one-script-by-link.html'}]}
     check_search_data(url, correct)
     
-    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e', 'url': 'https://andymartin.cc/test-pages/hello-world.js'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/one-script-by-link.html'}]}
     check_search_data(url, correct)
-
-    assert False
 
     # We're done!
     robobrowser.terminate()
