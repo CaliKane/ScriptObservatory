@@ -208,7 +208,7 @@ def test_all():
     backend.terminate()
 
     
-def check_search(url, expected)
+def check_search(url, expected):
     r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
     print("comparing:")
     print(ordered(json.dumps(r)))
