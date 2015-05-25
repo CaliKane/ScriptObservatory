@@ -213,22 +213,23 @@ def test_all():
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
  
-    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
-    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    check_search_data(url, correct)
-    
     url = "https://andymartin.cc/test-pages/simple.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
     check_search_data(url, correct)
     
+    url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
+    correct = {'objects': [{'id': 'a0f33bba1eb36b4bbb9cef89a7f72e015fe5bf8cdc957fb6a1f0aee130f71e79', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline.html', 'pageviews': [{'scripts': [{'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab', 'url': 'inline_script_b97dc449b77078dc8b'}], 'date': 1432518282712}]}]}
+    check_search_data(url, correct)
+
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e', 'url': 'https://andymartin.cc/test-pages/hello-world.js'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/one-script-by-link.html'}]}
     check_search_data(url, correct)
-    
-    url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
-    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e', 'url': 'https://andymartin.cc/test-pages/hello-world.js'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/one-script-by-link.html'}]}
+ 
+    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
     check_search_data(url, correct)
-
+ 
+    
     # We're done!
     robobrowser.terminate()
     backend.terminate()
