@@ -70,25 +70,18 @@ Here are some steps that have been made to make this process as trustworthy as p
 Roadmap
 -------
 
-Near-term todo:
- - Support uploading content of HTML (main frame & subframes)
- - Support uploading of iframe tags
- - Support YARA scanning full database archive + live alerting on new submissions
- - Add indexes to speed up database queries
- - Add tests for backend API & chrome extension code
- - Add button to chrome extension to toggle reporting on and off
- - Add button to chrome extension to view current page's analysis page
- - Allow blacklisting stats upload for website regexes in the chrome extension
- - Have chrome extension automatically report all errors while browsing sites
+Near-term todos are tracked with [GitHub Issues](https://github.com/andy11/ScriptObservatory/issues).
+
+If you want to get involved, you can see issues tagged as "help-wanted" here: 
+[help-wanted](https://github.com/andy11/ScriptObservatory/labels/help%20wanted)
+
+Longer-term ideas:
  - Improve visualizations for what scripts & versions of scripts have been included
- - Add status to robotasks (scheduled, inprogress, terminated) and have robobrowser delete task only on success
- - Harden backend APIs (review what methods are allowed)
  - Merge chrome extension code with a script-blocker like uBlock
  - Let users view scripts in extension and choose whether or not to allow them to run
-
-Longer-term:
- - Make sure there's no interference with other extensions / ad-blockers
+ - Support YARA scanning full database archive + live alerting on new submissions
  - Support flash objects
+ - Add status to robotasks (scheduled, inprogress, terminated) and have robobrowser delete task only on success
 
 
 Contributing
