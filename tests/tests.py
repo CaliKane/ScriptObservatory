@@ -219,8 +219,10 @@ def check_search(url, expected):
 def ordered(obj):
     """ https://stackoverflow.com/questions/25851183/how-to-compare-two-json-objects-with-the-same-elements-in-a-different-order-equa """
     if isinstance(obj, dict):
-        return sorted((k, ordered(v)) for k, v in obj.items())
-    if isinstance(obj, list):
+        return sorted((k, ordered(v)) for k, v in obj.items() if k != 'date')
+    elif isinstance(obj, list):
         return sorted(ordered(x) for x in obj)
     else:
         return obj
+
+
