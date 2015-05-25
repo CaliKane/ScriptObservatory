@@ -212,7 +212,7 @@ def check_search(url, expected):
     r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
     print("comparing:")
     print(ordered(json.dumps(r)))
-    print(ordered(json.dumps(expected))
+    print(ordered(json.dumps(expected)))
     assert ordered(json.dumps(r)) == ordered(json.dumps(expected))
 
 
