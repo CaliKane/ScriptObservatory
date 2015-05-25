@@ -2,14 +2,14 @@
 #
 # This code implements all backend functionality, including database models, database 
 # management, advanced data querying, and script-content file serving.
-
+#
 # NOTES on speeding up queries....
 #   Table indices need to be manually created until code is added to do this directly 
 #   with flask/SQLAlchemy. Information here describes the command you need to run:
 #
 #        https://www.sqlite.org/lang_createindex.html
 #
-#    Thanks Micah for the pointers! :) https://github.com/macro1
+#   Thanks Micah for the pointers! :) https://github.com/macro1
 #
 
 import json
@@ -127,8 +127,8 @@ def post_script_content():
     # and not try to upload them to save bandwidth.
 
 
-@app.route('/search', methods=["GET"])
-def search():
+@app.route('/api/search', methods=["GET"])
+def api_search():
     url = request.args.get('url')
     url_hash = request.args.get('hash')
     script_by_url = request.args.get('script_by_url')
@@ -180,6 +180,12 @@ def search():
 @app.route('/')
 def index():
     return app.send_static_file("index.html")
+
+
+@app.route('/search/')
+def search():
+    return app.send_static_file("index.html")
+
 
 if __name__ == '__main__':
     port = int(os.environ['BACKEND_PORT'])

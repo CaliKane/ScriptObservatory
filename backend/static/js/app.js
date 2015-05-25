@@ -274,7 +274,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     $scope.makeScriptQueryByUrl = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
 
-        $http.get("/search?script_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+        $http.get("/api/search?script_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
@@ -291,7 +291,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     $scope.makeScriptQueryByHash = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
         
-        $http.get("/search?script_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+        $http.get("/api/search?script_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
@@ -306,7 +306,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     $scope.makeWebpageQuery = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
         
-        $http.get("/search?url=" + queryString, {timeout: $scope.WEBPAGE_QRY_TIMEOUT}).success(function (data){
+        $http.get("/api/search?url=" + queryString, {timeout: $scope.WEBPAGE_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
