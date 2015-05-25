@@ -199,7 +199,7 @@ def test_all():
     correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b    77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bc    bd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
     
     print(ordered(r))
-    print(ordered(json.loads(correct))
+    print(ordered(json.loads(correct)))
     assert ordered(r) == ordered(json.loads(correct))
        
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
