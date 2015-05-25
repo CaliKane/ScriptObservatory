@@ -6,18 +6,18 @@ The goal of the ScriptObservatory project is to extend the idea behind the
 information about the **_live content_** people are seeing on
 the internet.
 
+The long-term goal of the [website](https://www.scriptobservatory.org)
+is for it to be a place where anyone can analyze the record of 
+what code people have seen while on the internet. The 
+long-term goal for the 
+[Chrome extension](https://github.com/andy11/ScriptObservatory#usage)
+is to crowdsource the data collection and to act as a 
+**_content-aware_** script blocker, letting you have finer control 
+over what runs on your computer. 
+
 Initially, the only objects that will be analyzed are JavaScript files. 
 Eventually, it might be extended to include other types of content like 
 flash objects and iframes. 
-
-The long-term goal of the [website](https://www.scriptobservatory.org)
-is for it to be a place where anyone can analyze the record of 
-what snippets of code people have been sent while on the internet. The 
-long-term goal for the 
-[Chrome extension](https://github.com/andy11/ScriptObservatory#usage)
-is to crowdsource the data collection and to (optionally) act as a 
-**_content-aware_** script blocker, letting you have finer control 
-over what runs on your computer. 
 
 
 Usage
