@@ -184,6 +184,10 @@ def index():
 
 @app.route('/search/')
 def search():
+    """ 
+    this is a temporary hack to let us serve query links that end in ?query=XXX off of
+    a path that's been added to the robots.txt file to prevent google from indexing them
+    """
     return app.send_static_file("index.html")
 
 
