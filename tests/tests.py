@@ -196,11 +196,11 @@ def test_all():
     url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
     r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
     print(r)
-    assert len(r["objects"]) == 1
-    assert len(r["objects"][0]["pageviews"]) == 1
-    scripts = r["objects"][0]["pageviews"][0]["scripts"]
-    assert len(scripts) == 1
-    assert scripts[0]["hash"] == "b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab"
+    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b    77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bc    bd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
+    
+    print(ordered(r))
+    print(ordered(json.loads(correct))
+    assert ordered(r) == ordered(json.loads(correct))
        
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
     r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
@@ -226,3 +226,11 @@ def test_all():
     robobrowser.terminate()
     backend.terminate()
 
+def ordered(obj):
+    """ https://stackoverflow.com/questions/25851183/how-to-compare-two-json-objects-with-the-same-elements-in-a-different-order-equa """
+    if isinstance(obj, dict):
+        return sorted((k, ordered(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return sorted(ordered(x) for x in obj)
+    else:
+        return obj
