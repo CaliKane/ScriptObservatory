@@ -149,6 +149,32 @@ def wait_for_additions_to_webpage_api(webpage_entries, timeout):
             assert False  # robobrowser failed to increase size of webpage API!
         time.sleep(timeout/10)
 
+    
+def check_search_data(url, expected):
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
+    print(url)
+    print(r)
+    print(ordered(r))
+    assert ordered(r) == ordered(expected)
+
+
+def ordered(obj):
+    """ 
+    ordered(obj) recursively orders all elements within *obj* and sets all values assocaited with 
+    'date' keys to zero (when we're checking a result with a known-good value, the dates will never 
+    be correct).
+    
+    adapted from this post:
+    https://stackoverflow.com/questions/25851183/how-to-compare-two-json-objects-with-the-same-elements-in-a-different-order-equa 
+    """
+    if isinstance(obj, dict):
+        if 'date' in obj.keys(): obj['date'] = 0
+        return sorted((k, ordered(v)) for k, v in obj.items())
+    elif isinstance(obj, list):
+        return sorted(ordered(x) for x in obj)
+    else:
+        return obj
+
 
 
 def test_all():
@@ -189,45 +215,21 @@ def test_all():
  
     url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
     correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    check_search(url, correct)
+    check_search_data(url, correct)
     
     url = "https://andymartin.cc/test-pages/simple.html"
-    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    #check_search(url, correct)
+    check_search_data(url, correct)
     
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
-    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    #check_search(url, correct)
+    check_search_data(url, correct)
     
     url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
-    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    #check_search(url, correct)
+    check_search_data(url, correct)
+
+    assert False
 
     # We're done!
     robobrowser.terminate()
     backend.terminate()
-
-    
-def check_search(url, expected):
-    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
-    print("comparing:")
-    print(r)
-    print(expected)
-    print(json.dumps(r))
-    print(json.dumps(expected))
-    print(ordered(r))
-    print(ordered(expected))
-    assert ordered(r) == ordered(expected)
-
-
-def ordered(obj):
-    """ https://stackoverflow.com/questions/25851183/how-to-compare-two-json-objects-with-the-same-elements-in-a-different-order-equa """
-    if isinstance(obj, dict):
-        if 'date' in obj.keys(): obj['date'] = 0
-        return sorted((k, ordered(v)) for k, v in obj.items())
-    elif isinstance(obj, list):
-        return sorted(ordered(x) for x in obj)
-    else:
-        return obj
 
 
