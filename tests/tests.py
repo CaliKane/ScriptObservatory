@@ -183,49 +183,38 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
+ 
+    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
+    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
+    check_search(url, correct)
     
     url = "https://andymartin.cc/test-pages/simple.html"
-    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
-    print(r)
-    assert len(r["objects"]) == 1
-    assert len(r["objects"][0]["pageviews"]) == 1
-    assert len(r["objects"][0]["pageviews"][0]["scripts"]) == 0
-
-    url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
-    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
-    print(r)
     correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
-    print(json.dumps(r))
-    print(ordered(json.dumps(r)))
-    print(ordered(json.dumps(correct)))
-    assert ordered(json.dumps(r)) == ordered(json.dumps(correct))
+    #check_search(url, correct)
     
-    """   
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
-    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
-    print(r)
-    assert len(r["objects"]) == 1
-    assert len(r["objects"][0]["pageviews"]) == 1
-    scripts = r["objects"][0]["pageviews"][0]["scripts"]
-    assert len(scripts) == 1
-    assert scripts[0]["hash"] == "fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e"
-
+    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
+    #check_search(url, correct)
+    
     url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
-    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
-    print(r)
-    assert len(r["objects"]) == 1
-    assert len(r["objects"][0]["pageviews"]) == 1
-    scripts = r["objects"][0]["pageviews"][0]["scripts"]
-    assert len(scripts) == 2
-    assert scripts[0]["hash"] == "fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e"
-    assert scripts[1]["hash"] == "b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab"
-    """
+    correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
+    #check_search(url, correct)
 
     # We're done!
     robobrowser.terminate()
     backend.terminate()
+
+    
+def check_search(url, expected)
+    r = json_get("{0}/search?url={1}".format(TEST_BASE_URL, url))
+    print("comparing:")
+    print(ordered(json.dumps(r)))
+    print(ordered(json.dumps(expected))
+    assert ordered(json.dumps(r)) == ordered(json.dumps(expected))
+
 
 def ordered(obj):
     """ https://stackoverflow.com/questions/25851183/how-to-compare-two-json-objects-with-the-same-elements-in-a-different-order-equa """
