@@ -24,9 +24,11 @@ from xvfbwrapper import Xvfb
 
 API_BASE_URL = "https://scriptobservatory.org/api/robotask"
 
+N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
+N_SECS_ON_DELETE_FAIL = 5
 N_SECS_TO_WAIT_AFTER_ONLOAD = 8
 N_SECS_TO_WAIT_AFTER_ERR = 20
-N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
+N_SECS_WHEN_NO_TASKS_FOUND = 30
 N_SECS_REQ_TIMEOUT = 70
 N_SECS_HARD_REQ_TIMEOUT = 90
 
@@ -37,26 +39,22 @@ if 'TRAVIS' in os.environ:
     OPTIONS.add_argument("--no-sandbox")
 
 
-class RoboBrowseException(Exception):
-    # we can just inherit from the plain Exception class
-    pass
-
-
 def get_next_robotask():
-    """ gets the (url, priority, task_id) of next task or raise a RoboBrowseException on error """
+    """ gets the (url, priority, task_id) of next task """
     response = requests.get(API_BASE_URL, 
                             params=dict(q=json.dumps(dict(order_by=[dict(field='priority', direction='asc')]))),
                             headers={'Content-Type': 'application/json'},
                             verify=False)
 
     if response.status_code != 200:
-        raise RoboBrowseException("GET returned non-200 response code!")
+        return (None, None, None)
 
     task_data = response.json()
     tasks = task_data["objects"]
     n_tasks = len(tasks)
-    if len(tasks) == 0:
-        raise RoboBrowseException("no jobs currently in the queue")
+    
+    if n_tasks == 0:
+        return (None, None, None)
 
     # we choose randomly from up to the first *max_tasks* tasks that all have the same priority
     # level as the first task (which has the highest priority because of sort order).
@@ -69,13 +67,13 @@ def get_next_robotask():
 
 
 def delete_robotask(task_id):
-    """ deletes the task with id *task_id* from the robotask API or raises a RoboBrowseException on error """
+    """ deletes the task with id *task_id* from the robotask API or return -1 on error """
     response = requests.delete("{0}/{1}".format(API_BASE_URL, task_id), verify=False)
     
     if response.status_code != 204:
-        # a non-204 status is most often returned if someone else has already deleted the task. We raise a 
-        # RoboBrowseException so we go and get the next task instead of running this one 
-        raise RoboBrowseException("DELETE returned non-204! someone else likely already got this task.")
+        # a non-204 status is most often returned if someone else has already deleted the task. We return
+        # -1 so we can go and get the next task instead of running this one 
+        return -1
 
 
 def fetch_webpage(url):
@@ -106,25 +104,30 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(filename="log-robobrowse.txt", level=logging.WARN)
         
-    vdisplay = Xvfb()
-    vdisplay.start()
-     
     logging.warn("number of chrome / python processes: {0}".format(subprocess.check_output("ps aux | grep -i \"chrome\|python\" | wc -l", shell=True)))
 
     url, priority, task_id = get_next_robotask()
-    logging.warn("got task for url: {0}".format(url))
-    delete_robotask(task_id)
     
+    if url is None:
+        logging.warn("no tasks found! sleeping for {0} seconds then continuing...".format(N_SECS_WHEN_NO_TASKS_FOUND))
+        time.sleep(N_SECS_WHEN_NO_TASKS_FOUND)
+        exit()
+
+    logging.warn("got task for url: {0}".format(url))
+    
+    if delete_robotask(task_id) is not None:
+        logging.warn("error when calling delete_robotask()! (someone else probably got this task)")
+        time.sleep(N_SECS_ON_DELETE_FAIL)
+        exit()
+
+    vdisplay = Xvfb()
+    vdisplay.start()
     p = multiprocessing.Process(target=fetch_webpage, args=(url,))
     
     try:
         p.start()
         p.join(N_SECS_HARD_REQ_TIMEOUT)
     
-    except RoboBrowseException as e:
-        logging.error("ERROR: {0} -- continuing on...".format(e))
-        time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
-
     except subprocess.CalledProcessError as e:
         logging.error("ERROR: CalledProcessError {0} -- continuing on...".format(e))
         time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
