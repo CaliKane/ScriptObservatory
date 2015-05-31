@@ -60,7 +60,7 @@ def get_next_robotask():
 
     # we choose randomly from up to the first *max_tasks* tasks that all have the same priority
     # level as the first task (which has the highest priority because of sort order).
-    max_tasks = 10 if n_tasks < max_tasks else n_tasks
+    max_tasks = 10 if n_tasks < 10 else n_tasks
     task_choices = [t for t in tasks[:max_tasks] if t["priority"] == tasks[0]["priority"]]
     current_task = random.choice(task_choices)
     
@@ -109,13 +109,15 @@ if __name__ == "__main__":
     vdisplay = Xvfb()
     vdisplay.start()
      
-    try:
-        logging.warn("number of chrome / python processes: {0}".format(subprocess.check_output("ps aux | grep \"hrome\|python\" | wc -l", shell=True)))
+    logging.warn("number of chrome / python processes: {0}".format(subprocess.check_output("ps aux | grep -i \"chrome\|python\" | wc -l", shell=True)))
 
-        url, priority, task_id = get_next_robotask()
-        logging.warn("got task for url: {0}".format(url))
-        delete_robotask(task_id)
-        p = multiprocessing.Process(target=fetch_webpage, args=(url,))
+    url, priority, task_id = get_next_robotask()
+    logging.warn("got task for url: {0}".format(url))
+    delete_robotask(task_id)
+    
+    p = multiprocessing.Process(target=fetch_webpage, args=(url,))
+    
+    try:
         p.start()
         p.join(N_SECS_HARD_REQ_TIMEOUT)
     
