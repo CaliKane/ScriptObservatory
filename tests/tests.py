@@ -34,7 +34,7 @@ import time
 
 # relative paths from tests/ directory
 PATH_TO_BACKEND = "../backend/backend.py"
-PATH_TO_ROBO_BROWSER = "../robo-browser/robo-browser.py"
+PATH_TO_ROBO_BROWSER = "../robo-browser/robo-browser.sh"
 PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 
 # set environment variables
@@ -77,8 +77,8 @@ def launch_backend():
 
 def launch_robobrowser():
     """ launches robo-browser.py and returns the subprocess handle so it can be later terminated """
-    logging.warn("launching robo-browser.py")
-    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER)])
+    logging.warn("launching robo-browser.sh")
+    s = subprocess.Popen(["bash", os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER)])
     time.sleep(1)
     assert s.poll() is None
     return s

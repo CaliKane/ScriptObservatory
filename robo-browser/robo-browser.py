@@ -11,7 +11,6 @@ import multiprocessing
 import os
 import random
 import requests
-import signal
 import subprocess
 import sys
 import time
@@ -46,11 +45,6 @@ class SigtermException(Exception):
 class RoboBrowseException(Exception):
     # we can just inherit from the plain Exception class
     pass
-
-
-def sigterm_handler(_signo, _stack_frame):
-    logging.error("caught SIGTERM! raising SigtermException to recreate the Xvfb display")
-    raise SigtermException
 
 
 def get_next_robotask():
@@ -114,8 +108,6 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(filename="log-robobrowse.txt", level=logging.WARN)
         
-    signal.signal(signal.SIGTERM, sigterm_handler)
-
     vdisplay = Xvfb()
     vdisplay.start()
      
@@ -130,14 +122,6 @@ if __name__ == "__main__":
         MY_PID = p.pid
         p.join(N_SECS_HARD_REQ_TIMEOUT)
         if p.is_alive():
-            # if p is still alive after N_SECS_HARD_REQ_TIMEOUT, something's gone very wrong with the Selenium
-            # webdriver. In the past, the driver.quit() call has often been the place where it gets stuck.
-            # There really isn't anything we can do to recover, so we destroy all processes with the given
-            # PGID. To avoid destroying ourselves, we catch SIGTERM in our main thread and try to continue after
-            # recreating the Xvfb display.
-            logging.error("running: kill -TERM -{0}".format(MY_PID))
-            out = subprocess.check_output("kill -TERM -{0}".format(MY_PID), shell=True)
-            logging.error("result: {0}".format(out))
             p.terminate()
     
     except RoboBrowseException as e:
@@ -148,17 +132,5 @@ if __name__ == "__main__":
         logging.error("ERROR: CalledProcessError {0} -- continuing on...".format(e))
         time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
 
-    except SigtermException as e:
-        logging.error("ERROR: {0} -- continuing on...".format(e))
-        
-        # per notes above we need to recreate the Xvfb display because it will have been destroyed by our
-        # call kill when trying to cleanly destroy a broken webdriver.
-        logging.error("closing vdisplay")
-        vdisplay.stop()
-        logging.error("creating new vdisplay")
-        vdisplay = Xvfb()
-        vdisplay.start()
-        time.sleep(N_SECS_TO_WAIT_AFTER_ERR)
-            
     vdisplay.stop()
 
