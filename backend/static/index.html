@@ -43,7 +43,6 @@
         <br><br>
         A few ways to get involved:
         <ul>
-          <li><i>Want to reverse-engineer bad JavaScript and write a guest blog post?</i> See <a href="https://github.com/andy11/ScriptObservatory/issues/3" target="_blank">Issue #3</a>.</li>
           <li><i>Want to search through all the JavaScript we've ever collected for anything malicious?</i> See <a href="https://github.com/andy11/ScriptObservatory/issues/4" target="_blank">Issue #4</a>.</li>
           <li><i>Want to help port the extension to Firefox?</i> See <a href="https://github.com/andy11/ScriptObservatory/issues/5" target="_blank">Issue #5</a>.</li>
           <li>See all our other "help-wanted" issues <a href="https://github.com/andy11/ScriptObservatory/labels/help%20wanted" target="_blank">here</a>.</li>
@@ -70,8 +69,8 @@
           With the Chrome Extension installed, your browser will send these four pieces of information to a ScriptObservatory server every time you view a webpage:
           <ul>
             <li>The full URL of the webpage</li>
-            <li>The full URL of each script included in or linked from the webpage</li>
-            <li>The SHA-256 hash of each script's content</li>
+            <li>The full URL of each script linked to from the webpage</li>
+            <li>The SHA-256 hash of each script's content (inline & remote)</li>
             <li>The time you made this observation</li>
           </ul>
           <br>
@@ -120,15 +119,14 @@
           <h3><i>Some sample webpage queries:</i></h3>
           <ul>
             <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
-            <li><a href="#" ng-click='submitQuery("https://www.vt.edu/");'>https://www.vt.edu/</a></li>
+            <li><a href="#" ng-click='submitQuery("vt.edu");'>vt.edu</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
-            <li><a href="#" ng-click='submitQuery("http://www.hrichina.org/en");'>http://www.hrichina.org/en</a></li>
+            <li><a href="#" ng-click='submitQuery("hrichina");'>hrichina</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.studentsforafreetibet.org");'>https://www.studentsforafreetibet.org</a></li>
             <li><a href="#" ng-click='submitQuery("http://www.betterweather.net");'>http://www.betterweather.net</a></li>
             <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a></li>
-            <li><a href="#" ng-click='submitQuery("https://xkcd.com");'>https://xkcd.com</a></li>
+            <li><a href="#" ng-click='submitQuery("xkcd");'>xkcd</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware.dontneedcoffee.com");'>http://malware.dontneedcoffee.com</a></li>
-            <li><a href="#" ng-click='submitQuery("recode.net");'>recode.net</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov/portal/dmv");'>https://www.dmv.ca.gov/portal/dmv</a></li>
           </ul>
           <br>
@@ -144,8 +142,8 @@
         </div>
         
         <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS'" id="script_query_section">
-          <table class="table table-bordered table-condensed">
-            <th style="width:50%; text-align:center;"> Webpages <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
+          <table class="table table-hover table-bordered table-condensed">
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
                 <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site }}</a> </td>
             </tr>
@@ -153,10 +151,10 @@
         </div>
 
         <div ng-show="QRY_STATUS == 'HAVE_WEBPAGE_RESULTS'" id="website_query_section">
-          <table class="table table-bordered table-condensed">
-            <th style="width:30%; text-align:center;"> Site URL <br> <input ng-model="search.url" placeholder="Filter by URL"> </th>
-            <th style="width:5%; text-align:center;"> N </th>
-            <th style="width:65%; text-align:center;"> Scripts </th>
+          <table class="table table-bordered table-hover table-condensed">
+            <th style="width:30%; text-align:center;"> Site URL <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+            <th style="width:5%; text-align:center;"> Number of Observations</th>
+            <!--<th style="width:65%; text-align:center;"> Scripts </th>-->
             <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
                 <td style="text-align: center;">
                   <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
@@ -164,6 +162,7 @@
                 <td style="text-align: center;">
                   {{ site.occur }}
                 </td>
+                <!--
                 <td>
                   <table class="table-condensed table-hover" style="background-color:inherit;">
                     <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
@@ -172,6 +171,7 @@
                     </tr>
                   </table>
                 </td>
+                -->
             </tr>
           </table>
         </div>
@@ -209,7 +209,7 @@
             <div class="col-sm-1"></div>
           </div>
           </form>
-            <div align="center">(A <a href="https://github.com/andy11/ScriptObservatory/blob/master/robo-browser/robo-browser.py" target="_blank">robo-browser</a> will visit it sometime soon, usually within 30 seconds.)</div>
+            <div align="center">(A <a href="https://github.com/andy11/ScriptObservatory/blob/master/robo-browser/robo-browser.py" target="_blank">robo-browser</a> will visit it soon. If you don't see it after 10 minutes, feel free to send me an email.)</div>
           <br><br>
           <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
           <br>
@@ -261,7 +261,7 @@
             <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
             <td style="width:25%;">
               <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ','}} </a><br>
               </span>
             </td>
           </tr>
@@ -296,9 +296,8 @@
         <br>
         <h4><u>Actions</u></h4>
         <ul>
-          <li> Click a hash value (above) to see archived versions of this script </li> 
-          <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a></li>
-          <li> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a></li>
+          <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
           <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
@@ -319,8 +318,8 @@
         <h4><u>Actions</u></h4>
         <ul>
           <li> View <a href="https://scriptobservatory.org/script-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
-          <li> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a></li>
-          <li> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a></li>
+          <li> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
           <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
