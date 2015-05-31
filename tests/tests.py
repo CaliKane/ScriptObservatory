@@ -226,7 +226,23 @@ def test_all():
     correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
     check_search_data(url, correct)
  
+ 
+    # Submit 12 test pages and verify the robo-browser gets through them:
+    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    wait_for_robotask_to_be_emptied(600)
     
+
     # We're done!
     robobrowser.terminate()
     backend.terminate()
