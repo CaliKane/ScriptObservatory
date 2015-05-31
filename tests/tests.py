@@ -138,7 +138,7 @@ def wait_for_robotask_to_be_emptied(timeout):
     while get_number_entries(TEST_ROBOTASK_API) != 0:
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to clear out robotask API!
-        time.sleep(timeout/5)
+        time.sleep(5)
 
 
 def wait_for_additions_to_webpage_api(webpage_entries, timeout):
@@ -147,7 +147,7 @@ def wait_for_additions_to_webpage_api(webpage_entries, timeout):
     while get_number_entries(TEST_WEBPAGE_API) != webpage_entries:
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to increase size of webpage API!
-        time.sleep(timeout/10)
+        time.sleep(5)
 
     
 def check_search_data(url, expected):
