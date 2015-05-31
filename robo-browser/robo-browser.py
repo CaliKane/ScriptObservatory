@@ -62,9 +62,14 @@ def get_next_robotask():
     if len(task["objects"]) == 0:
         raise RoboBrowseException("no jobs currently in the queue")
 
-    current_task = task["objects"][random.randint(0,10)]  # we choose randomly between the next 10 tasks
-                                                          # this is a temporary hack to prevent multiple robo-browsers from
-                                                          # all grabbing the next task at the same time.
+    max_tasks = 10
+    if len(task["objects"]) < max_tasks: 
+        max_tasks = len(task["objects"])
+    
+    # we choose randomly from up to the first *max_tasks* tasks that all have the same priority
+    # level as the first task (which has the highest priority because of sort order).
+    task_choices = [t for t in task["objects"][:max_tasks] if t["priority"] == task["objects"][0]["priority"]]
+    current_task = random.choice(task_choices)
 
     return (current_task["url"], current_task["priority"], current_task["id"])
     # TODO: may need to catch requests.exceptions.ConnectionError
