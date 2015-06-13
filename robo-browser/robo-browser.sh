@@ -3,7 +3,7 @@
 
 while :
 do
-    ./robo-browser.py
+    python3 ./robo-browser.py
     sleep 1
 done
 
