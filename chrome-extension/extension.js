@@ -88,6 +88,17 @@ function httpPost(url, data){
     return;  // TODO: check return code
 }
 
+/*
+ * scriptcontentPost(data)
+ * -----------------------
+ * Send json-ified script-content *data* if the server doesn't already have it
+ */
+function scriptcontentPost(data){
+    if (KNOWN_HASHES[data['sha256']] == undefined){
+        httpPost(SCRIPTCONTENT_API_URL, data); 
+    }
+}
+
 
 /* 
  * chrome.webRequest.onBeforeRequest listener
@@ -139,7 +150,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 var script_content_data = {"sha256": hash, 
                                            "content": data};
                 
-                httpPost(SCRIPTCONTENT_API_URL, script_content_data);      
+                scriptcontentPost(script_content_data);      
             }
 
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
@@ -188,7 +199,7 @@ chrome.tabs.onUpdated.addListener(
                     var script_content_data = {"sha256": hash, 
                                                "content": data};
             
-                    httpPost(SCRIPTCONTENT_API_URL, script_content_data);
+                    scriptcontentPost(script_content_data);
                 }
 
                 var timeStamp = new Date().getTime();

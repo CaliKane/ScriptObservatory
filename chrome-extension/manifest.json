@@ -8,8 +8,9 @@
   ],
   "background": {
     "scripts": [
-      "extension.js",
-      "sha256.js"
+      "known_scripts.js",
+      "sha256.js",
+      "extension.js"
     ],
     "persistent": true
   }
