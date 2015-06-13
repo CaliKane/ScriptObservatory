@@ -23,6 +23,7 @@ from xvfbwrapper import Xvfb
 
 
 API_BASE_URL = "https://scriptobservatory.org/api/robotask"
+LOG_FILE = os.environ['LOG_FILEPATH']
 
 N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
 N_SECS_ON_DELETE_FAIL = 5
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     if 'TRAVIS' in os.environ:
         logging.basicConfig(level=logging.WARN)
     else:
-        logging.basicConfig(filename="log-robobrowse.txt", level=logging.WARN)
+        logging.basicConfig(filename=LOG_FILE, level=logging.WARN)
         
     logging.warn("number of chrome / python processes: {0}".format(subprocess.check_output("ps aux | grep -i \"chrome\|python\" | wc -l", shell=True)))
 
