@@ -183,7 +183,7 @@ def check_script_content(h):
     r = requests.get(url)
     assert r.status_code == 200
 
-    sha256 = hashlib.sha256(content.encode('utf-8')).hexdigest()
+    sha256 = hashlib.sha256(r.text.encode('utf-8')).hexdigest()
     
     print(sha256)
     print(h)
