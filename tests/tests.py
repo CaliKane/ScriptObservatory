@@ -184,16 +184,13 @@ def check_script_content(h):
     assert r.status_code == 200
 
     sha256 = hashlib.sha256(r.text.encode('utf-8')).hexdigest()
-    
-    print(sha256)
-    print(h)
     assert sha256 == h
 
 
 def test_all():
     logging.basicConfig(level=logging.WARN)
     backend = launch_backend()
-
+    time.sleep(2) # give backend 2s to get ready
 
     # Test that all APIs are up and empty:
     assert get_number_entries(TEST_WEBPAGE_API) == 0
