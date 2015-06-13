@@ -14,12 +14,12 @@ from pylab import *
 axes = figure().add_subplot(111)
 
 N_X_LABELS = 5
-N_DATA_POINTS = 60
+N_DATA_POINTS = 40
 OUTPUT_BASEDIR = sys.argv[1]  #/static/img/ directory
 
 
 
-conn = sqlite3.connect('../backend/database.db')
+conn = sqlite3.connect('../../backend/database.db')
 
 c = conn.cursor()
 
