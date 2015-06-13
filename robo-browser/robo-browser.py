@@ -24,7 +24,7 @@ from xvfbwrapper import Xvfb
 
 API_BASE_URL = "https://scriptobservatory.org/api/robotask"
 
-N_SECS_TO_WAIT_FOR_CHROME_EXT = 2
+N_SECS_TO_WAIT_FOR_CHROME_EXT = 3
 N_SECS_ON_DELETE_FAIL = 5
 N_SECS_TO_WAIT_AFTER_ONLOAD = 8
 N_SECS_TO_WAIT_AFTER_ERR = 20

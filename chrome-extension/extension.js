@@ -95,7 +95,11 @@ function httpPost(url, data){
  */
 function scriptcontentPost(data){
     if (KNOWN_HASHES[data['sha256']] == undefined){
+        console.log("posting scriptcontent " + data["sha256"]);
         httpPost(SCRIPTCONTENT_API_URL, data); 
+    }
+    else{
+        console.log("skipping sc " + data["sha256"]);
     }
 }
 
