@@ -24,6 +24,7 @@
 #
 
 
+import hashlib
 import json
 import logging
 import os
@@ -41,12 +42,14 @@ PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 FILEPATH = os.path.dirname(os.path.realpath(__file__))
 os.environ["PATH_TO_EXTENSION"] = os.path.join(FILEPATH, PATH_TO_CHROME_EXTENSION)
 
+# URL paths
 TEST_BASE_URL = "http://127.0.0.1:8080"
 TEST_SUGGESTIONS_API = "http://127.0.0.1:8080/api/suggestions"
 TEST_ROBOTASK_API = "http://127.0.0.1:8080/api/robotask"
 TEST_WEBPAGE_API = "http://127.0.0.1:8080/api/webpage"
 TEST_PAGEVIEW_API = "http://127.0.0.1:8080/api/pageview"
 TEST_SCRIPT_API = "http://127.0.0.1:8080/api/script"
+TEST_SCRIPT_CONTENT_API = "http://127.0.0.1:8080/script-content/"
 
 
 def json_post(url, content):
@@ -173,6 +176,19 @@ def ordered(obj):
         return obj
 
 
+def check_script_content(h):
+    """ checks that /script-content/*h* exists on the server and that the hash is correct """
+    url = "{0}{1}".format(TEST_SCRIPT_CONTENT_API, h)
+
+    r = requests.get(url)
+    assert r.status_code == 200
+
+    sha256 = hashlib.sha256(content.encode('utf-8')).hexdigest()
+    
+    print(sha256)
+    print(h)
+    assert sha256 == h
+
 
 def test_all():
     logging.basicConfig(level=logging.WARN)
@@ -217,16 +233,20 @@ def test_all():
     url = "https://andymartin.cc/test-pages/one-script-by-inline.html"
     correct = {'objects': [{'id': 'a0f33bba1eb36b4bbb9cef89a7f72e015fe5bf8cdc957fb6a1f0aee130f71e79', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline.html', 'pageviews': [{'scripts': [{'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab', 'url': 'inline_script_b97dc449b77078dc8b'}], 'date': 1432518282712}]}]}
     check_search_data(url, correct)
+    check_script_content('b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab')
 
     url = "https://andymartin.cc/test-pages/one-script-by-link.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e', 'url': 'https://andymartin.cc/test-pages/hello-world.js'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/one-script-by-link.html'}]}
     check_search_data(url, correct)
- 
+    check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
+
     url = "https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html"
     correct = {'objects': [{'pageviews': [{'scripts': [{'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
     check_search_data(url, correct)
+    check_script_content('b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab')
+    check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
  
- 
+
     # Submit 12 test pages and verify the robo-browser gets through them:
     schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
