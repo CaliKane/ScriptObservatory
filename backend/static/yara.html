@@ -4,17 +4,15 @@
   <p>
     Yara-scanning is in test/experimental mode.
     <br><br>
-    Please don't submit more than one request at a time. If it starts bringing down the server I'll have to turn it off :-(
+    Requests are throttled, but please don't submit more than one request at a time. 
     <br><br>
-    If a request takes longer than 20 minutes, it will be killed... you can send me an email and I'll take a look to see why it's taking so long.
-    <br><br>
-    <b>*IMPORTANT* You need to email me your email address before this will work! If your email isn't on the whitelist, no email will be sent!</b>
-    <br><br>
-    email address <input></input>
-    <br>
-    yara rule <input></input>
-    <br>
-    <input type=Submit value=Submit></input>
+    If a request takes longer than 20 minutes, it will be killed... you can send me an email and I'll look to see why it's taking so long.
+    <br><br><br>
+    <form action="yara_scan" method="post">
+    Email Address:<br> <input type="text" name="email"><br><br>
+    YARA Rule:<br> <textarea rows="30" cols="80" name="yara"></textarea><br><br>
+    <input type="submit" value="Submit">
+    </form>
 
 </body>
 </html>

@@ -6,10 +6,8 @@ from random import randint
 from smtplib import SMTP
 from subprocess import check_output, CalledProcessError
 from sys import argv
+from time import time
 
-
-TIMEOUT = 1200
-WHITELIST = ["andy@andymartin.cc"]
 
 
 def sendmail(dest_addr, message):
@@ -31,9 +29,10 @@ def drop_rule_file(text):
     return filepath
 
 
-if __name__ == "__main__":
-    dst_email = argv[1]
-    rule = argv[2]
+def run_yara_scan(dst_email, rule):
+    TIMEOUT = 1200
+    WHITELIST = environ['EMAIL_WHITELIST'].split(',')
+
     search_directory = "/home/andy/projects/ScriptObservatory/backend/static/script-content/"  # move to env var
     
     if dst_email not in WHITELIST: 
@@ -42,17 +41,19 @@ if __name__ == "__main__":
 
     tmp_file = drop_rule_file(rule)
     try:
+        start_t = time()
         output = check_output("yara --threads=1 {0} {1}".format(tmp_file, search_directory), shell=True, timeout=TIMEOUT)
+        end_t = time()
         output = output.decode("utf-8")
         output = output.replace("{0}/".format(search_directory), "")
         output = output.replace(".txt", "")
 
         if len(output) == 0:
-            output = "no results found."
+            output = "no results found"
         elif len(output.split('\n')) > 10000:
-            output = "too many results. (>10,000)"
+            output = "too many results (>10,000)"
 
-        message = "Subject: YARA Scan Results (success!)\n\nQuery:\n {0}\n\nHits (sha256):\n{1}".format(rule, output)
+        message = "Subject: YARA Scan Results (success!)\n\nQuery:\n {0}\n\nHits (sha256):\n{1}\n\nElapsed Time: {2} seconds".format(rule, output, end_t-start_t)
 
     except CalledProcessError as e:
         print(e)
@@ -63,4 +64,10 @@ if __name__ == "__main__":
     
     if dst_email != environ["GMAIL_ACCOUNT"]:
         sendmail(environ["GMAIL_ACCOUNT"], message)
+
+
+if __name__ == "__main__":
+    dst_email = argv[1]
+    rule = argv[2]
+    run_yara_scan(dst_email, rule)
 

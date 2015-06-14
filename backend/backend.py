@@ -17,6 +17,7 @@ import os
 import hashlib
 import sys
 import time
+from threading import Thread
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask.ext.restless import APIManager
@@ -24,8 +25,11 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, Text, ForeignKey
 
+import yarascan
+
 
 SCRIPT_CONTENT_FOLDER = os.environ['PATH_TO_STORE_SCRIPTCONTENT']
+MAX_YARA_SCAN_THREADS = 2
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -95,6 +99,36 @@ api_manager.create_api(Suggestions,
 @app.route('/script-content/<path:filename>', methods=["GET"])
 def get_script_content(filename):
     return send_from_directory(SCRIPT_CONTENT_FOLDER, "{0}.txt".format(filename), as_attachment=False)
+
+
+threads = []
+
+@app.route('/yara_scan', methods=["POST"])
+def run_yara_scan():
+    for t in threads:
+        if not t.is_alive(): 
+            t.join()
+            threads.remove(t)
+    
+    if len(threads) >= MAX_YARA_SCAN_THREADS:
+        return 'too many active jobs! try again later'
+
+    email = request.form.get('email')
+    yara = request.form.get('yara')
+
+    if not email or not yara:
+        return 'Please set BOTH the "email" and "yara" parameters!'
+
+    email_whitelist = os.environ['EMAIL_WHITELIST'].split(',')
+
+    if email not in email_whitelist:
+        return 'Email address not found in EMAIL_WHITELIST. email me if you want your email to be added.'
+
+    t = Thread(target=yarascan.run_yara_scan, args=(email, yara))
+    threads.append(t)
+    t.start()
+
+    return 'Thanks. Wait atleast 20 minutes (or until you get a results email) before sending another request.'
 
 
 @app.route('/script-content', methods=["POST"])
@@ -193,5 +227,5 @@ def search():
 
 if __name__ == '__main__':
     port = int(os.environ['BACKEND_PORT'])
-    app.run(host="0.0.0.0", port=port, use_reloader=False)
+    app.run(host="0.0.0.0", port=port, use_reloader=False, debug=False)
 
