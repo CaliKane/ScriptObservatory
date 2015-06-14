@@ -33,7 +33,10 @@ N_SECS_WHEN_NO_TASKS_FOUND = 30
 N_SECS_REQ_TIMEOUT = 70
 N_SECS_HARD_REQ_TIMEOUT = 90
 
+USER_AGENT_STR = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+
 OPTIONS = Options()
+OPTIONS.add_argument("--user-agent={0}".format(USER_AGENT_STR))
 OPTIONS.add_argument("--load-extension={0}".format(os.environ['PATH_TO_EXTENSION']))
 OPTIONS.add_argument("--disable-application-cache")
 if 'TRAVIS' in os.environ:
