@@ -6,11 +6,14 @@
     <br><br>
     Requests are throttled, but please don't submit more than one request at a time. 
     <br><br>
-    If a request takes longer than 20 minutes, it will be killed... you can send me an email and I'll look to see why it's taking so long.
+    If a request takes longer than 20 minutes, it will be killed. You can send me an email and I'll look to see why it's taking so long.
+    <br><br>
+    To start using this feature, your email address has to be added to a list of approved addresses. Send me an email if you want to be added.
     <br><br><br>
     <form action="yara_scan" method="post">
     Email Address:<br> <input type="text" name="email"><br><br>
-    YARA Rule:<br> <textarea rows="30" cols="80" name="yara"></textarea><br><br>
+    YARA Rule:<br> <textarea rows="30" cols="80" name="yara">rule dummy&#10;{&#10;&#9;condition: false&#10;}</textarea>
+    <br><br>
     <input type="submit" value="Submit">
     </form>
 
