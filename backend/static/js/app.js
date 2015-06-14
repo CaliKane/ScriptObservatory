@@ -36,6 +36,11 @@ function isValidHash(str) {
 }
 
 
+function getLength(obj) {
+    return Object.keys(obj).length;
+}
+
+
 /* 
  * AngularJS app definition
  */
@@ -265,21 +270,22 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     }
 
     // STATUS OPTIONS:
-    //  WAITING_FOR_QRY, PROCESSING_QRY, NO_RESULTS, HAVE_WEBPAGE_RESULTS, HAVE_SCRIPT_RESULTS, QRY_ERROR
+    //  WAITING_FOR_QRY, PROCESSING_QRY, NO_RESULTS, HAVE_WEBPAGE_RESULTS, HAVE_SCRIPT_RESULTS_URL, HAVE_SCRIPT_RESULTS_HASH, QRY_ERROR
     $scope.QRY_STATUS = "WAITING_FOR_QRY";
 
-    $scope.SCRIPT_QRY_TIMEOUT = 10*1000;
+    $scope.SCRIPT_QRY_TIMEOUT = 20*1000;
     $scope.WEBPAGE_QRY_TIMEOUT = 30*1000;
 
     $scope.makeScriptQueryByUrl = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
+        app.scriptQuery = queryString;
 
         $http.get("/api/search?script_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
             else {
-                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS";
+                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS_URL";
             }
 
             app.scriptQueryResults = data.objects;
@@ -290,15 +296,15 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 
     $scope.makeScriptQueryByHash = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
+        app.scriptQuery = queryString;
         
         $http.get("/api/search?script_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
             else {
-                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS";
+                $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS_HASH";
             }
-
             app.scriptQueryResults = data.objects;
         });
     }

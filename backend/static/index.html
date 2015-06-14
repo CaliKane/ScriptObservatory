@@ -17,7 +17,7 @@
     <p class="unselectable">a project to record and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
   </header>
 
-  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="img/forkme_right_darkblue_121621.png"></a>
+  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://scriptobservatory.org/img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="https://scriptobservatory.org/img/forkme_right_darkblue_121621.png"></a>
 
   <div class="bodycontainer">
     <div class="container">
@@ -74,7 +74,6 @@
             <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
             <li><a href="#" ng-click='submitQuery("vt.edu");'>vt.edu</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
-            <li><a href="#" ng-click='submitQuery("hrichina");'>hrichina</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.studentsforafreetibet.org");'>https://www.studentsforafreetibet.org</a></li>
             <li><a href="#" ng-click='submitQuery("http://www.betterweather.net");'>http://www.betterweather.net</a></li>
             <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a></li>
@@ -90,15 +89,25 @@
             <li><a href="#" ng-click='submitQuery("https://sb.scorecardresearch.com/beacon.js");'>https://sb.scorecardresearch.com/beacon.js</a></li>
             <li><a href="#" ng-click='submitQuery("c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3");'>c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3</a></li>
             <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
-            <li><a href="#" ng-click='submitQuery("https://www.google.com/js/bg/71ikiLcMrGYIGyvMYn7ZsljFfaS4wGaxf80-aqUxjBw.js");'>https://www.google.com/js/bg/71ikiLcMrGYIGyvMYn7ZsljFfaS4wGaxf80-aqUxjBw.js</a></li>
           </ul>
         </div>
         
-        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS'" id="script_query_section">
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="script_query_section">
+          <p> Results found for <a href="#" ng-click="openHash({'hash':app.scriptQuery}, '', '')">{{ app.scriptQuery }}</a>:</p>
           <table class="table table-hover table-bordered table-condensed">
             <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site }}</a> </td>
+                <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
+            </tr>
+          </table>
+        </div>
+        
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="script_query_section">
+          <p> Results found for <a href="#" ng-click="openScript({'url':app.scriptQuery}, '')">{{ app.scriptQuery }}</a>:</p>
+          <table class="table table-hover table-bordered table-condensed">
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+            <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
+                <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
           </table>
         </div>
@@ -134,7 +143,7 @@
         </div>
 
         <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
-          <span> Something went wrong :-( ... An error report has been logged.</span>
+          <span> Something went wrong. An error report has been logged. <br><br> If you use an extension like uBlock that blocks requests based on URL, check your console. </span>
         </div>
 
         <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
@@ -244,18 +253,18 @@
       
       </tab>
  
-
+      <!--
       <tab heading="Blog">
         <br><br>
         <p align="center"> Coming soon. </p>
         <br><br>
       </tab>
+      -->
 
       </tabset>
     </div>
 
 
-    <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="websiteModalContent.html">
       <div class="modal-header">
         <h3 class="modal-title">Website: <span class="modal-url">{{ currentObj.url }}</span></h3>
@@ -263,6 +272,7 @@
 
       <div class="modal-body">
         <h4><u>Observed Scripts</u></h4>
+        <span ng-if="(currentObj.scripts | object2Array ).length == 0"> No scripts found. </span>
         <table class="table-condensed table-hover" style="background-color:inherit;">
           <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
             <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
@@ -288,7 +298,6 @@
       </div>
     </script>
 
-    <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="scriptModalContent.html">
       <div class="modal-header">
         <h3 class="modal-title">Script: <span class="modal-url">{{ currentObj.url }}</span></h3>
@@ -297,15 +306,18 @@
       <div class="modal-body">
         <h4><u>Observed Hashes</u></h4>
         <table class="table-condensed table-hover" style="background-color:inherit;">
-          <span ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
+          <span ng-if="webpageUrl != ''" ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
             <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, scriptUrl);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+          </span>
+          <span ng-if="webpageUrl == ''">
+            To see the observed hashes for this script, you need to look at the results coming from a specific webpage. Viewing all hashes seen across all webpages is coming soon. 
           </span>
         </table>
         <br>
         <h4><u>Actions</u></h4>
         <ul>
           <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
           <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
@@ -316,7 +328,6 @@
       </div>
     </script>
 
-    <!-- TODO these modal templates are horrible and should be fixed soon -->
     <script class="modal" type="text/ng-template" id="hashModalContent.html">
       <div class="modal-header">
         <h3 class="modal-title">Hash: <span class="modal-url">{{ currentObj.hash }}</span></h3>
@@ -326,8 +337,8 @@
         <h4><u>Actions</u></h4>
         <ul>
           <li> View <a href="https://scriptobservatory.org/script-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
-          <li> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="scriptUrl != ''"> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
           <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
