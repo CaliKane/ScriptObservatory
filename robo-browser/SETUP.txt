@@ -1,0 +1,8 @@
+To get going on a fresh Debian 7 install, you'll need to:
+
+sudo apt-get install python3 python3-pip xvfb
+sudo pip install selenium xvfbwrapper requests
+download the latest chromedriver binary and place in /usr/bin/
+download the latest google-chrome and install with dpkg
+
+
