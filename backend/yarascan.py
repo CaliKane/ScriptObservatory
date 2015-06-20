@@ -17,8 +17,6 @@ MAX_HASHES = 500
 MAX_PAGES_PER_HASH = 25
 YARA_SCAN_TIMEOUT = 1500
 
-EMAIL_WHITELIST = environ['EMAIL_WHITELIST'].split(',')
-
 SCRIPT_QUERY_URL  = "https://scriptobservatory.org/api/search?script_by_hash={0}"  
 
 SUCCESS_SUBJECT = "YARA Scan Results (success!)"
@@ -29,6 +27,11 @@ FAILURE_MESSAGE = "<html><head></head><body>Query:<br>{0}<br><br>Error:<br>{1}<b
 
 WARNING_MESSAGE = """A maximum of {0} hashes and {1} webpages for each hash will be shown here. 
                   To see full results, refine your YARA rule or query the server directly.""".format(MAX_HASHES, MAX_PAGES_PER_HASH)
+
+try:
+    EMAIL_WHITELIST = environ['EMAIL_WHITELIST'].split(',')
+except KeyError as e:
+    EMAIL_WHITELIST = []
 
 
 def sendmail(dest_addr, subject, message):
