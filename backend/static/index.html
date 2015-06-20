@@ -41,13 +41,12 @@
         bookmarklet to your bookmarks bar to jump directly to the analysis page for whatever website you have open.
         <br><br>
         <h3><i>Are you looking for a project to get involved with?</i></h3>
-        Check out the page on <a target="_blank" href="https://github.com/andy11/ScriptObservatory">GitHub</a> or <a target="_blank" href="mailto:scriptobservatory@gmail.com">get in touch</a>.  A few ways to get involved:
-        <ul>
-          <li><i>Want to search through all the JavaScript we've ever collected for anything malicious?</i> See <a href="https://github.com/andy11/ScriptObservatory/issues/4" target="_blank">Issue #4</a>.</li>
-          <li><i>Want to help port the extension to Firefox?</i> See <a href="https://github.com/andy11/ScriptObservatory/issues/5" target="_blank">Issue #5</a>.</li>
-          <li>See all our other "help-wanted" issues <a href="https://github.com/andy11/ScriptObservatory/labels/help%20wanted" target="_blank">here</a>.</li>
-        </ul>
-        <br>
+        <a target="_blank" href="mailto:scriptobservatory@gmail.com">Send me an email</a> to get in touch! 
+        <br><br>
+        Most of the coding is in Python (backend, analysis tools, scanning automation tools), AngularJS (webpage), plain JavaScript (chrome extension), and HTML/CSS/Bootstrap (webpage). All the code is on <a target="_blank" href="https://github.com/andy11/ScriptObservatory">GitHub</a>. 
+        <br><br>
+        If you're not interested in coding and just want to comb through the data we've collected, see the "Explore the Data" tab to get started.
+        <br><br>
         </p>
       </tab>
      
@@ -90,6 +89,9 @@
             <li><a href="#" ng-click='submitQuery("c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3");'>c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3</a></li>
             <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
           </ul>
+          <br>
+          <h3><i>Got YARA signatures? (experimental)</i></h3>
+          <p> Click <a href="https://scriptobservatory.org/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
         </div>
         
         <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="script_query_section">
@@ -143,7 +145,7 @@
         </div>
 
         <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
-          <span> Something went wrong. An error report has been logged. <br><br> If you use an extension like uBlock that blocks requests based on URL, check your console. </span>
+          <span> Something went wrong. An error report has been logged. <br><br> If you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (this is the most common cause of this error) </span>
         </div>
 
         <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
@@ -171,7 +173,7 @@
             <div class="col-sm-1"></div>
           </div>
           </form>
-            <div align="center">(A <a href="https://github.com/andy11/ScriptObservatory/blob/master/robo-browser/robo-browser.py" target="_blank">robo-browser</a> will visit it soon. If you don't see it after 10 minutes, feel free to send me an <a target="_blank" href="mailto:scriptobservatory@gmail.com">email</a>.)</div>
+            <div align="center">(Submit the website, wait a few minutes, then search for it under the "Explore the Data" tab. <br>If you don't see it after 10 minutes, feel free to <a target="_blank" href="mailto:scriptobservatory@gmail.com">send me an email</a>.)</div>
           <br><br>
           <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
           <br>
@@ -188,7 +190,7 @@
           </form>
            <br>
           <div align="center">
-            (These are manually reviewed before they're added to <a href="https://github.com/andy11/ScriptObservatory/tree/master/robo-browser/website-lists" target="_blank">a list</a>. Use any format that's consistent and easy to parse.)
+            (These are manually reviewed before they're added to a list. Use any format that's consistent and easy to parse.)
           </div>
         </p>
         <br><br>
@@ -237,7 +239,7 @@
           If you have suggestions for ways to further improve, get in touch!
           <br><br>
           <h3><i>How much data have you collected?</i></h3>
-          I started scanning in April 2015. Here are some plots that get updated every 12 hours.
+          I started scanning in April 2015. Here are some plots that get updated every 12 hours:
           <br><br>
           <div align="center">
           <img src="https://scriptobservatory.org/img/entries-over-time.png"></img>
