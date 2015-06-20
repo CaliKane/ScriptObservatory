@@ -47,19 +47,18 @@ Privacy
 -------
 
 With the ScriptObservatory Chrome extension installed, your browser will send these
-four pieces of information to a remote server at regular intervals:
- 1. The full URL of the script you downloaded
- 2. The full URL of the parent webpage where the script was included
- 3. The SHA-256 hash of the script's content
- 4. The time you made this observation
+three pieces of information to the ScriptObservatory backend each time you view a webpage:
+ 1. The URL of the webpage
+ 2. The URL of the each piece of JavaScript included on the webpage
+ 3. The SHA-256 hash of the content of each script you observe
 
-Optionally, you can have the Chrome extension send the full content of the scripts you
-download to the server too. This will be turned off by default in all released versions.
+You can optionally have the Chrome extension send the content of the scripts you
+observe. This will be turned off by default in all released versions.
 
-Here are some steps that have been made to make this process as trustworthy as possible:
+Here are some steps that have been taken to make this process as trustworthy as possible:
  - The connection from you to the remote upload server will always be 
    [encrypted using SSL/TLS](https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org). 
- - No IP addresses or User IDs are ever recorded in the database.
+ - Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded in the database. Your observations will be immediately mixed in with those of everyone else. If you see an IP address or User ID value in a URL string that made it past the filters, [let me know](mailto:scriptobservatory@gmail.com) and I'll remove them and blacklist further reports for that website. 
  - The source code for both the client and the server will always be available for you to 
    review. (See the 
    [chrome-extension/](https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension) 
