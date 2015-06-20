@@ -30,6 +30,7 @@ import yarascan
 
 SCRIPT_CONTENT_FOLDER = os.environ['PATH_TO_STORE_SCRIPTCONTENT']
 MAX_YARA_SCAN_THREADS = 2
+MAX_SCRIPT_RESULTS = 250
 
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
@@ -202,9 +203,9 @@ def api_search():
     
     elif script_by_url or script_by_hash:
         if script_by_url is not None:   
-            scripts = db.session.query(Script).filter(Script.url == script_by_url).all()
+            scripts = db.session.query(Script).filter(Script.url == script_by_url).limit(MAX_SCRIPT_RESULTS).all()
         elif script_by_hash is not None:   
-            scripts = db.session.query(Script).filter(Script.hash == script_by_hash).all()
+            scripts = db.session.query(Script).filter(Script.hash == script_by_hash).limit(MAX_SCRIPT_RESULTS).all()
         
         json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
 

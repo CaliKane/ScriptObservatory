@@ -97,7 +97,9 @@
         <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="script_query_section">
           <p> Results found for <a href="#" ng-click="openHash({'hash':app.scriptQuery}, '', '')">{{ app.scriptQuery }}</a>:</p>
           <table class="table table-hover table-bordered table-condensed">
-            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
+              <span ng-if="app.scriptQueryResults.length >= 250"> (just showing the first 250 results!) </span>
+            </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
                 <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
@@ -107,7 +109,9 @@
         <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="script_query_section">
           <p> Results found for <a href="#" ng-click="openScript({'url':app.scriptQuery}, '')">{{ app.scriptQuery }}</a>:</p>
           <table class="table table-hover table-bordered table-condensed">
-            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
+              <span ng-if="app.scriptQueryResults.length >= 250"> (just showing the first 250 results!) </span>
+            </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
                 <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
