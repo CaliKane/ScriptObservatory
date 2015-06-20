@@ -25,6 +25,8 @@ from xvfbwrapper import Xvfb
 API_BASE_URL = "https://scriptobservatory.org/api/robotask"
 LOG_FILE = os.environ['LOG_FILEPATH']
 
+MAX_RANDOM_CHOICE_TASKS = 25
+
 N_SECS_TO_WAIT_FOR_CHROME_EXT = 5
 N_SECS_ON_DELETE_FAIL = 5
 N_SECS_TO_WAIT_AFTER_ONLOAD = 8
@@ -46,7 +48,8 @@ if 'TRAVIS' in os.environ:
 def get_next_robotask():
     """ gets the (url, priority, task_id) of next task """
     response = requests.get(API_BASE_URL, 
-                            params=dict(q=json.dumps(dict(order_by=[dict(field='priority', direction='asc')]))),
+                            params=dict(q=json.dumps(dict(order_by=[dict(field='priority', direction='asc')],
+                                                          results_per_page=MAX_RANDOM_CHOICE_TASKS))),
                             headers={'Content-Type': 'application/json'},
                             verify=False)
 
@@ -62,7 +65,7 @@ def get_next_robotask():
 
     # we choose randomly from up to the first *max_tasks* tasks that all have the same priority
     # level as the first task (which has the highest priority because of sort order).
-    max_tasks = 10 if n_tasks < 10 else n_tasks
+    max_tasks = MAX_RANDOM_CHOICE_TASKS if n_tasks > MAX_RANDOM_CHOICE_TASKS else n_tasks  # probably unnecessary
     task_choices = [t for t in tasks[:max_tasks] if t["priority"] == tasks[0]["priority"]]
     current_task = random.choice(task_choices)
     

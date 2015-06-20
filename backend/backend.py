@@ -89,7 +89,7 @@ api_manager.create_api(Script,
                        methods=["GET", "POST", "PUT", "PATCH"])
 
 api_manager.create_api(RoboTask,
-                       max_results_per_page=0,
+                       results_per_page=100,
                        methods=["GET", "POST", "DELETE", "PUT"])
 
 api_manager.create_api(Suggestions,
