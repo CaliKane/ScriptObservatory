@@ -2,6 +2,7 @@
 #
 
 import requests
+from html import escape
 from os import environ
 from random import randint
 from smtplib import SMTP
@@ -91,13 +92,13 @@ def run_yara_scan(dst_email, rule):
         
         warning = "A maximum of {0} hashes and {1} webpages for each hash will be shown here. To see full results, refine your YARA rule or query the server directly.".format(MAX_HASHES, MAX_PAGES_PER_HASH)
         subject = "YARA Scan Results (success!)"
-        message = "<html><head></head><body><u>Query:</u><br>{0}<br><br><u>Warning:</u><br>{1}</u><br><br><u>Hits:</u><br>{2}<u>Elapsed Time:</u><br>{3} seconds</body></html>".format(rule, warning, final_output, end_t-start_t)
+        message = "<html><head></head><body><u>Query:</u><br>{0}<br><br><u>Warning:</u><br>{1}</u><br><br><u>Hits:</u><br>{2}<u>Elapsed Time:</u><br>{3} seconds</body></html>".format(escape(rule), warning, final_output, end_t-start_t)
 
     except CalledProcessError as e:
         print(e)
         output = str(e)
         subject = "YARA Scan Results (error!)"
-        message = "Query:\n {0}\n\nError:\n{1}\n\nCheck your YARA syntax!".format(rule, output)
+        message = "Query:\n {0}\n\nError:\n{1}\n\nCheck your YARA syntax!".format(escape(rule), output)
 
     sendmail(dst_email, subject, message)
     
