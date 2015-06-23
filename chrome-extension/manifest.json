@@ -35,8 +35,5 @@
         "tabs"
     ],
 
-    "options_page": "html/dashboard.html",
-    "options_ui": {
-        "page": "html/options_ui.html"
-    }
+    "options_page": "html/dashboard.html"
 }
