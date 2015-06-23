@@ -29,6 +29,15 @@ function updateReportingStatusDisplay(){
         e("current-reporting-status").innerHTML = "Reporting is OFF";
         e("toggle-reporting-status").innerHTML = "Turn Observation Reporting On";
     }
+    
+    if (bp.getScriptContentReportingState()){
+        e("toggle-sc-uploading-status").innerHTML = "Turn Script Content Uploading Off";
+        e("current-sc-uploading-status").innerHTML = "Script Content Uploading is ON";
+    }
+    else{
+        e("toggle-sc-uploading-status").innerHTML = "Turn Script Content Uploading On";
+        e("current-sc-uploading-status").innerHTML = "Script Content Uploading is OFF";
+    }
 }
     
 function toggleReportingStatus(){
@@ -36,9 +45,16 @@ function toggleReportingStatus(){
     updateReportingStatusDisplay();
 }
 
+function toggleSCUploadingStatus(){
+    bp.toggleScriptContentUploadingState();
+    updateReportingStatusDisplay();
+}
+
 
 e("analyze-current-page").addEventListener("click", jumpToAnalysisPage);
 e("toggle-reporting-status").addEventListener("click", toggleReportingStatus);
+e("toggle-sc-uploading-status").addEventListener("click", toggleSCUploadingStatus);
+
 
 updateReportingStatusDisplay();
 

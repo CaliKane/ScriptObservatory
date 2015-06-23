@@ -26,30 +26,46 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
  *              - Cleared every time a request for a main_frame is made. 
  *              - Used and cleared every time the chrome.tabs.onUpdated listener fires 
  *                and data is POSTed to the API.
- *              - Cleared whenever REPORTING_ON is toggled to false
+ *              - Cleared whenever GENERAL_REPORTING_ON is toggled to false
  *
- * (2) REPORTING_ON: true if the chrome extension should report observations to the
+ * (2) GENERAL_REPORTING_ON: true if the chrome extension should report observations to the
  *                   ScriptObservatory backend, false if not.
  */
 var SCRIPTS = {};
-var REPORTING_ON = false; //should cause tests to fail
+var GENERAL_REPORTING_ON = true; 
+var SCRIPT_CONTENT_UPLOADING_ON = true;
 
 
 /*
- * REPORTING_ON helper functions
+ * GENERAL_REPORTING_ON helper functions
  * -----------------------------
  * Help with getting/setting the global reporting state and automatically performing 
  * follow-up actions needed.
- * TODO: eventually work this into OO-style code
+ * TODO: eventually clean this up...
  */
 function toggleReportingState(){
-    REPORTING_ON = !REPORTING_ON;
+    GENERAL_REPORTING_ON = !GENERAL_REPORTING_ON;
     SCRIPTS = {};
+
+    if (GENERAL_REPORTING_ON == false && SCRIPT_CONTENT_UPLOADING_ON == true){
+        // if GENERAL_REPORTING_ON was just turned false, we want to make sure 
+        // SCRIPT_CONTENT_UPLOADING_ON is also false
+        toggleScriptContentUploadingState();
+    }
+
 }
 
-function getReportingState(){
-    return REPORTING_ON;
+function toggleScriptContentUploadingState(){
+    if (SCRIPT_CONTENT_UPLOADING_ON == false && GENERAL_REPORTING_ON == false){
+        // GENERAL_REPORTING_ON must be true in order to report script content!
+        // TODO: explain to user
+        return;
+    }             
+    SCRIPT_CONTENT_UPLOADING_ON = !SCRIPT_CONTENT_UPLOADING_ON;
 }
+
+function getReportingState(){ return GENERAL_REPORTING_ON; }
+function getScriptContentReportingState(){ return SCRIPT_CONTENT_UPLOADING_ON; }
 
 
 /*
@@ -116,8 +132,10 @@ function httpPost(url, data){
  * Send json-ified script-content *data* 
  */
 function scriptcontentPost(data){
-    console.log("posting scriptcontent " + data["sha256"]);
-    httpPost(SCRIPTCONTENT_API_URL, data); 
+    if (SCRIPT_CONTENT_UPLOADING_ON){
+        console.log("posting scriptcontent " + data["sha256"]);
+        httpPost(SCRIPTCONTENT_API_URL, data); 
+    }
 }
 
 
@@ -149,7 +167,7 @@ function scriptcontentPost(data){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
-        if (REPORTING_ON == false){
+        if (GENERAL_REPORTING_ON == false){
             return {cancel: false}; 
         }
 
@@ -209,7 +227,7 @@ chrome.webRequest.onBeforeRequest.addListener(
  */
 chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab){
-        if (REPORTING_ON == false){
+        if (GENERAL_REPORTING_ON == false){
             return {cancel: false}; 
         }
 
