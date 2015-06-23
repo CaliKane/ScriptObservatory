@@ -1,17 +1,42 @@
 {
-  "name": "ScriptObservatory",
-  "version": "0.0.1",
-  "manifest_version": 2,
-  "description": "Keep track of what scripts you run.",
-  "permissions": [
-    "http://*/*", "https://*/*", "webRequest", "webRequestBlocking", "tabs"
-  ],
-  "background": {
-    "scripts": [
-      "known_scripts.js",
-      "sha256.js",
-      "extension.js"
+    "manifest_version": 2,
+    
+    "name": "ScriptObservatory",
+    "version": "0.0.1",
+   
+    "description": "Keep track of what scripts you run.",
+    "icons": {
+        "16": "img/icon_16.png",
+        "128": "img/icon_128.png"
+    },  
+    
+    "browser_action": {
+        "default_icon": {
+            "19": "img/browsericons/icon19.png",
+            "38": "img/browsericons/icon38.png"
+        },
+        "default_title": "ScriptObservatory Chrome Extension",
+        "default_popup": "html/popup.html"
+    },
+
+    "background": {
+        "scripts": [
+            "js/sha256.js",
+            "js/extension.js"
+        ],
+        "persistent": true
+    },
+
+    "permissions": [
+        "http://*/*", 
+        "https://*/*", 
+        "webRequest", 
+        "webRequestBlocking",
+        "tabs"
     ],
-    "persistent": true
-  }
+
+    "options_page": "html/dashboard.html",
+    "options_ui": {
+        "page": "html/options_ui.html"
+    }
 }
