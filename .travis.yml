@@ -23,20 +23,20 @@ script:
   - echo "appending current directory to PATH"
   - export PATH=$(pwd):$PATH
   - echo "archiving robo-browser.py & extension.js before we patch them to point to the local backend"
-  - mv chrome-extension/extension.js chrome-extension/extension.js-arch
+  - mv chrome-extension/js/extension.js chrome-extension/js/extension.js-arch
   - mv robo-browser/robo-browser.py robo-browser/robo-browser.py-arch
-  - ls chrome-extension/
+  - ls chrome-extension/js/
   - ls robo-browser/
   - echo "patching extension.js"
-  - sed 's/https:\/\/scriptobservatory.org/http:\/\/127.0.0.1:8080/g' chrome-extension/extension.js-arch > chrome-extension/extension.js
-  - ls chrome-extension/
+  - sed 's/https:\/\/scriptobservatory.org/http:\/\/127.0.0.1:8080/g' chrome-extension/js/extension.js-arch > chrome-extension/js/extension.js
+  - ls chrome-extension/js/
   - echo "patching robo-browser.py"
   - sed 's/https:\/\/scriptobservatory.org/http:\/\/127.0.0.1:8080/g' robo-browser/robo-browser.py-arch > robo-browser/robo-browser.py
   - ls robo-browser/
   - nosetests tests/
   - echo "restoring extension.js"
-  - mv chrome-extension/extension.js-arch chrome-extension/extension.js
-  - ls chrome-extension/
+  - mv chrome-extension/js/extension.js-arch chrome-extension/js/extension.js
+  - ls chrome-extension/js/
   - echo "restoring robo-browser.py"
   - mv robo-browser/robo-browser.py-arch robo-browser/robo-browser.py
   - ls robo-browser/
