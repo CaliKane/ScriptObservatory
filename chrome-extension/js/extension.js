@@ -23,11 +23,33 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
  * Global Data Structures
  * ----------------------
  * (1) SCRIPTS: Maps the tabId to a list of all scripts loaded for the given tab. 
- *              Cleared every time a request for a main_frame is made. Used and
- *              cleared every time the chrome.tabs.onUpdated listener fires and
- *              data is POSTed to the API.
+ *              - Cleared every time a request for a main_frame is made. 
+ *              - Used and cleared every time the chrome.tabs.onUpdated listener fires 
+ *                and data is POSTed to the API.
+ *              - Cleared whenever REPORTING_ON is toggled to false
+ *
+ * (2) REPORTING_ON: true if the chrome extension should report observations to the
+ *                   ScriptObservatory backend, false if not.
  */
-SCRIPTS = {};
+var SCRIPTS = {};
+var REPORTING_ON = false; //should cause tests to fail
+
+
+/*
+ * REPORTING_ON helper functions
+ * -----------------------------
+ * Help with getting/setting the global reporting state and automatically performing 
+ * follow-up actions needed.
+ * TODO: eventually work this into OO-style code
+ */
+function toggleReportingState(){
+    REPORTING_ON = !REPORTING_ON;
+    SCRIPTS = {};
+}
+
+function getReportingState(){
+    return REPORTING_ON;
+}
 
 
 /*
@@ -127,6 +149,10 @@ function scriptcontentPost(data){
  */
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
+        if (REPORTING_ON == false){
+            return {cancel: false}; 
+        }
+
         var tabId = details.tabId;
         var data = "";
         var hash = "";
@@ -163,7 +189,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // TODO: look into auto-reporting this error...
         console.log("failed to hit a return statement!!");
     }, 
-    {urls: ["<all_urls>"], types: ["script", "main_frame"]}, 
+    {urls: ["http://*/*", "https://*/*"], types: ["script", "main_frame"]}, 
     ["blocking"]
 );
 
@@ -183,6 +209,10 @@ chrome.webRequest.onBeforeRequest.addListener(
  */
 chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab){
+        if (REPORTING_ON == false){
+            return {cancel: false}; 
+        }
+
         if (changeInfo.status == "complete"){
             inline_callback = function(scripts){
                 if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
