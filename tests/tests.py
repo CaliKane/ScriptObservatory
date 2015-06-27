@@ -257,7 +257,7 @@ def test_all():
     check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
  
     url = "https://andymartin.cc/test-pages/iframe-dropped.html"
-    correct = {'objects': [{'pageviews': [{'scripts': [{'hash': '24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e76    6fb37f097e38df0b', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html'}, {'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/iframe-dropped.html', 'id': 'bcbd228cb9bbd1128c50e4f3bde5806820f056777574dc026e0b500023436228'}]}
+    correct = {'objects': [{'pageviews': [{'scripts': [{'hash': '24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html'}, {'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/iframe-dropped.html', 'id': '0011c8873b915ea0f61df1de7b0deafea4d69f88421a649e3bb9ca68827beaed'}]}
     check_search_data(url, correct)
     check_script_content('b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab')
     check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
