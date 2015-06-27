@@ -45,16 +45,17 @@ for n, pv in enumerate(pageviews):
 
     if t > time_vals[time_vals_ind]:
         #print obs_so_far / hours_per_tv
-        y.append(obs_so_far / hours_per_tv)
+        y.append(obs_so_far * 0.001 / hours_per_tv)
         labels.append(t)
         time_vals_ind += 1
         obs_so_far = 0
 
 plt.plot(range(len(y)), y, 'r-')
 plt.title("New Pageview Observations Added Per Hour")
+plt.ylabel("Thousands of pageviews")
 
 xmin, xmax, ymin, ymax = plt.axis()
-plt.axis([xmin, xmax, 0, ymax+4])
+plt.axis([xmin, xmax, 0, ymax])
 n_labels = len(axes.get_xticklabels())
 
 time_labels = range(t_first + t_elapsed/n_labels, t_last + t_elapsed/n_labels, t_elapsed/n_labels)
