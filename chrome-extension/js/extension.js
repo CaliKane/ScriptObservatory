@@ -232,7 +232,7 @@ chrome.tabs.onUpdated.addListener(
         }
 
         if (changeInfo.status == "complete"){
-            inline_callback = function(scripts){
+            inline_callback = setTimeout(function(scripts){
                 if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
                 scripts = scripts[0];
 
@@ -256,7 +256,7 @@ chrome.tabs.onUpdated.addListener(
                 delete SCRIPTS[tabId];
 
                 httpPatch(tab.url, pageview_data);
-            };
+            }, 2500);
 
             // TODO: review this injected code for possible security issues before making
             //       release. OK for now as it's just the robo-browser using this code.
