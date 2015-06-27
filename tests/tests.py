@@ -220,14 +220,15 @@ def test_all():
 
     # Submit a test pages to the robotask API & verify it's correctly recorded:
     initial_n_webpages = get_number_entries(TEST_WEBPAGE_API)
-    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 5)
-    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
-    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
-    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/simple.html", 1)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 2)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 3)
+    schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 4)
     schedule_robotask("https://andymartin.cc/test-pages/iframe-simple.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped.html", 6)
     
-    wait_for_robotask_to_be_emptied(120)
-    wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
+    wait_for_robotask_to_be_emptied(180)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 6, 60)
  
     url = "https://andymartin.cc/test-pages/simple.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
