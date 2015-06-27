@@ -224,6 +224,7 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-link.html", 5)
     schedule_robotask("https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html", 5)
+    schedule_robotask("https://andymartin.cc/test-pages/iframe-simple.html", 5)
     
     wait_for_robotask_to_be_emptied(120)
     wait_for_additions_to_webpage_api(initial_n_webpages + 4, 60)
