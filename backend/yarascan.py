@@ -101,8 +101,10 @@ def run_yara_scan(dst_email, rule):
                 if len(results) > MAX_PAGES_PER_HASH: 
                     results = results[:MAX_PAGES_PER_HASH] 
                 results = ['<a href="https://scriptobservatory.org/search/?query={0}" target="_blank">{0}</a>, '.format(r) for r in results]
+                if len(results) == 0:
+                    results = ['(no webpages found)']
 
-                final_output += "Hash {0} matches, seen on:<br>{1}<br><br>".format('<a href="https://scriptobservatory.org/search/?query={0}" target="_blank">{0}</a>'.format(h), 
+                final_output += "Hash {0} matches, seen on:<br>{1}<br><br>".format('<a href="https://scriptobservatory.org/script-content/{0}" target="_blank">{0}</a>'.format(h), 
                                                                                    ' '.join(results))
         
         subject = SUCCESS_SUBJECT
