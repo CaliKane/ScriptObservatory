@@ -232,31 +232,33 @@ chrome.tabs.onUpdated.addListener(
         }
 
         if (changeInfo.status == "complete"){
-            inline_callback = setTimeout(function(scripts){
-                if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
-                scripts = scripts[0];
+            inline_callback = function(scripts){
+                setTimeout(function(scripts){
+                    if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
+                    scripts = scripts[0];
 
-                var arrayLength = scripts.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    data = String(scripts[i]);
-                    hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-                    var url = "inline_script_" + hash.slice(0,18);
-                    SCRIPTS[tabId].push({"url": url, "hash": hash});
+                    var arrayLength = scripts.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        data = String(scripts[i]);
+                        hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+                        var url = "inline_script_" + hash.slice(0,18);
+                        SCRIPTS[tabId].push({"url": url, "hash": hash});
+                    
+                        var script_content_data = {"sha256": hash, 
+                                                   "content": data};
                 
-                    var script_content_data = {"sha256": hash, 
-                                               "content": data};
-            
-                    scriptcontentPost(script_content_data);
-                }
+                        scriptcontentPost(script_content_data);
+                    }
 
-                var timeStamp = new Date().getTime();
-                var pageview_data = {"scripts": SCRIPTS[tabId]};
+                    var timeStamp = new Date().getTime();
+                    var pageview_data = {"scripts": SCRIPTS[tabId]};
 
-                
-                delete SCRIPTS[tabId];
+                    
+                    delete SCRIPTS[tabId];
 
-                httpPatch(tab.url, pageview_data);
-            }, 2500);
+                    httpPatch(tab.url, pageview_data);
+                }, 2500);
+            };
 
             // TODO: review this injected code for possible security issues before making
             //       release. OK for now as it's just the robo-browser using this code.
