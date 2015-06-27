@@ -165,6 +165,9 @@ function scriptcontentPost(data){
  * More general information is available in the chrome.webRequest docs: 
  *   http://developer.chrome.com/extensions/webRequest
  */
+
+var POST_IFRAME_CONTENT = false;
+
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         if (GENERAL_REPORTING_ON == false){
@@ -175,7 +178,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         var data = "";
         var hash = "";
 
-        if (details.type == "script") {
+        if (details.type == "script" || details.type == "sub_frame") {
             data = httpGet(details.url);
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
@@ -189,12 +192,49 @@ chrome.webRequest.onBeforeRequest.addListener(
                             " but main_frame not found!!");
             }
             
-            if (details.url.slice(0, 13) != "inline_script"){
-                var script_content_data = {"sha256": hash, 
-                                           "content": data};
-                
-                scriptcontentPost(script_content_data);      
+            if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
+                if (details.url.slice(0, 13) != "inline_script"){
+                    var script_content_data = {"sha256": hash, 
+                                               "content": data};
+                    
+                    scriptcontentPost(script_content_data);      
+                }
             }
+
+            if (details.type == "sub_frame"){
+                var el = document.createElement("html");
+                el.innerHTML = data;
+             
+                var to_return = [];
+                var scripts = el.getElementsByTagName("script");
+                console.log("got " + scripts.length + " scripts in iframe");    
+            
+                for (var i=0; i<scripts.length; ++i){
+                    if (!scripts[i].src){
+                        console.log("got inline iframe script!");    
+                        inline_script_content = String(scripts[i].innerHTML);
+                        console.log(inline_script_content);
+                        hash = CryptoJS.SHA256(inline_script_content).toString(CryptoJS.enc.Base64);
+                        var url = "inline_script_" + hash.slice(0,18);
+                    
+                        var script_content_data = {"sha256": hash, 
+                                                   "content": inline_script_content};
+                        scriptcontentPost(script_content_data);
+
+                        if (tabId in SCRIPTS) {
+                            SCRIPTS[tabId].push({"url": url, "hash": hash});
+                        }
+                        else {
+                            // TODO: look into auto-reporting this error
+                            console.log("tabId of " + tabId + 
+                                        " found for " + url +
+                                        " but main_frame not found!!");
+                       }
+                    }
+                }
+                
+            }
+
 
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
@@ -207,7 +247,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // TODO: look into auto-reporting this error...
         console.log("failed to hit a return statement!!");
     }, 
-    {urls: ["http://*/*", "https://*/*"], types: ["script", "main_frame"]}, 
+    {urls: ["http://*/*", "https://*/*"], types: ["script", "main_frame", "sub_frame"]}, 
     ["blocking"]
 );
 
@@ -225,39 +265,39 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
-chrome.tabs.onUpdated.addListener(
-    function(tabId, changeInfo, tab){
+    var listener = function(tabId, changeInfo, tab){
         if (GENERAL_REPORTING_ON == false){
             return {cancel: false}; 
         }
 
         if (changeInfo.status == "complete"){
+            console.log("creating inline_callback object");
             inline_callback = function(scripts){
-                setTimeout(function(scripts){
-                    if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
-                    scripts = scripts[0];
+                console.log("within the delayed inline_callback call!");
+                if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
+                scripts = scripts[0];
 
-                    var arrayLength = scripts.length;
-                    for (var i = 0; i < arrayLength; i++) {
-                        data = String(scripts[i]);
-                        hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-                        var url = "inline_script_" + hash.slice(0,18);
-                        SCRIPTS[tabId].push({"url": url, "hash": hash});
-                    
-                        var script_content_data = {"sha256": hash, 
-                                                   "content": data};
+                var arrayLength = scripts.length;
+                console.log("found " + arrayLength + " scripts");
+                for (var i = 0; i < arrayLength; i++) {
+                    data = String(scripts[i]);
+                    hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+                    var url = "inline_script_" + hash.slice(0,18);
+                    SCRIPTS[tabId].push({"url": url, "hash": hash});
                 
-                        scriptcontentPost(script_content_data);
-                    }
+                    var script_content_data = {"sha256": hash, 
+                                               "content": data};
+            
+                    scriptcontentPost(script_content_data);
+                }
 
-                    var timeStamp = new Date().getTime();
-                    var pageview_data = {"scripts": SCRIPTS[tabId]};
+                var timeStamp = new Date().getTime();
+                var pageview_data = {"scripts": SCRIPTS[tabId]};
 
-                    
-                    delete SCRIPTS[tabId];
+                
+                delete SCRIPTS[tabId];
 
-                    httpPatch(tab.url, pageview_data);
-                }, 2500);
+                httpPatch(tab.url, pageview_data);
             };
 
             // TODO: review this injected code for possible security issues before making
@@ -273,5 +313,12 @@ chrome.tabs.onUpdated.addListener(
            
         }
     }
-);
+
+var SLEEP_BEFORE_UPLOAD = 2000;
+
+var delayedListener = function(tabId, changeInfo, tab){
+    setTimeout(listener, SLEEP_BEFORE_UPLOAD, tabId, changeInfo, tab);
+}
+
+chrome.tabs.onUpdated.addListener(delayedListener);
 
