@@ -158,7 +158,7 @@ def check_search_data(url, expected):
     
     correct = ordered(expected)
     output = ordered(r)
-    print("expected: {0}, got: {1}".format(correct, output))
+    print("expected: {0}\ngot: {1}\n".format(correct, output))
     assert correct == output
 
 
@@ -188,7 +188,7 @@ def check_script_content(h):
     assert r.status_code == 200
 
     sha256 = hashlib.sha256(r.text.encode('utf-8')).hexdigest()
-    print("expected: {0}, got: {1}".format(h, sha256))
+    print("expected: {0}\ngot: {1}\n".format(h, sha256))
     assert sha256 == h
 
 
