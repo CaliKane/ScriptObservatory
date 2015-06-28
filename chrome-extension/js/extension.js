@@ -181,7 +181,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (details.type == "script" || details.type == "sub_frame") {
             data = httpGet(details.url);
 
-            console.log(details.url + " on tabid= " + tabId + " --> " + data);
+            //console.log(details.url + " on tabid= " + tabId + " --> " + data);
 
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
@@ -210,13 +210,13 @@ chrome.webRequest.onBeforeRequest.addListener(
              
                 var to_return = [];
                 var scripts = el.getElementsByTagName("script");
-                console.log("got " + scripts.length + " scripts in iframe");    
+                //console.log("got " + scripts.length + " scripts in iframe");    
             
                 for (var i=0; i<scripts.length; ++i){
                     if (!scripts[i].src){
-                        console.log("got inline iframe script!");    
+                        //console.log("got inline iframe script!");    
                         inline_script_content = String(scripts[i].innerHTML);
-                        console.log(inline_script_content);
+                        //console.log(inline_script_content);
                         hash = CryptoJS.SHA256(inline_script_content).toString(CryptoJS.enc.Base64);
                         var url = "inline_script_" + hash.slice(0,18);
                     
@@ -275,14 +275,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         }
 
         if (changeInfo.status == "complete"){
-            console.log("creating inline_callback object");
             inline_callback = function(scripts){
-                console.log("within the delayed inline_callback call!");
                 if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
                 scripts = scripts[0];
 
                 var arrayLength = scripts.length;
-                console.log("found " + arrayLength + " scripts on the main_frame");
                 for (var i = 0; i < arrayLength; i++) {
                     data = String(scripts[i]);
                     hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
