@@ -95,7 +95,7 @@ function httpPatch(site_url, data){
     var patch_data = {"pageviews": {"add": [data]} };
     var patch_url = WEBPAGE_API_URL + "/" + url_hash;
     
-    console.log("finished ->" + JSON.stringify(patch_data));
+    console.log("finished " + site_url + " -> " + JSON.stringify(patch_data));
 
     request.open("PATCH", patch_url, false);
     request.setRequestHeader("Content-Type", "application/json");
@@ -180,6 +180,9 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         if (details.type == "script" || details.type == "sub_frame") {
             data = httpGet(details.url);
+
+            console.log(details.url + " on tabid= " + tabId + " --> " + data);
+
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
             if (tabId in SCRIPTS) {
@@ -232,10 +235,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                        }
                     }
                 }
-                
+                return {cancel: false}; // this is inefficient, but returning the content b64-encoded 
+                                        // results in no JS getting run in the child IFRAME
+                                        // TODO: debug
             }
-
-
+             
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
@@ -278,7 +282,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 scripts = scripts[0];
 
                 var arrayLength = scripts.length;
-                console.log("found " + arrayLength + " scripts");
+                console.log("found " + arrayLength + " scripts on the main_frame");
                 for (var i = 0; i < arrayLength; i++) {
                     data = String(scripts[i]);
                     hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
