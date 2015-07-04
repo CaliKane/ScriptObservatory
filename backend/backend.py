@@ -12,6 +12,8 @@
 #   Thanks Micah for the pointers! :) https://github.com/macro1
 #
 
+import gzip
+import html
 import json
 import os
 import hashlib
@@ -99,7 +101,16 @@ api_manager.create_api(Suggestions,
 
 @app.route('/script-content/<path:filename>', methods=["GET"])
 def get_script_content(filename):
-    return send_from_directory(SCRIPT_CONTENT_FOLDER, "{0}.txt".format(filename), as_attachment=False)
+    filename_gz = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(filename))
+    
+    file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre>".format(filename)
+    if os.path.isfile(filename_gz):
+        with gzip.open(filename_gz, 'rb') as f:
+            file_content += html.escape(f.read().decode('utf-8'))
+    else:
+        file_content += "content not found"
+    file_content += "</pre>\n</body>\n</html>"
+    return file_content
 
 
 threads = []
@@ -129,7 +140,7 @@ def run_yara_scan():
     threads.append(t)
     t.start()
 
-    return 'Thanks. Wait atleast 20 minutes (or until you get a results email) before sending another request.'
+    return 'Thanks. Wait atleast 20 minutes or until you get a results email before sending another request. You can now close this window.'
 
 
 @app.route('/script-content', methods=["POST"])
@@ -140,6 +151,10 @@ def post_script_content():
     req = json.loads(str(request.data, 'utf-8'))
     sha256_c = req.get('sha256')
     filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256_c))
+    filename_gz = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(sha256_c))
+    
+    if os.path.isfile(filename_gz):
+        return 'we already have this content'
     
     if os.path.isfile(filename):
         return 'we already have this content'
@@ -153,10 +168,10 @@ def post_script_content():
         # TODO: auto-report cases where this check fails? this should never happen
         return "content / hash mismatch"
 
-    filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256))
-    with open(filename, 'wb') as f:
+    filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(sha256))
+    with gzip.open(filename, 'wb') as f:
         f.write(content.encode('utf-8'))
-
+    
     return 'thanks!'
     # TODO: eventually, we can have the chrome extension track hashes the server already has
     # and not try to upload them to save bandwidth.
