@@ -99,7 +99,7 @@ function httpPatch(site_url, data){
     
     console.log("finished " + site_url + " -> " + JSON.stringify(patch_data));
 
-    request.open("PATCH", patch_url, false);
+    request.open("PATCH", patch_url, true);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(patch_data));
     
@@ -181,7 +181,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (details.type == "script" || details.type == "sub_frame") {
             data = httpGet(details.url);
 
-            //console.log(details.url + " on tabid= " + tabId + " --> " + data);
+            console.log(details.url + " on tabid= " + tabId + " --> " + data);
 
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
@@ -203,7 +203,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                     scriptcontentPost(script_content_data);      
                 }
             }
-
+            
             if (details.type == "sub_frame"){
                 var el = document.createElement("html");
                 el.innerHTML = data;
@@ -247,7 +247,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log("got main_frame request");
             if (tabId in SCRIPTS){
                 console.log("we've found unsent data for this tab! --> " + JSON.stringify(SCRIPTS[tabId]));
-                listener({"tabId": tabId, "url": url, "scripts": scripts});
+                listener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
                 SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
             }
             else {
@@ -278,6 +278,7 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
+    var scripts_to_send = [];
     var listener = function(details){
         if (GENERAL_REPORTING_ON == false){
             return {cancel: false}; 
@@ -290,10 +291,11 @@ chrome.webRequest.onBeforeRequest.addListener(
             return; // check to see if it's been deleted since 
         }
 
-        if ("scripts" in details){
+        if ("scripts" in details && typeof details["scripts"] != 'undefined'){
             // we were triggered by a main_frame request
             console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
             scripts_to_send = details.scripts;
+            console.log(JSON.stringify(scripts_to_send) + " <-- sts");
         }
         else {
             // we were triggered by onCompleted
@@ -303,9 +305,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                 return; 
             }
             scripts_to_send = SCRIPTS[tabId]["scripts"];
+            console.log(JSON.stringify(scripts_to_send) + " <-- sts");
         }
 
-        var scripts_to_send = [];
         inline_callback = function(scripts){
             /*
             if (!(tabId in SCRIPTS)){
