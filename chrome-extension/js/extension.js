@@ -20,8 +20,8 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
 
 
 /*
- * Global Data Structures
- * ----------------------
+ * Global Variables / Data Structures
+ * ----------------------------------
  * (1) SCRIPTS: Maps the tabId to a list of all scripts loaded for the given tab. 
  *              - Cleared every time a request for a main_frame is made. 
  *              - Used and cleared every time the chrome.tabs.onUpdated listener fires 
@@ -34,6 +34,8 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
 var SCRIPTS = {};
 var GENERAL_REPORTING_ON = true; 
 var SCRIPT_CONTENT_UPLOADING_ON = true;
+var POST_IFRAME_CONTENT = true;
+
 
 
 /*
@@ -165,8 +167,6 @@ function scriptcontentPost(data){
  * More general information is available in the chrome.webRequest docs: 
  *   http://developer.chrome.com/extensions/webRequest
  */
-
-var POST_IFRAME_CONTENT = false;
 
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {

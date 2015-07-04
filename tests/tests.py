@@ -25,6 +25,7 @@
 
 
 import hashlib
+import html
 import json
 import logging
 import os
@@ -187,7 +188,11 @@ def check_script_content(h):
     r = requests.get(url)
     assert r.status_code == 200
 
-    sha256 = hashlib.sha256(r.text.encode('utf-8')).hexdigest()
+    html_data = r.text.encode('utf-8')
+    script_content = html_data.split('<pre>')[1].split('</pre>')[0]
+    script_content = html.unescape(script_content)
+
+    sha256 = hashlib.sha256(script_content).hexdigest()
     print("expected: {0}\ngot: {1}\n".format(h, sha256))
     assert sha256 == h
 
@@ -259,7 +264,7 @@ def test_all():
     check_script_content('b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab')
     check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
     # require IFRAME content posting is turned on:
-    #check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')  
+    check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')  
 
     url = "https://andymartin.cc/test-pages/iframe-dropped.html"
     correct = {'objects': [{'pageviews': [{'scripts': [{'hash': '24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html'}, {'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}, {'hash':'2fbd3d57f0b0aa1e3bf0baf1f5e475f2e90b41053c8a0f0b11a0608e416a3adf', 'url': 'inline_script_2fbd3d57f0b0aa1e3b'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/iframe-dropped.html', 'id': '0011c8873b915ea0f61df1de7b0deafea4d69f88421a649e3bb9ca68827beaed'}]}
@@ -268,7 +273,7 @@ def test_all():
     check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
     check_script_content('2fbd3d57f0b0aa1e3bf0baf1f5e475f2e90b41053c8a0f0b11a0608e416a3adf')
     # require IFRAME content posting is turned on:
-    #check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
+    check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
 
     url = "https://andymartin.cc/test-pages/iframe-simple-nested.html"
     correct = {'objects': [{'pageviews': [{'scripts': [{"url":"https://andymartin.cc/test-pages/iframe-simple.html","hash":"73a8712953772399e5567ad30082b395a05a0786bad6b901f46d42418ef69b7a"}, {'hash': '24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html'}, {'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/iframe-simple-nested.html', 'id': '0651e6fed8963e2a70d98789768fc7ea3b8098023ccdcc3b303caeb049a268e4'}]}
@@ -276,8 +281,8 @@ def test_all():
     check_script_content('b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab')
     check_script_content('fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e')
     # require IFRAME content posting is turned on:
-    #check_script_content('73a8712953772399e5567ad30082b395a05a0786bad6b901f46d42418ef69b7a')
-    #check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
+    check_script_content('73a8712953772399e5567ad30082b395a05a0786bad6b901f46d42418ef69b7a')
+    check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
  
     url = "https://andymartin.cc/test-pages/iframe-dropped-nested.html"
     correct = {'objects': [{'pageviews': [{'scripts': [{"url":"https://andymartin.cc/test-pages/iframe-dropped.html","hash":"214678cac8b4b1c8e127feaeaa8d0b81e41ba4082aa78cd601bbb09e4ca1a6d8"}, {'hash': '24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b', 'url': 'https://andymartin.cc/test-pages/one-script-by-inline-and-one-by-link.html'}, {'url': 'https://andymartin.cc/test-pages/hello-world.js', 'hash': 'fefe7a6e59e3a20f28adc30e89924ee99110edbf3351d0f9d65956159f635c0e'}, {'url': 'inline_script_b97dc449b77078dc8b', 'hash': 'b97dc449b77078dc8b6af5996da434382ae78a551e2268d0e9b7c0dea5dce8ab'}, {'hash':'2fbd3d57f0b0aa1e3bf0baf1f5e475f2e90b41053c8a0f0b11a0608e416a3adf', 'url': 'inline_script_2fbd3d57f0b0aa1e3b'}, {"url":"inline_script_5ee0b62e7babeeb8c5","hash":"5ee0b62e7babeeb8c58ee099f9caca099c94d3b0bd2bb5079021394102ed91b7"}], 'date': 1432509413332}], 'url': 'https://andymartin.cc/test-pages/iframe-dropped-nested.html', 'id': 'c2e7d4c89995ac582e86f4a19bd4b0f8bea81d8de70396d10df3a3bb2d2ee1a8'}]}
@@ -287,8 +292,8 @@ def test_all():
     check_script_content('5ee0b62e7babeeb8c58ee099f9caca099c94d3b0bd2bb5079021394102ed91b7')
     check_script_content('2fbd3d57f0b0aa1e3bf0baf1f5e475f2e90b41053c8a0f0b11a0608e416a3adf')
     # require IFRAME content posting is turned on:
-    #check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
-    #check_script_content('214678cac8b4b1c8e127feaeaa8d0b81e41ba4082aa78cd601bbb09e4ca1a6d8')
+    check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
+    check_script_content('214678cac8b4b1c8e127feaeaa8d0b81e41ba4082aa78cd601bbb09e4ca1a6d8')
 
 
     # We're done!
