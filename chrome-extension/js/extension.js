@@ -27,7 +27,7 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
  *              - Used and cleared every time the chrome.tabs.onUpdated listener fires 
  *                and data is POSTed to the API.
  *              - Cleared whenever GENERAL_REPORTING_ON is toggled to false
- *
+ *              TODO UPDATE
  * (2) GENERAL_REPORTING_ON: true if the chrome extension should report observations to the
  *                   ScriptObservatory backend, false if not.
  */
@@ -122,7 +122,7 @@ function httpPatch(site_url, data){
  */
 function httpPost(url, data){
     var request = new XMLHttpRequest();
-    request.open("POST", url, false);
+    request.open("POST", url, true);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
     return;  // TODO: check return code
@@ -186,7 +186,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
             if (tabId in SCRIPTS) {
-                SCRIPTS[tabId].push({"url": details.url, "hash": hash});
+                SCRIPTS[tabId]["scripts"].push({"url": details.url, "hash": hash});
             }
             else {
                 // TODO: look into auto-reporting this error
@@ -225,7 +225,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                         scriptcontentPost(script_content_data);
 
                         if (tabId in SCRIPTS) {
-                            SCRIPTS[tabId].push({"url": url, "hash": hash});
+                            SCRIPTS[tabId]["scripts"].push({"url": url, "hash": hash});
                         }
                         else {
                             // TODO: look into auto-reporting this error
@@ -244,7 +244,17 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
         else if (details.type == "main_frame") {
-            SCRIPTS[tabId] = []; 
+            console.log("got main_frame request");
+            if (tabId in SCRIPTS){
+                console.log("we've found unsent data for this tab! --> " + JSON.stringify(SCRIPTS[tabId]));
+                listener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
+                SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
+                
+            }
+            else {
+                console.log("clearing SCRIPTS in main_frame req");
+                SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
+            }
             return {cancel: false}; 
         }        
 
@@ -269,57 +279,79 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
-    var listener = function(tabId, changeInfo, tab){
+    var listener = function(details){
         if (GENERAL_REPORTING_ON == false){
             return {cancel: false}; 
         }
-
-        if (changeInfo.status == "complete"){
-            inline_callback = function(scripts){
-                if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
-                scripts = scripts[0];
-
-                var arrayLength = scripts.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    data = String(scripts[i]);
-                    hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-                    var url = "inline_script_" + hash.slice(0,18);
-                    SCRIPTS[tabId].push({"url": url, "hash": hash});
-                
-                    var script_content_data = {"sha256": hash, 
-                                               "content": data};
-            
-                    scriptcontentPost(script_content_data);
-                }
-
-                var timeStamp = new Date().getTime();
-                var pageview_data = {"scripts": SCRIPTS[tabId]};
-
-                
-                delete SCRIPTS[tabId];
-
-                httpPatch(tab.url, pageview_data);
-            };
-
-            // TODO: review this injected code for possible security issues before making
-            //       release. OK for now as it's just the robo-browser using this code.
-            injected_code = "var to_return = []; var scripts = " +
-                    "document.getElementsByTagName('script'); for (var i=0; " +
-                    "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
-                    "scripts[i].innerHTML ); }; to_return";
-
-            chrome.tabs.executeScript(tabId, 
-                                      {code: injected_code},
-                                      inline_callback);
-           
+    
+        var tabId = details.tabId;
+        
+        if (!(tabId in SCRIPTS)){
+            console.log("in listener, but tabId not in SCRIPTS!");
+            return; // check to see if it's been deleted since 
         }
+        console.log("in listener() details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
+        if (details.url != SCRIPTS[tabId]["url"]) return; 
+
+        var scripts_to_send = [];
+        if ("scripts" in details){
+            scripts_to_send = details.scripts;
+        }
+        else {
+            scripts_to_send = SCRIPTS[tabId]["scripts"];
+        }
+
+        inline_callback = function(scripts){
+            /*
+            if (!(tabId in SCRIPTS)){
+                console.log("in inline_callback, but tabId not in SCRIPTS!");
+                return; // check to see if it's been deleted since 
+            }
+            */
+            console.log(" in inline_callback(), scripts = " + JSON.stringify(scripts) + " --> " + Object.prototype.toString.call( scripts ));
+            if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
+            scripts = scripts[0];
+
+            var arrayLength = scripts.length;
+            for (var i = 0; i < arrayLength; i++) {
+                data = String(scripts[i]);
+                hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+                var url = "inline_script_" + hash.slice(0,18);
+                scripts_to_send.push({"url": url, "hash": hash});
+            
+                var script_content_data = {"sha256": hash, 
+                                           "content": data};
+        
+                scriptcontentPost(script_content_data);
+            }
+
+            var timeStamp = new Date().getTime();
+            var pageview_data = {"scripts": scripts_to_send};
+
+            console.log("on " + details.url + " we saw " + pageview_data["scripts"]);
+            
+            if (!("scripts" in details)){
+                delete SCRIPTS[tabId];
+                console.log(" .. now clearing SCRIPTS in listener()");
+            }
+
+            httpPatch(details.url, pageview_data);
+        
+        };
+
+        // TODO: review this injected code for possible security issues before making
+        //       release. OK for now as it's just the robo-browser using this code.
+        injected_code = "var to_return = []; var scripts = " +
+                "document.getElementsByTagName('script'); for (var i=0; " +
+                "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
+                "scripts[i].innerHTML ); }; to_return";
+
+        chrome.tabs.executeScript(tabId, 
+                                  {code: injected_code},
+                                  inline_callback);
+       
+        console.log("we've run executeScript()");
     }
 
-var SLEEP_BEFORE_UPLOAD = 2000;
 
-var delayedListener = function(tabId, changeInfo, tab){
-    setTimeout(listener, SLEEP_BEFORE_UPLOAD, tabId, changeInfo, tab);
-}
-
-chrome.tabs.onUpdated.addListener(delayedListener);
-
+chrome.webNavigation.onCompleted.addListener(listener);

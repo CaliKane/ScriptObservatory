@@ -32,6 +32,7 @@
         "https://*/*", 
         "webRequest", 
         "webRequestBlocking",
+        "webNavigation",
         "tabs"
     ],
 

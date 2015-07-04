@@ -295,7 +295,22 @@ def test_all():
     check_script_content('24a3d764ffedc8a8dbe186da30dfbd2e3b27bebb9ea91e766fb37f097e38df0b')
     check_script_content('214678cac8b4b1c8e127feaeaa8d0b81e41ba4082aa78cd601bbb09e4ca1a6d8')
 
-
+    # REDIRECT-INLINE.HTML
+    url = "https://andymartin.cc/test-pages/redirect-inline.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/redirect-inline.html'}]}
+    check_search_data(url, correct)
+    url = "https://andymartin.cc/test-pages/end.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
+    check_search_data(url, correct)
+    
+    # REDIRECT-REMOTE.HTML
+    url = "https://andymartin.cc/test-pages/redirect-remote.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{"url":"https://andymartin.cc/test-pages/js/redirect.js","hash":"f7d41e0426b66e02e78c32f9d61d60c059b442d1cdaee67b74ec35d17283fe80"}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/redirect-remote.html'}]}
+    check_search_data(url, correct)
+    url = "https://andymartin.cc/test-pages/end.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
+    check_search_data(url, correct)
+    
     # We're done!
     robobrowser.terminate()
     backend.terminate()
