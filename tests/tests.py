@@ -162,7 +162,7 @@ def check_search_data(url, expected):
     
     correct = ordered(expected)
     output = ordered(r)
-    print("expected: {0}\ngot: {1}\n".format(correct, output))
+    print("expected: {0}\ngot:      {1}\n".format(correct, output))
     assert correct == output
 
 

@@ -247,9 +247,8 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log("got main_frame request");
             if (tabId in SCRIPTS){
                 console.log("we've found unsent data for this tab! --> " + JSON.stringify(SCRIPTS[tabId]));
-                listener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
+                listener({"tabId": tabId, "url": url, "scripts": scripts});
                 SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
-                
             }
             else {
                 console.log("clearing SCRIPTS in main_frame req");
@@ -290,17 +289,23 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log("in listener, but tabId not in SCRIPTS!");
             return; // check to see if it's been deleted since 
         }
-        console.log("in listener() details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
-        if (details.url != SCRIPTS[tabId]["url"]) return; 
 
-        var scripts_to_send = [];
         if ("scripts" in details){
+            // we were triggered by a main_frame request
+            console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
             scripts_to_send = details.scripts;
         }
         else {
+            // we were triggered by onCompleted
+            console.log("in listener() because of onCompleted, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
+            if (details.url != SCRIPTS[tabId]["url"]){
+                console.log("skipping this one");
+                return; 
+            }
             scripts_to_send = SCRIPTS[tabId]["scripts"];
         }
 
+        var scripts_to_send = [];
         inline_callback = function(scripts){
             /*
             if (!(tabId in SCRIPTS)){
@@ -336,7 +341,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             }
 
             httpPatch(details.url, pageview_data);
-        
         };
 
         // TODO: review this injected code for possible security issues before making
