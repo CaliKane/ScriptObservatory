@@ -150,7 +150,7 @@ def wait_for_additions_to_webpage_api(webpage_entries, timeout):
     initial_t = time.time()
     n = get_number_entries(TEST_WEBPAGE_API)
     while n < webpage_entries:
-        print("we have {0} entries, need {1} more".format(n, webpage_entries - n)
+        print("we have {0} entries, need {1} more".format(n, webpage_entries - n))
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to increase size of webpage API!
         time.sleep(5)
