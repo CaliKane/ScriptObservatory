@@ -297,7 +297,7 @@ def test_all():
 
     # REDIRECT-INLINE.HTML
     url = "https://andymartin.cc/test-pages/redirect-inline.html"
-    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/redirect-inline.html'}]}
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/redirect-inline.html'}]}
     check_search_data(url, correct)
     url = "https://andymartin.cc/test-pages/end.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
