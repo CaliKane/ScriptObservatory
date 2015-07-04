@@ -233,10 +233,10 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped.html", 6)
     schedule_robotask("https://andymartin.cc/test-pages/iframe-simple-nested.html", 7)
     schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped-nested.html", 8)
-
-    
+    schedule_robotask("https://andymartin.cc/test-pages/redirect-inline.html", 9)
+    schedule_robotask("https://andymartin.cc/test-pages/redirect-remote.html", 10)
     wait_for_robotask_to_be_emptied(180)
-    wait_for_additions_to_webpage_api(initial_n_webpages + 8, 60)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 10, 60)
  
     url = "https://andymartin.cc/test-pages/simple.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
