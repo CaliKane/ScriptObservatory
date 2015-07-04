@@ -148,10 +148,13 @@ def wait_for_robotask_to_be_emptied(timeout):
 def wait_for_additions_to_webpage_api(webpage_entries, timeout):
     """ keep polling the webpage API until there are *webpage_entries* entries, assert-ing False if *timeout* is reached """
     initial_t = time.time()
-    while get_number_entries(TEST_WEBPAGE_API) != webpage_entries:
+    n = get_number_entries(TEST_WEBPAGE_API)
+    while n < webpage_entries:
+        print("we have {0} entries, need {1} more".format(n, webpage_entries - n)
         if time.time() - initial_t > timeout:
             assert False  # robobrowser failed to increase size of webpage API!
         time.sleep(5)
+        n = get_number_entries(TEST_WEBPAGE_API) 
 
     
 def check_search_data(url, expected):
@@ -233,10 +236,10 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped.html", 6)
     schedule_robotask("https://andymartin.cc/test-pages/iframe-simple-nested.html", 7)
     schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped-nested.html", 8)
-    schedule_robotask("https://andymartin.cc/test-pages/redirect-inline.html", 9)
-    schedule_robotask("https://andymartin.cc/test-pages/redirect-remote.html", 10)
+    schedule_robotask("https://andymartin.cc/test-pages/redirect-inline.html", 9)  # this also creates a record for end.html
+    schedule_robotask("https://andymartin.cc/test-pages/redirect-remote.html", 10) # this also creates a record for end.html
     wait_for_robotask_to_be_emptied(180)
-    wait_for_additions_to_webpage_api(initial_n_webpages + 10, 60)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 11, 60)
  
     url = "https://andymartin.cc/test-pages/simple.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
