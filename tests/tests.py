@@ -188,9 +188,9 @@ def check_script_content(h):
     r = requests.get(url)
     assert r.status_code == 200
 
-    html_data = r.text.encode('utf-8')
+    html_data = r.text
     script_content = html_data.split('<pre>')[1].split('</pre>')[0]
-    script_content = html.unescape(script_content)
+    script_content = html.unescape(script_content).encode('utf-8')
 
     sha256 = hashlib.sha256(script_content).hexdigest()
     print("expected: {0}\ngot: {1}\n".format(h, sha256))
