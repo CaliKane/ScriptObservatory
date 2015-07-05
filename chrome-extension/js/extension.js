@@ -54,7 +54,6 @@ function toggleReportingState(){
         // SCRIPT_CONTENT_UPLOADING_ON is also false
         toggleScriptContentUploadingState();
     }
-
 }
 
 function toggleScriptContentUploadingState(){
@@ -317,6 +316,10 @@ chrome.webRequest.onBeforeRequest.addListener(
             */
             console.log(" in inline_callback(), scripts = " + JSON.stringify(scripts) + " --> " + Object.prototype.toString.call( scripts ));
             if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
+            if (Object.prototype.toString.call( scripts[0] ) == '[object Undefined]'){
+                console.log("scripts[0] was undefined! returning.");
+                return;
+            }
             scripts = scripts[0];
 
             var arrayLength = scripts.length;
@@ -353,7 +356,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 "scripts[i].innerHTML ); }; to_return";
 
         chrome.tabs.executeScript(tabId, 
-                                  {code: injected_code},
+                                  {code: injected_code, runAt: "document_start"},
                                   inline_callback);
        
         console.log("we've run executeScript()");
