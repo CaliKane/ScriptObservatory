@@ -35,7 +35,7 @@ var SCRIPTS = {};
 var GENERAL_REPORTING_ON = true; 
 var SCRIPT_CONTENT_UPLOADING_ON = true;
 var POST_IFRAME_CONTENT = true;
-
+var scripts_to_send = [];
 
 
 /*
@@ -277,97 +277,94 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
  */
-    var scripts_to_send = [];
-    var listener = function(details){
-        if (GENERAL_REPORTING_ON == false){
-            return {cancel: false}; 
-        }
+function listener(details){
+    if (GENERAL_REPORTING_ON == false){
+        return {cancel: false}; 
+    }
+
+    var tabId = details.tabId;
     
-        var tabId = details.tabId;
-        
+    if (!(tabId in SCRIPTS)){
+        console.log("in listener, but tabId not in SCRIPTS!");
+        return; // check to see if it's been deleted since 
+    }
+
+    if ("scripts" in details && typeof details["scripts"] != 'undefined'){
+        // we were triggered by a main_frame request
+        /*if (SCRIPTS[tabId]["locked"]){
+            console.log("tabId has been locked!");
+            return;
+        }*/
+
+        console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
+        scripts_to_send = details.scripts;
+        console.log(JSON.stringify(scripts_to_send) + " <-- sts");
+    }
+    else {
+        // we were triggered by onCompleted
+        console.log("in listener() because of onCompleted, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
+        if (details.url != SCRIPTS[tabId]["url"]){
+            console.log("skipping this one");
+            return; 
+        }
+        scripts_to_send = SCRIPTS[tabId]["scripts"];
+        delete SCRIPTS[tabId];
+        console.log(" .. now clearing SCRIPTS in listener()");
+        console.log(JSON.stringify(scripts_to_send) + " <-- sts");
+    }
+
+    // TODO: review this injected code for possible security issues before making
+    //       release. OK for now as it's just the robo-browser using this code.
+    injected_code = "var to_return = []; var scripts = " +
+            "document.getElementsByTagName('script'); for (var i=0; " +
+            "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
+            "scripts[i].innerHTML ); }; to_return";
+
+    chrome.tabs.executeScript(tabId, 
+                              {code: injected_code, runAt: "document_start"},
+                              function(scripts){
+        /*
         if (!(tabId in SCRIPTS)){
-            console.log("in listener, but tabId not in SCRIPTS!");
+            console.log("in inline_callback, but tabId not in SCRIPTS!");
             return; // check to see if it's been deleted since 
         }
-
-        if ("scripts" in details && typeof details["scripts"] != 'undefined'){
-            // we were triggered by a main_frame request
-            /*if (SCRIPTS[tabId]["locked"]){
-                console.log("tabId has been locked!");
-                return;
-            }*/
-
-            console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
-            scripts_to_send = details.scripts;
-            console.log(JSON.stringify(scripts_to_send) + " <-- sts");
+        */
+        console.log(" in inline_callback(), scripts = " + JSON.stringify(scripts) + " --> " + Object.prototype.toString.call( scripts ));
+        if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
+        if (Object.prototype.toString.call( scripts[0] ) == '[object Undefined]'){
+            console.log("scripts[0] was undefined! returning.");
+            return;
         }
-        else {
-            // we were triggered by onCompleted
-            console.log("in listener() because of onCompleted, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
-            if (details.url != SCRIPTS[tabId]["url"]){
-                console.log("skipping this one");
-                return; 
-            }
-            scripts_to_send = SCRIPTS[tabId]["scripts"];
-            delete SCRIPTS[tabId];
-            console.log(" .. now clearing SCRIPTS in listener()");
-            console.log(JSON.stringify(scripts_to_send) + " <-- sts");
-        }
+        scripts = scripts[0];
 
-        inline_callback = function(scripts){
-            /*
-            if (!(tabId in SCRIPTS)){
-                console.log("in inline_callback, but tabId not in SCRIPTS!");
-                return; // check to see if it's been deleted since 
-            }
-            */
-            console.log(" in inline_callback(), scripts = " + JSON.stringify(scripts) + " --> " + Object.prototype.toString.call( scripts ));
-            if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
-            if (Object.prototype.toString.call( scripts[0] ) == '[object Undefined]'){
-                console.log("scripts[0] was undefined! returning.");
-                return;
-            }
-            scripts = scripts[0];
-
-            var arrayLength = scripts.length;
-            for (var i = 0; i < arrayLength; i++) {
-                data = String(scripts[i]);
-                hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-                var url = "inline_script_" + hash.slice(0,18);
-                scripts_to_send.push({"url": url, "hash": hash});
-            
-                var script_content_data = {"sha256": hash, 
-                                           "content": data};
+        var arrayLength = scripts.length;
+        for (var i = 0; i < arrayLength; i++) {
+            data = String(scripts[i]);
+            hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+            var url = "inline_script_" + hash.slice(0,18);
+            scripts_to_send.push({"url": url, "hash": hash});
         
-                scriptcontentPost(script_content_data);
-            }
+            var script_content_data = {"sha256": hash, 
+                                       "content": data};
+    
+            scriptcontentPost(script_content_data);
+        }
 
-            var timeStamp = new Date().getTime();
-            var pageview_data = {"scripts": scripts_to_send};
+        var timeStamp = new Date().getTime();
+        var pageview_data = {"scripts": scripts_to_send};
 
-            console.log("on " + details.url + " we saw " + pageview_data["scripts"]);
-            /*
-            if (SCRIPTS[tabId]["locked"]){
-                console.log("tabId has been locked!");
-                return;
-            }*/
+        console.log("on " + details.url + " we saw " + pageview_data["scripts"]);
+        /*
+        if (SCRIPTS[tabId]["locked"]){
+            console.log("tabId has been locked!");
+            return;
+        }*/
 
-            httpPatch(details.url, pageview_data);
-        };
+        httpPatch(details.url, pageview_data);
+    });
 
-        // TODO: review this injected code for possible security issues before making
-        //       release. OK for now as it's just the robo-browser using this code.
-        injected_code = "var to_return = []; var scripts = " +
-                "document.getElementsByTagName('script'); for (var i=0; " +
-                "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
-                "scripts[i].innerHTML ); }; to_return";
-
-        chrome.tabs.executeScript(tabId, 
-                                  {code: injected_code, runAt: "document_start"},
-                                  inline_callback);
-       
-        console.log("we've run executeScript()");
-    }
+    console.log("we've run executeScript()");
+}
 
 
 chrome.webNavigation.onCompleted.addListener(listener);
