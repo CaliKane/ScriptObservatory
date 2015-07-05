@@ -22,14 +22,9 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
 /*
  * Global Variables / Data Structures
  * ----------------------------------
- * (1) SCRIPTS: Maps the tabId to a list of all scripts loaded for the given tab. 
- *              - Cleared every time a request for a main_frame is made. 
- *              - Used and cleared every time the chrome.tabs.onUpdated listener fires 
- *                and data is POSTed to the API.
- *              - Cleared whenever GENERAL_REPORTING_ON is toggled to false
- *              TODO UPDATE
- * (2) GENERAL_REPORTING_ON: true if the chrome extension should report observations to the
- *                   ScriptObservatory backend, false if not.
+ * - SCRIPTS: Maps the tabId to a dictionary containing the tab's URL and loaded JavaScript
+ * - GENERAL_REPORTING_ON: true --> chrome extension should report observations to the backend
+ * - scripts_to_send --> temporarily global until refactor (TODO)
  */
 var SCRIPTS = {};
 var GENERAL_REPORTING_ON = true; 
@@ -41,9 +36,9 @@ var scripts_to_send = [];
 /*
  * GENERAL_REPORTING_ON helper functions
  * -----------------------------
- * Help with getting/setting the global reporting state and automatically performing 
- * follow-up actions needed.
- * TODO: eventually clean this up...
+ * Help with getting/setting/maintaining the global reporting state 
+ * 
+ * TODO: eventually refactor and move all this to separate JS file
  */
 function toggleReportingState(){
     GENERAL_REPORTING_ON = !GENERAL_REPORTING_ON;
@@ -59,7 +54,6 @@ function toggleReportingState(){
 function toggleScriptContentUploadingState(){
     if (SCRIPT_CONTENT_UPLOADING_ON == false && GENERAL_REPORTING_ON == false){
         // GENERAL_REPORTING_ON must be true in order to report script content!
-        // TODO: explain to user
         return;
     }             
     SCRIPT_CONTENT_UPLOADING_ON = !SCRIPT_CONTENT_UPLOADING_ON;
@@ -73,14 +67,15 @@ function getScriptContentReportingState(){ return SCRIPT_CONTENT_UPLOADING_ON; }
  * httpGet(url)
  * ------------
  * Perform a HTTP GET request to *url* and return its content
+ *
+ * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpGet(url){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", url, false);
     xmlHttp.send();
-    return xmlHttp.responseText;  // TODO: check return code
+    return xmlHttp.responseText;  
 }
-
 
 /*
  * httpPatch(url, data)
@@ -88,6 +83,8 @@ function httpGet(url){
  * Send json-ified *data* with a HTTP PATCH request to *url*. If the PATCH request
  * fails with an error code of 404, we automatically send a POST request to 
  * initialize the webpage in the ScriptObservatory API.
+ *
+ * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPatch(site_url, data){
     var request = new XMLHttpRequest();
@@ -109,22 +106,20 @@ function httpPatch(site_url, data){
         
         httpPost(WEBPAGE_API_URL, post_data);
     }
-
-    return;  // TODO: check return code
 }
-
 
 /*
  * httpPost(url, data)
  * -------------------
  * Send json-ified *data* with a HTTP POST request to *url*
+ *
+ * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPost(url, data){
     var request = new XMLHttpRequest();
     request.open("POST", url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(data));
-    return;  // TODO: check return code
 }
 
 /*
@@ -145,12 +140,12 @@ function scriptcontentPost(data){
  * ------------------------------------------
  * We hook into chrome.webRequest.onBeforeRequest to keep track of the tabIds of
  * all requests for "main_frame" objects and to grab the content of requests for
- * "script" objects. 
+ * "script" and "sub_frame" objects. 
  * 
- * For "script" requests, we perform our own download of the content and calculate
- * the sha256 hash of what we receive from the server. After the download of a 
- * "script" object is complete, if an entry is present in SCRIPTS for our current
- * tabId, we add the data we have (script URL & hash) to the SCRIPTS data structure.
+ * For "script" and "sub_frame" requests, we perform our own download of the content 
+ * and calculate the sha256 hash of what we receive from the server. After the download 
+ * of the object is complete, if an entry is present in SCRIPTS for our current
+ * tabId, we add the data we have (script URL & hash).
  * 
  * It would be nice if we could let the browser do the request for "script" objects
  * normally and grab the content of the response it receives, but this is not
@@ -179,9 +174,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         if (details.type == "script" || details.type == "sub_frame") {
             data = httpGet(details.url);
-
-            console.log(details.url + " on tabid= " + tabId + " --> " + data);
-
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
             if (tabId in SCRIPTS) {
@@ -189,17 +181,12 @@ chrome.webRequest.onBeforeRequest.addListener(
             }
             else {
                 // TODO: look into auto-reporting this error
-                console.log("tabId of " + tabId + 
-                            " found for " + details.url +
-                            " but main_frame not found!!");
+                console.log("no main_frame found for " + details.url + " on tabId " + tabId);
             }
             
             if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
                 if (details.url.slice(0, 13) != "inline_script"){
-                    var script_content_data = {"sha256": hash, 
-                                               "content": data};
-                    
-                    scriptcontentPost(script_content_data);      
+                    scriptcontentPost({"sha256": hash, "content": data});
                 }
             }
             
