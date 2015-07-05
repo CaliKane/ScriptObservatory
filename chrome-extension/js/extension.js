@@ -99,7 +99,7 @@ function httpPatch(site_url, data){
     
     console.log("finished " + site_url + " -> " + JSON.stringify(patch_data));
 
-    request.open("PATCH", patch_url, true);
+    request.open("PATCH", patch_url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(patch_data));
     
