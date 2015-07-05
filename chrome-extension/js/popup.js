@@ -23,19 +23,15 @@ function jumpToAnalysisPage(){
 function updateReportingStatusDisplay(){
     if (bp.getReportingState()){
         e("current-reporting-status").innerHTML = "Reporting is ON";
-        e("toggle-reporting-status").innerHTML = "Turn Observation Reporting Off";
     }
     else {
         e("current-reporting-status").innerHTML = "Reporting is OFF";
-        e("toggle-reporting-status").innerHTML = "Turn Observation Reporting On";
     }
     
     if (bp.getScriptContentReportingState()){
-        e("toggle-sc-uploading-status").innerHTML = "Turn Script Content Uploading Off";
         e("current-sc-uploading-status").innerHTML = "Script Content Uploading is ON";
     }
     else{
-        e("toggle-sc-uploading-status").innerHTML = "Turn Script Content Uploading On";
         e("current-sc-uploading-status").innerHTML = "Script Content Uploading is OFF";
     }
 }

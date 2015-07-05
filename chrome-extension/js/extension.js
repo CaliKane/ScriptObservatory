@@ -30,6 +30,7 @@ var SCRIPTS = {};
 var GENERAL_REPORTING_ON = true; 
 var SCRIPT_CONTENT_UPLOADING_ON = true;
 var POST_IFRAME_CONTENT = true;
+var UPLOAD_BLACKLIST = [];
 var scripts_to_send = [];
 
 
@@ -49,6 +50,8 @@ function toggleReportingState(){
         // SCRIPT_CONTENT_UPLOADING_ON is also false
         toggleScriptContentUploadingState();
     }
+
+    setSettings();
 }
 
 function toggleScriptContentUploadingState(){
@@ -57,6 +60,8 @@ function toggleScriptContentUploadingState(){
         return;
     }             
     SCRIPT_CONTENT_UPLOADING_ON = !SCRIPT_CONTENT_UPLOADING_ON;
+
+    setSettings();
 }
 
 function getReportingState(){ 
@@ -66,6 +71,69 @@ function getReportingState(){
 function getScriptContentReportingState(){
     return SCRIPT_CONTENT_UPLOADING_ON;
 }
+
+
+function setSettings(){
+    chrome.storage.sync.set({'GENERAL_REPORTING_ON': GENERAL_REPORTING_ON,
+                             'SCRIPT_CONTENT_UPLOADING_ON': SCRIPT_CONTENT_UPLOADING_ON,
+                             'POST_IFRAME_CONTENT': POST_IFRAME_CONTENT,
+                             'UPLOAD_BLACKLIST': UPLOAD_BLACKLIST}, 
+                            function(){
+                                console.log("finished with setSettings() call");
+                            });
+}
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
+function getSettings(){
+    chrome.storage.sync.get('GENERAL_REPORTING_ON', function(items) {
+        if (isEmpty(items)){ 
+            console.log("no stored GENERAL_REPORTING_ON value found, defaulting to True.");
+            GENERAL_REPORTING_ON = true;
+        }
+        else { 
+            console.log("GENERAL_REPORTING_ON --> " + JSON.stringify(items));
+            GENERAL_REPORTING_ON = items["GENERAL_REPORTING_ON"];
+        }
+    });
+    
+    chrome.storage.sync.get('SCRIPT_CONTENT_UPLOADING_ON', function(items) {
+        if (isEmpty(items)){ 
+            console.log("no stored SCRIPT_CONTENT_UPLOADING_ON value found, defaulting to True."); 
+            SCRIPT_CONTENT_UPLOADING_ON = true;
+        }
+        else { 
+            console.log("SCRIPT_CONTENT_UPLOADING_ON --> " + JSON.stringify(items));
+            SCRIPT_CONTENT_UPLOADING_ON = items["SCRIPT_CONTENT_UPLOADING_ON"];
+        }
+    });
+    
+    chrome.storage.sync.get('POST_IFRAME_CONTENT', function(items) {
+        if (isEmpty(items)){ 
+            console.log("no stored POST_IFRAME_CONTENT value found, defaulting to True."); 
+            POST_IFRAME_CONTENT = true;
+        }
+        else { 
+            console.log("POST_IFRAME_CONTENT --> " + JSON.stringify(items));
+            POST_IFRAME_CONTENT = items["POST_IFRAME_CONTENT"];
+        } 
+    });
+
+    chrome.storage.sync.get('UPLOAD_BLACKLIST', function(items) {
+        if (isEmpty(items)){ 
+            console.log("no stored UPLOAD_BLACKLIST value found, defaulting to []."); 
+            UPLOAD_BLACKLIST = [];
+        }
+        else { 
+            console.log("UPLOAD_BLACKLIST --> " + JSON.stringify(items));
+            UPLOAD_BLACKLIST = items["UPLOAD_BLACKLIST"];
+        }
+    });
+}
+
+getSettings();
 
 /*
  * httpGet(url)

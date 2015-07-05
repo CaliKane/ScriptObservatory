@@ -33,7 +33,8 @@
         "webRequest", 
         "webRequestBlocking",
         "webNavigation",
-        "tabs"
+        "tabs",
+        "storage"
     ],
 
     "options_page": "html/dashboard.html"
