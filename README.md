@@ -39,7 +39,7 @@ passes the object back to the browser.
 
 This way of grabbing the content isn't ideal and will hopefully be improved soon.
 Documentation of design decisions can be found directly in the source code. 
-([chrome-extension/extension.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/extension.js)
+([chrome-extension/js/extension.js](https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/js/extension.js)
 would be a good place to start.)
 
 
@@ -58,10 +58,13 @@ observe. This will be turned off by default in all released versions.
 Here are some steps that have been taken to make this process as trustworthy as possible:
  - The connection from you to the ScriptObservatory backend will always be 
    [encrypted using SSL/TLS](https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org). 
- - Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded in the database. Your observations will be immediately mixed in with those of everyone else. If you see an IP address or User ID value in a URL string that made it past the filters, [let me know](mailto:scriptobservatory@gmail.com) and I'll remove them and blacklist further reports for that website. 
+ - Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded
+   in the database. Your observations will be immediately mixed in with those of everyone else. 
+   If you see an IP address or User ID value in a URL string that made it past the filters, 
+   [let me know](mailto:scriptobservatory@gmail.com) and I'll remove them and blacklist further 
+   reports for that website. 
  - The source code for both the client and the server will always be available for you to 
-   review. (See the 
-   [chrome-extension/](https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension) 
+   review. (See the [chrome-extension/](https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension) 
    and [backend/](https://github.com/andy11/ScriptObservatory/tree/master/backend) 
    directories to get started.)
 
@@ -69,22 +72,10 @@ Here are some steps that have been taken to make this process as trustworthy as 
 Roadmap
 -------
 
-Near-term todos are tracked with [GitHub Issues](https://github.com/andy11/ScriptObservatory/issues).
+TODOs are tracked with [GitHub Issues](https://github.com/andy11/ScriptObservatory/issues).
 
-If you want to get involved, you can see issues tagged as "help-wanted" here: 
-[help-wanted](https://github.com/andy11/ScriptObservatory/labels/help%20wanted)
+If you have questions or want to get involved, you can see issues tagged as "help-wanted" 
+[here](https://github.com/andy11/ScriptObservatory/labels/help%20wanted)
+or [send me an email](mailto:scriptobservatory@gmail.com).
 
-Longer-term ideas:
- - Improve visualizations for what scripts & versions of scripts have been included
- - Merge chrome extension code with a script-blocker like uBlock
- - Let users view scripts in extension and choose whether or not to allow them to run
- - Support YARA scanning full database archive + live alerting on new submissions
- - Support flash objects
- - Add status to robotasks (scheduled, inprogress, terminated) and have robobrowser delete task only on success
-
-
-Contributing
-------------
-
-If you have ideas/comments/suggestions, please submit them as Issues or Pull Requests. Thanks!
 
