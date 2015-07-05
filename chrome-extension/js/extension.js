@@ -23,7 +23,7 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
  * Global Variables / Data Structures
  * ----------------------------------
  * - SCRIPTS: Maps the tabId to a dictionary containing the tab's URL and loaded JavaScript
- * - GENERAL_REPORTING_ON: true --> chrome extension should report observations to the backend
+ * - GENERAL_REPORTING_ON: true if chrome extension should report observations to the backend
  * - scripts_to_send --> temporarily global until refactor (TODO)
  */
 var SCRIPTS = {};
@@ -34,8 +34,8 @@ var scripts_to_send = [];
 
 
 /*
- * GENERAL_REPORTING_ON helper functions
- * -----------------------------
+ * Helper Functions for General Settings 
+ * -------------------------------------
  * Help with getting/setting/maintaining the global reporting state 
  * 
  * TODO: eventually refactor and move all this to separate JS file
@@ -59,9 +59,13 @@ function toggleScriptContentUploadingState(){
     SCRIPT_CONTENT_UPLOADING_ON = !SCRIPT_CONTENT_UPLOADING_ON;
 }
 
-function getReportingState(){ return GENERAL_REPORTING_ON; }
-function getScriptContentReportingState(){ return SCRIPT_CONTENT_UPLOADING_ON; }
+function getReportingState(){ 
+    return GENERAL_REPORTING_ON;
+}
 
+function getScriptContentReportingState(){
+    return SCRIPT_CONTENT_UPLOADING_ON;
+}
 
 /*
  * httpGet(url)
@@ -87,24 +91,19 @@ function httpGet(url){
  * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPatch(site_url, data){
-    var request = new XMLHttpRequest();
-    
     var url_hash = CryptoJS.SHA256(site_url).toString(CryptoJS.enc.Base64);
     var patch_data = {"pageviews": {"add": [data]} };
     var patch_url = WEBPAGE_API_URL + "/" + url_hash;
     
     console.log("finished " + site_url + " -> " + JSON.stringify(patch_data));
 
+    var request = new XMLHttpRequest();
     request.open("PATCH", patch_url, false);
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify(patch_data));
     
     if (request.status == 404){
-        var post_data = {"id": url_hash,
-                         "url": site_url,
-                         "pageviews": [data]};
-        
-        httpPost(WEBPAGE_API_URL, post_data);
+        httpPost(WEBPAGE_API_URL, {"id": url_hash, "url": site_url, "pageviews": [data]});
     }
 }
 
@@ -138,17 +137,17 @@ function scriptcontentPost(data){
 /* 
  * chrome.webRequest.onBeforeRequest listener
  * ------------------------------------------
- * We hook into chrome.webRequest.onBeforeRequest to keep track of the tabIds of
+ * We hook into chrome.webRequest.onBeforeRequest to keep track of the tabIds for
  * all requests for "main_frame" objects and to grab the content of requests for
  * "script" and "sub_frame" objects. 
  * 
  * For "script" and "sub_frame" requests, we perform our own download of the content 
  * and calculate the sha256 hash of what we receive from the server. After the download 
  * of the object is complete, if an entry is present in SCRIPTS for our current
- * tabId, we add the data we have (script URL & hash).
+ * tabId, we add the data we have (script URL & hash) to it.
  * 
- * It would be nice if we could let the browser do the request for "script" objects
- * normally and grab the content of the response it receives, but this is not
+ * It would be nice if we could let the browser make the normal request for these 
+ * objects and let us grab the content of the response it receives, but this is not
  * currently possible with the APIs chrome exposes to extensions. We're stuck 
  * injecting in this non-optimal way for now.
  * 
@@ -173,9 +172,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         var hash = "";
 
         if (details.type == "script" || details.type == "sub_frame") {
+            // Get our own copy of the data
             data = httpGet(details.url);
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
+            // Add the data & hash to our SCRIPTS record:
             if (tabId in SCRIPTS) {
                 SCRIPTS[tabId]["scripts"].push({"url": details.url, "hash": hash});
             }
@@ -184,30 +185,26 @@ chrome.webRequest.onBeforeRequest.addListener(
                 console.log("no main_frame found for " + details.url + " on tabId " + tabId);
             }
             
+            // Upload the content to the scriptcontent API:
             if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
-                if (details.url.slice(0, 13) != "inline_script"){
+                if (details.url.slice(0, 13) != "inline_script"){ /// <-- this may not be necessary TODO
                     scriptcontentPost({"sha256": hash, "content": data});
                 }
             }
             
+            // If it's an iframe, we need to search through it for JavaScript tags:
             if (details.type == "sub_frame"){
                 var el = document.createElement("html");
                 el.innerHTML = data;
-             
-                var to_return = [];
                 var scripts = el.getElementsByTagName("script");
-                //console.log("got " + scripts.length + " scripts in iframe");    
             
                 for (var i=0; i<scripts.length; ++i){
                     if (!scripts[i].src){
-                        //console.log("got inline iframe script!");    
                         inline_script_content = String(scripts[i].innerHTML);
-                        //console.log(inline_script_content);
                         hash = CryptoJS.SHA256(inline_script_content).toString(CryptoJS.enc.Base64);
                         var url = "inline_script_" + hash.slice(0,18);
-                    
-                        var script_content_data = {"sha256": hash, 
-                                                   "content": inline_script_content};
+                        var script_content_data = {"sha256": hash, "content": inline_script_content};
+                        
                         scriptcontentPost(script_content_data);
 
                         if (tabId in SCRIPTS) {
@@ -215,9 +212,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                         }
                         else {
                             // TODO: look into auto-reporting this error
-                            console.log("tabId of " + tabId + 
-                                        " found for " + url +
-                                        " but main_frame not found!!");
+                            console.log("no main_frame found for " + details.url + " on tabId " + tabId);
                        }
                     }
                 }
@@ -229,22 +224,27 @@ chrome.webRequest.onBeforeRequest.addListener(
             var data_uri = window.btoa(unescape(encodeURIComponent(data)));
             return {"redirectUrl":"data:text/html;base64, " + data_uri};
         }
-        else if (details.type == "main_frame") {
-            console.log("got main_frame request");
+        
+        if (details.type == "main_frame") {
             if (tabId in SCRIPTS){
-                console.log("we've found unsent data for this tab! --> " + JSON.stringify(SCRIPTS[tabId]));
-                listener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
-                SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
+                /* If we see a main_frame request go out while we SCRIPTS[tabId] is still defined, something
+                 * strange must have happened... for example, a piece of javascript dropped code that changes
+                 * window.location, or the user started navigating to a new webpage before the current page
+                 * finished loading. 
+                 *
+                 * We want to handle these cases by still uploading their observations, so we invoke our 
+                 * onCompleteListener in a (hacky) way to mimic what would happen if that page were to finish 
+                 * loading on its own.
+                 */
+                onCompleteListener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
             }
-            else {
-                console.log("clearing SCRIPTS in main_frame req");
-                SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
-            }
+            
+            // clear tabId's entry in SCRIPTS and let the main_frame request go through unaltered
+            SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
             return {cancel: false}; 
         }        
 
-        // TODO: look into auto-reporting this error...
-        console.log("failed to hit a return statement!!");
+        console.log("failed to hit a return statement!!");  // TODO: auto-report this error
     }, 
     {urls: ["http://*/*", "https://*/*"], types: ["script", "main_frame", "sub_frame"]}, 
     ["blocking"]
@@ -252,19 +252,18 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 
 /*
- * chrome.tabs.onUpdated listener
- * ------------------------------
- * We hook into chrome.tabs.onUpdated to determine when a page load has completed. 
+ * chrome.webNavigation.onCompleted listener (onCompleteListener())
+ * ----------------------------------------------------------------
+ * We hook into chrome.webNavigation.onCompleted to determine when a page load has finished.
  *
- * We check changeInfo.status to make sure that the reason the onUpdated listener
- * was called is that the status was changed to "complete". If this is so, we 
- * inject javascript to scrape all inline script tags out of the document body.
+ * We inject javascript to scrape all inline script tags out of the document body.
  * We then grab those script bodies and calculate the SHA-256 hash of each of
  * them. Once we have this, we add these inline scripts to the scripts already
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
- * from SCRIPTS. We then delete tabId's entry from SCRIPTS.
+ * from SCRIPTS. 
  */
-function listener(details){
+
+var onCompleteListener = function(details){
     if (GENERAL_REPORTING_ON == false){
         return {cancel: false}; 
     }
@@ -272,86 +271,52 @@ function listener(details){
     var tabId = details.tabId;
     
     if (!(tabId in SCRIPTS)){
+        // TODO: look into auto-reporting this error...
         console.log("in listener, but tabId not in SCRIPTS!");
-        return; // check to see if it's been deleted since 
+        return;
     }
 
     if ("scripts" in details && typeof details["scripts"] != 'undefined'){
         // we were triggered by a main_frame request
-        /*if (SCRIPTS[tabId]["locked"]){
-            console.log("tabId has been locked!");
-            return;
-        }*/
-
-        console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
+        // TODO: hacky & should be refactored
         scripts_to_send = details.scripts;
-        console.log(JSON.stringify(scripts_to_send) + " <-- sts");
     }
     else {
         // we were triggered by onCompleted
-        console.log("in listener() because of onCompleted, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
         if (details.url != SCRIPTS[tabId]["url"]){
-            console.log("skipping this one");
+            console.log("a main_frame request has already caused us to upload this pageview");
             return; 
         }
         scripts_to_send = SCRIPTS[tabId]["scripts"];
         delete SCRIPTS[tabId];
-        console.log(" .. now clearing SCRIPTS in listener()");
-        console.log(JSON.stringify(scripts_to_send) + " <-- sts");
     }
 
-    // TODO: review this injected code for possible security issues before making
+    // TODO: Review this injected code for possible security issues before making
     //       release. OK for now as it's just the robo-browser using this code.
+    //       The google page says to watch out for XSS but doesn't give more details.
     injected_code = "var to_return = []; var scripts = " +
             "document.getElementsByTagName('script'); for (var i=0; " +
             "i<scripts.length; i++) { if(!scripts[i].src) to_return.push( " +
             "scripts[i].innerHTML ); }; to_return";
 
-    chrome.tabs.executeScript(tabId, 
-                              {code: injected_code, runAt: "document_start"},
-                              function(scripts){
-        /*
-        if (!(tabId in SCRIPTS)){
-            console.log("in inline_callback, but tabId not in SCRIPTS!");
-            return; // check to see if it's been deleted since 
+    chrome.tabs.executeScript(tabId, {code: injected_code, runAt: "document_start"}, function(scripts){
+        if (Object.prototype.toString.call( scripts ) != '[object Undefined]' && 
+            Object.prototype.toString.call( scripts[0] ) != '[object Undefined]'){ 
+            scripts = scripts[0];
+
+            var arrayLength = scripts.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var data = String(scripts[i]);
+                var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
+                var url = "inline_script_" + hash.slice(0,18);
+                
+                scripts_to_send.push({"url": url, "hash": hash});
+                scriptcontentPost({"sha256": hash, "content": data});
+            }
+
+            httpPatch(details.url, {"scripts": scripts_to_send});
         }
-        */
-        console.log(" in inline_callback(), scripts = " + JSON.stringify(scripts) + " --> " + Object.prototype.toString.call( scripts ));
-        if (Object.prototype.toString.call( scripts ) == '[object Undefined]') return;
-        if (Object.prototype.toString.call( scripts[0] ) == '[object Undefined]'){
-            console.log("scripts[0] was undefined! returning.");
-            return;
-        }
-        scripts = scripts[0];
-
-        var arrayLength = scripts.length;
-        for (var i = 0; i < arrayLength; i++) {
-            data = String(scripts[i]);
-            hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
-            var url = "inline_script_" + hash.slice(0,18);
-            scripts_to_send.push({"url": url, "hash": hash});
-        
-            var script_content_data = {"sha256": hash, 
-                                       "content": data};
-    
-            scriptcontentPost(script_content_data);
-        }
-
-        var timeStamp = new Date().getTime();
-        var pageview_data = {"scripts": scripts_to_send};
-
-        console.log("on " + details.url + " we saw " + pageview_data["scripts"]);
-        /*
-        if (SCRIPTS[tabId]["locked"]){
-            console.log("tabId has been locked!");
-            return;
-        }*/
-
-        httpPatch(details.url, pageview_data);
     });
+};
 
-    console.log("we've run executeScript()");
-}
-
-
-chrome.webNavigation.onCompleted.addListener(listener);
+chrome.webNavigation.onCompleted.addListener(onCompleteListener);
