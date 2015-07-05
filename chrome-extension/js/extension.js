@@ -292,6 +292,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         if ("scripts" in details && typeof details["scripts"] != 'undefined'){
             // we were triggered by a main_frame request
+            /*if (SCRIPTS[tabId]["locked"]){
+                console.log("tabId has been locked!");
+                return;
+            }*/
+
             console.log("in listener() because of a main_frame request, details.url= " + details.url + " SCRIPTS[tabId][url]= " + SCRIPTS[tabId]["url"]);
             scripts_to_send = details.scripts;
             console.log(JSON.stringify(scripts_to_send) + " <-- sts");
@@ -304,6 +309,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                 return; 
             }
             scripts_to_send = SCRIPTS[tabId]["scripts"];
+            delete SCRIPTS[tabId];
+            console.log(" .. now clearing SCRIPTS in listener()");
             console.log(JSON.stringify(scripts_to_send) + " <-- sts");
         }
 
@@ -339,11 +346,11 @@ chrome.webRequest.onBeforeRequest.addListener(
             var pageview_data = {"scripts": scripts_to_send};
 
             console.log("on " + details.url + " we saw " + pageview_data["scripts"]);
-            
-            if (!("scripts" in details)){
-                delete SCRIPTS[tabId];
-                console.log(" .. now clearing SCRIPTS in listener()");
-            }
+            /*
+            if (SCRIPTS[tabId]["locked"]){
+                console.log("tabId has been locked!");
+                return;
+            }*/
 
             httpPatch(details.url, pageview_data);
         };
