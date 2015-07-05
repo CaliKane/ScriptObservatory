@@ -9,12 +9,24 @@
 
 <body>
 <div id="dashboard-nav">
-    <br>
+    <h1>ScriptObservatory Chrome Extension Settings</h1>
     <h2>Webpage Blacklists</h2>
-    <p> If you'd like to turn off uploading for certain webpages, enter them below. (Wildcards are supported, for example *.google.com will block all google subdomains.) </p>
-    <br>
-
+    <p> 
+        If you'd like to turn off uploading for certain webpages, enter them below. Wildcards are supported. (For example *.google.com will block all google subdomains.) 
+        <br><br>
+        Enter a new filter here:
+        <form id="filterForm">
+            <input id="new_filter"></input>
+            <input type="submit"></input>
+        </form>
+        <br><br>
+        Your currently blacklisted filters are:
+        <br>
+        <p id="current_filters"></p>
+        <br><br>
+    </p>
 </div>
-</body>
 
+<script src="../js/dashboard.js"></script>
+</body>
 </html>

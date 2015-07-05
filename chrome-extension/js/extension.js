@@ -72,8 +72,26 @@ function getScriptContentReportingState(){
     return SCRIPT_CONTENT_UPLOADING_ON;
 }
 
+function getFilters(){
+    return UPLOAD_BLACKLIST;
+}
+
+function addFilter(filter){
+    // TODO: check to make sure it's not already present
+    // TODO: validate
+    if (UPLOAD_BLACKLIST.indexOf(filter) == -1){
+        UPLOAD_BLACKLIST.push(filter);
+        setSettings();
+    }
+}
+
+function removeFilter(filter_ind){
+    UPLOAD_BLACKLIST.splice(parseInt(filter_ind), 1);
+    setSettings();
+}
 
 function setSettings(){
+    // TODO: rename 
     chrome.storage.sync.set({'GENERAL_REPORTING_ON': GENERAL_REPORTING_ON,
                              'SCRIPT_CONTENT_UPLOADING_ON': SCRIPT_CONTENT_UPLOADING_ON,
                              'POST_IFRAME_CONTENT': POST_IFRAME_CONTENT,
