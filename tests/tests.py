@@ -301,10 +301,10 @@ def test_all():
  
     # REDIRECT-REMOTE.HTML
     url = "https://andymartin.cc/test-pages/redirect-remote.html"
-    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{"url":"https://andymartin.cc/test-pages/js/redirect.js","hash":"f7d41e0426b66e02e78c32f9d61d60c059b442d1cdaee67b74ec35d17283fe80"}]}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/redirect-remote.html'}]}
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{"url":"https://andymartin.cc/test-pages/js/redirect.js","hash":"f7d41e0426b66e02e78c32f9d61d60c059b442d1cdaee67b74ec35d17283fe80"}]}], 'id': 'c41e236bb2dcb4bb70f53d14c552a5b0624b5fefeed530428ea5b27de94b45a3', 'url': 'https://andymartin.cc/test-pages/redirect-remote.html'}]}
     check_search_data(url, correct)
     url = "https://andymartin.cc/test-pages/end.html"
-    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': '7ba166d77694f20c8713278bd3d98a231b5a6db67f43515d8c35fd821c024d48', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
     check_search_data(url, correct)
 
     # REDIRECT-INLINE.HTML
@@ -312,7 +312,7 @@ def test_all():
     correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'cb00b1e06896b0850c9bf84138ccd311f2afbcd80e3612f2174be9f4918910eb', 'url': 'https://andymartin.cc/test-pages/redirect-inline.html'}]}
     check_search_data(url, correct)
     url = "https://andymartin.cc/test-pages/end.html"
-    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': 'b81cfef4f4c8515c985de28f290ca1b4577e7500bb166b26b2a3e6eecebe3363', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}], 'id': '7ba166d77694f20c8713278bd3d98a231b5a6db67f43515d8c35fd821c024d48', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
     check_search_data(url, correct)
        
     # We're done!
