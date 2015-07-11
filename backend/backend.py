@@ -103,7 +103,7 @@ api_manager.create_api(Suggestions,
 def get_script_content(filename):
     filename_gz = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(filename))
     
-    file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre>".format(filename)
+    file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:'Courier New', Courier, monospace, sans-serif;\">".format(filename)
     if os.path.isfile(filename_gz):
         with gzip.open(filename_gz, 'rb') as f:
             file_content += html.escape(f.read().decode('utf-8'))
