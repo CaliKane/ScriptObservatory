@@ -238,8 +238,10 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/iframe-dropped-nested.html", 8)
     schedule_robotask("https://andymartin.cc/test-pages/redirect-inline.html", 9)  # this also creates a record for end.html
     schedule_robotask("https://andymartin.cc/test-pages/redirect-remote.html", 10) # this also creates a record for end.html
+    schedule_robotask("https://andymartin.cc/test-pages/10-scripts.html", 11)
+    schedule_robotask("https://andymartin.cc/test-pages/100-scripts.html", 12)
     wait_for_robotask_to_be_emptied(180)
-    wait_for_additions_to_webpage_api(initial_n_webpages + 11, 60)
+    wait_for_additions_to_webpage_api(initial_n_webpages + 13, 60)  # +1 bc of extra for end.html
  
     url = "https://andymartin.cc/test-pages/simple.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517947093, 'scripts': []}], 'id': 'adc0ef3d09029497ef790606011ab866af526fa6e034244c8b311fd31a0ef42d', 'url': 'https://andymartin.cc/test-pages/simple.html'}]}
@@ -314,7 +316,17 @@ def test_all():
     url = "https://andymartin.cc/test-pages/end.html"
     correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': []}, {'date': 1432517971394, 'scripts': []}], 'id': '7ba166d77694f20c8713278bd3d98a231b5a6db67f43515d8c35fd821c024d48', 'url': 'https://andymartin.cc/test-pages/end.html'}]}
     check_search_data(url, correct)
-       
+ 
+    # 10 SCRIPTS ON ONE PAGE
+    url = "https://andymartin.cc/test-pages/10-scripts.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'cb00b1e06896b0850c9bf84138ccd311f2afbcd80e3612f2174be9f4918910eb', 'url': 'https://andymartin.cc/test-pages/redirect-inline.html'}]}
+    check_search_data(url, correct)
+
+    # 100 SCRIPTS ON ONE PAGE
+    url = "https://andymartin.cc/test-pages/100-scripts.html"
+    correct = {'objects': [{'pageviews': [{'date': 1432517971394, 'scripts': [{'hash': '8155327a98a90fd75e8bf08eb6c02a316ca920dca2b06b9c6f7abbadbac31d31', 'url': 'inline_script_8155327a98a90fd75e'}]}], 'id': 'cb00b1e06896b0850c9bf84138ccd311f2afbcd80e3612f2174be9f4918910eb', 'url': 'https://andymartin.cc/test-pages/redirect-inline.html'}]}
+    check_search_data(url, correct)
+    
     # We're done!
     robobrowser.terminate()
     backend.terminate()
