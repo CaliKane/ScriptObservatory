@@ -240,7 +240,7 @@ def test_all():
     schedule_robotask("https://andymartin.cc/test-pages/redirect-remote.html", 10) # this also creates a record for end.html
     schedule_robotask("https://andymartin.cc/test-pages/10-scripts.html", 11)
     schedule_robotask("https://andymartin.cc/test-pages/100-scripts.html", 12)
-    wait_for_robotask_to_be_emptied(180)
+    wait_for_robotask_to_be_emptied(300)
     wait_for_additions_to_webpage_api(initial_n_webpages + 13, 60)  # +1 bc of extra for end.html
  
     url = "https://andymartin.cc/test-pages/simple.html"
