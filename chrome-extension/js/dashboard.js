@@ -12,7 +12,7 @@ function updateView(){
     filter_html = ""
 
     for (var i = 0; i < filters.length; ++i){
-        filter_html += (filters[i] + ' <a href="#" id="remove-filter-' + i + '">remove</a> <br>\n');
+        filter_html += (filters[i].toString() + ' <a href="#" id="remove-filter-' + i + '">remove</a> <br>\n');
     }
     e("current_filters").innerHTML = filter_html;
 

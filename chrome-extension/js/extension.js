@@ -31,6 +31,7 @@ var GENERAL_REPORTING_ON = true;
 var SCRIPT_CONTENT_UPLOADING_ON = true;
 var POST_IFRAME_CONTENT = true;
 var UPLOAD_BLACKLIST = [];
+var DEFAULT_UPLOAD_BLACKLIST = [new RegExp("^https?:\\/\\/www.google.com\\/maps", 'i')];
 var scripts_to_send = [];
 
 
@@ -73,12 +74,13 @@ function getScriptContentReportingState(){
 }
 
 function getFilters(){
-    return UPLOAD_BLACKLIST;
+    return UPLOAD_BLACKLIST.map(regexArrayToStrings);
 }
 
 function addFilter(filter){
-    // TODO: check to make sure it's not already present
     // TODO: validate
+    filter = new RegExp(filter, "i");
+
     if (UPLOAD_BLACKLIST.indexOf(filter) == -1){
         UPLOAD_BLACKLIST.push(filter);
         setSettings();
@@ -95,7 +97,7 @@ function setSettings(){
     chrome.storage.sync.set({'GENERAL_REPORTING_ON': GENERAL_REPORTING_ON,
                              'SCRIPT_CONTENT_UPLOADING_ON': SCRIPT_CONTENT_UPLOADING_ON,
                              'POST_IFRAME_CONTENT': POST_IFRAME_CONTENT,
-                             'UPLOAD_BLACKLIST': UPLOAD_BLACKLIST}, 
+                             'UPLOAD_BLACKLIST': UPLOAD_BLACKLIST.map(regexArrayToStrings)}, 
                             function(){
                                 console.log("finished with setSettings() call");
                             });
@@ -141,14 +143,25 @@ function getSettings(){
 
     chrome.storage.sync.get('UPLOAD_BLACKLIST', function(items) {
         if (isEmpty(items)){ 
-            console.log("no stored UPLOAD_BLACKLIST value found, defaulting to []."); 
-            UPLOAD_BLACKLIST = [];
+            UPLOAD_BLACKLIST = DEFAULT_UPLOAD_BLACKLIST;
+            console.log("no stored UPLOAD_BLACKLIST value found, defaulting to " + UPLOAD_BLACKLIST.map(regexArrayToStrings)); 
         }
         else { 
-            console.log("UPLOAD_BLACKLIST --> " + JSON.stringify(items));
-            UPLOAD_BLACKLIST = items["UPLOAD_BLACKLIST"];
+            UPLOAD_BLACKLIST = items["UPLOAD_BLACKLIST"].map(stringArrayToRegexes);
+            console.log("UPLOAD_BLACKLIST --> " + UPLOAD_BLACKLIST.map(regexArrayToStrings));
         }
     });
+}
+
+function stringArrayToRegexes(cur_val, ind, arr){
+    // we always do case-insensitive regexes
+    return new RegExp(cur_val, 'i');
+}
+
+function regexArrayToStrings(cur_val, ind, arr){
+    // we strip off the leading / and trailing /i (hacky, but ok for now)
+    var str = cur_val.toString()
+    return str.substr(1, str.length - 3);
 }
 
 getSettings();
@@ -177,6 +190,13 @@ function httpGet(url){
  * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPatch(site_url, data){
+    for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
+        if (site_url.match(UPLOAD_BLACKLIST[i])){
+            console.log("we were going to send a PATCH, but " + site_url + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
+            return;
+        }    
+    }
+    
     var url_hash = CryptoJS.SHA256(site_url).toString(CryptoJS.enc.Base64);
     var patch_data = {"pageviews": {"add": [data]} };
     var patch_url = WEBPAGE_API_URL + "/" + url_hash;
@@ -198,6 +218,9 @@ function httpPatch(site_url, data){
  * -------------------
  * Send json-ified *data* with a HTTP POST request to *url*
  *
+ * WARNING: this should only be invoked via httpPatch or scriptcontentPost!
+ *           (UPLOAD_BLACKLIST checks take place there, instead!)
+ *
  * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPost(url, data){
@@ -212,9 +235,16 @@ function httpPost(url, data){
  * -----------------------
  * Send json-ified script-content *data* 
  */
-function scriptcontentPost(data){
+function scriptcontentPost(data, seen_on){
     if (SCRIPT_CONTENT_UPLOADING_ON){
-        console.log("posting scriptcontent " + data["sha256"]);
+        for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
+            if (seen_on.match(UPLOAD_BLACKLIST[i])){
+                console.log("we were going to POST scriptcontent, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
+                return;
+            }    
+        }
+        
+        console.log("posting scriptcontent " + data["sha256"] + " from page " + seen_on);
         httpPost(SCRIPTCONTENT_API_URL, data); 
     }
 }
@@ -274,7 +304,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             // Upload the content to the scriptcontent API:
             if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
                 if (details.url.slice(0, 13) != "inline_script"){ /// <-- this may not be necessary TODO
-                    scriptcontentPost({"sha256": hash, "content": data});
+                    scriptcontentPost({"sha256": hash, "content": data}, SCRIPTS[tabId]["url"]);
                 }
             }
             
@@ -291,7 +321,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                         var url = "inline_script_" + hash.slice(0,18);
                         var script_content_data = {"sha256": hash, "content": inline_script_content};
                         
-                        scriptcontentPost(script_content_data);
+                        scriptcontentPost(script_content_data, SCRIPTS[tabId]["url"]);
 
                         if (tabId in SCRIPTS) {
                             SCRIPTS[tabId]["scripts"].push({"url": url, "hash": hash});
@@ -397,7 +427,7 @@ var onCompleteListener = function(details){
                 var url = "inline_script_" + hash.slice(0,18);
                 
                 scripts_to_send.push({"url": url, "hash": hash});
-                scriptcontentPost({"sha256": hash, "content": data});
+                scriptcontentPost({"sha256": hash, "content": data}, details.url);
             }
 
             httpPatch(details.url, {"scripts": scripts_to_send});
