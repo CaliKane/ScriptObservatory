@@ -192,7 +192,7 @@ def check_script_content(h):
     assert r.status_code == 200
 
     html_data = r.text
-    script_content = html_data.split('<pre>')[1].split('</pre>')[0]
+    script_content = html_data.split('<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:\'Courier New\', Courier, monospace, sans-serif;\">')[1].split('</pre>')[0]
     script_content = html.unescape(script_content).encode('utf-8')
 
     sha256 = hashlib.sha256(script_content).hexdigest()
