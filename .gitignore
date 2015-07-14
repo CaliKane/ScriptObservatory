@@ -8,3 +8,4 @@ new-entries-per-hour.png
 unique-webpages-over-time.png
 backend/static/script-content/
 robo-browser/website-lists/
+backend/config.py

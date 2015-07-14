@@ -1,0 +1,10 @@
+A maximum of {{ config.MAX_HASHES }} hashes and {{ config.MAX_PAGES_PER_HASH }} webpages for
+each hash will be shown here. To see full results, refine your YARA
+rule or query the server directly.
+
+Hash {{ hash }} matches with {{ scripts.count(scripts) }} hits, seen on:
+<a href="https://scriptobservatory.org/script-content/{{ hash }}">{{ hash }}</a>
+
+{% for script in scripts -%}
+<a href="https://scriptobservatory.org/search/?query={{ script.pageview.url }}">{{ script.pageview.url }}</script>
+{% endfor -%}

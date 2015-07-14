@@ -1,81 +1,10 @@
-#!/usr/bin/env python3
-#
-# This code implements all backend functionality, including database models, database 
-# management, advanced data querying, and script-content file serving.
-#
-# NOTES on speeding up queries....
-#   Table indices need to be manually created until code is added to do this directly 
-#   with flask/SQLAlchemy. Information here describes the command you need to run:
-#
-#        https://www.sqlite.org/lang_createindex.html
-#
-#   Thanks Micah for the pointers! :) https://github.com/macro1
-#
-
-import gzip
-import html
-import json
-import os
-import hashlib
-import sys
-import time
-from threading import Thread
-
-from flask import Flask, request, jsonify, send_from_directory
+from backend import app
+from backend import db
+from backend.models import Webpage, Pageview, Script, RoboTask, Suggestions
+from backend.tasks import yara_scan_file
+from flask import request, jsonify, send_from_directory
 from flask.ext.restless import APIManager
-from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, Text, ForeignKey
 
-import yarascan
-
-
-SCRIPT_CONTENT_FOLDER = os.environ['PATH_TO_STORE_SCRIPTCONTENT']
-MAX_YARA_SCAN_THREADS = 2
-MAX_SCRIPT_RESULTS = 250
-
-app = Flask(__name__, static_url_path='')
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
-db = SQLAlchemy(app)
-
-
-class Webpage(db.Model):
-    __tablename__ = "webpage"
-    id = Column(Text, primary_key=True)
-    url = Column(Text, unique=True)
-    pageviews = relationship("Pageview", backref="webpage", lazy='subquery')
-
-class Pageview(db.Model):
-    __tablename__ = "pageview"
-    id = Column(Integer, primary_key=True)
-    url = Column(Integer, ForeignKey("webpage.url"))
-    date = Column(Integer, unique=False)
-    scripts = relationship("Script", backref=db.backref("pageview", lazy='subquery'), lazy='subquery')
-    
-    def __init__(self, **kwargs):
-        super(Pageview, self).__init__(**kwargs)
-        self.date = int(1000*time.time())
-
-class Script(db.Model):
-    __tablename__ = "script"
-    id = Column(Integer, primary_key=True)
-    pageview_id = Column(Integer, ForeignKey("pageview.id"))
-    url = Column(Text, unique=False)
-    hash = Column(Text, unique=False)
-
-class RoboTask(db.Model):
-    __tablename__ = "robotask"
-    id = Column(Integer, primary_key=True)
-    url = Column(Text, unique=False)
-    priority = Column(Integer, unique=False)
-
-class Suggestions(db.Model):
-    __tablename__ = "suggestions"
-    id = Column(Integer, primary_key=True)
-    content = Column(Text, unique=False)
-
-
-db.create_all()
 
 api_manager = APIManager(app, flask_sqlalchemy_db=db)
 api_manager.create_api(Webpage,
@@ -117,30 +46,7 @@ threads = []
 
 @app.route('/yara_scan', methods=["POST"])
 def run_yara_scan():
-    for t in threads:
-        if not t.is_alive(): 
-            t.join()
-            threads.remove(t)
-    
-    if len(threads) >= MAX_YARA_SCAN_THREADS:
-        return 'too many active jobs! try again later'
-
-    email = request.form.get('email')
-    yara = request.form.get('yara')
-
-    if not email or not yara:
-        return 'Please set BOTH the "email" and "yara" parameters!'
-
-    email_whitelist = os.environ['EMAIL_WHITELIST'].split(',')
-
-    if email not in email_whitelist:
-        return 'Email address not found in EMAIL_WHITELIST. email me if you want your email to be added.'
-
-    t = Thread(target=yarascan.run_yara_scan, args=(email, yara))
-    threads.append(t)
-    t.start()
-
-    return 'Thanks. Wait atleast 20 minutes or until you get a results email before sending another request. You can now close this window.'
+    return "Disabled for now"
 
 
 @app.route('/script-content', methods=["POST"])
@@ -171,6 +77,9 @@ def post_script_content():
     filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(sha256))
     with gzip.open(filename, 'wb') as f:
         f.write(content.encode('utf-8'))
+
+    # run yara scan on this new file
+    yara_scan_file.delay('{}.txt.gz'.format(sha256))
     
     return 'thanks!'
     # TODO: eventually, we can have the chrome extension track hashes the server already has
@@ -241,7 +150,4 @@ def search():
     return app.send_static_file("index.html")
 
 
-if __name__ == '__main__':
-    port = int(os.environ['BACKEND_PORT'])
-    app.run(host="0.0.0.0", port=port, use_reloader=False, debug=False)
 
