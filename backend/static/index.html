@@ -26,19 +26,16 @@
         <p> 
         <h3><i>Basic Information</i></h3>
         The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a>
-        by recording information about the <b><i>live content</i></b> people are seeing on the Internet.
+        by recording information about the <b><i>live content</i></b> people see on the Internet.
         <br><br>
-        The long-term goal of this website is for it to be a place where anyone can analyze a record of what code people have seen while on 
+        The long-term goal of this website is for it to be a place where anyone can analyze a record of what code people have been sent while on 
         the Internet. The long-term goal for the <!-- <a href="https://github.com/andy11/ScriptObservatory#usage" target="_blank">Chrome extension</a>--> Chrome extension is to 
         crowdsource the data collection and to act as a <b><i>content-aware</i></b> script blocker.
-        <br><br>
-        Initially, the only objects that will be analyzed are JavaScript files. Eventually, it might be extended to include other types of content like flash 
-        objects and iframes. 
         <br><br>
         <h3><i>Getting Started</i></h3>
         Click the <i>"Explore the Data"</i> tab to query the database. Or, drag this 
         <a href="javascript:q=location.href;open('https://scriptobservatory.org/search/?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
-        bookmarklet to your bookmarks bar to jump directly to the analysis page for whatever website you have open.
+        bookmarklet to your bookmarks bar to quickly jump to the analysis page for whatever website you have open.
         <br><br>
         <h3><i>Are you looking for a project to get involved with?</i></h3>
         <a target="_blank" href="mailto:scriptobservatory@gmail.com">Send me an email</a> to get in touch! 
@@ -78,7 +75,7 @@
             <li><a href="#" ng-click='submitQuery("reddit.com");'>reddit.com</a></li>
             <li><a href="#" ng-click='submitQuery("xkcd");'>xkcd</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware.dontneedcoffee.com");'>http://malware.dontneedcoffee.com</a></li>
-            <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov/portal/dmv");'>https://www.dmv.ca.gov/portal/dmv</a></li>
+            <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov");'>https://www.dmv.ca.gov</a></li>
           </ul>
           <br>
           <h3><i>Some sample script queries:</i></h3>
@@ -194,7 +191,7 @@
           </form>
            <br>
           <div align="center">
-            (These are manually reviewed before they're added to a list. Use any format that's consistent and easy to parse.)
+            (These are manually reviewed before they're added to a list.)
           </div>
         </p>
         <br><br>
@@ -206,13 +203,14 @@
           The data shown here was collected from browsers and web-crawlers using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
           If you'd like to automatically add your observations to the database, the extension will be available for download in the next few months.
           <br><br>
+          
           <h3><i>How does the Chrome Extension collect the data?</i></h3>
           The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
           browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
           back to the browser.
           <br><br>
           This way of grabbing the content isn't ideal performance-wise and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
-          code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/extension.js" target="_blank">chrome-extension/extension.js</a>
+          code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/js/extension.js" target="_blank">chrome-extension/js/extension.js</a>
           contains all the non-crypto code for the extension.)
           <br><br>
           With the ScriptObservatory Chrome extension installed, your browser will send these three pieces of information to the ScriptObservatory backend each time you view a webpage:
@@ -240,8 +238,17 @@
             </li>
           </ul>
           If you have suggestions for ways to further improve, get in touch!
+         <br><br>
+         <h3><i>What have you found so far?</i></h3>
+          As of 2015-07-16, the record contains (at least) 53 webpages serving malicious content.
+          
           <br><br>
-          <h3><i>How much data have you collected?</i></h3>
+          At this point, I don't plan on publishing a list of all the webpages that have been hacked. I might consider exceptions if the webpage owner is unresponsive or doesn't take action to prevent their visitors from being exploited.
+
+         <br><br>
+          I would <i>like</i> to do some kind of A/B testing to see if notifying site administrators that their sites are serving exploit kits actually causes them to remediate faster. But I don't have enough time. <i>If you'd be interested in helping out with this -- get in touch!</i>
+         <br><br>
+         <h3><i>How much data have you collected?</i></h3>
           I started scanning in April 2015. Here are some plots that get updated every 12 hours:
           <br><br>
           <div align="center">
@@ -250,9 +257,8 @@
           <img src="https://scriptobservatory.org/img/new-entries-per-hour.png"></img>
           <br><br>
           <img src="https://scriptobservatory.org/img/unique-webpages-over-time.png"></img>
-          </div>
-          <br><br>
           
+          </div>
         </p>
 
       
