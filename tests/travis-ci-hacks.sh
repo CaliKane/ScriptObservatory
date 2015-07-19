@@ -15,5 +15,5 @@ sudo apt-get install -y google-chrome-stable
 sudo chmod 1777 /dev/shm
 
 # install yara & python3-yara
-sudo apt-get install python3-yara yara
+#sudo apt-get install -y python3-yara yara
 
