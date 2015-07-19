@@ -1,9 +1,15 @@
+import gzip
+import hashlib
+import json
+import os
+
+from flask import request, jsonify, send_from_directory
+from flask.ext.restless import APIManager
+
 from backend import app
 from backend import db
 from backend.models import Webpage, Pageview, Script, RoboTask, Suggestions
 from backend.tasks import yara_scan_file
-from flask import request, jsonify, send_from_directory
-from flask.ext.restless import APIManager
 
 
 api_manager = APIManager(app, flask_sqlalchemy_db=db)
@@ -30,7 +36,7 @@ api_manager.create_api(Suggestions,
 
 @app.route('/script-content/<path:filename>', methods=["GET"])
 def get_script_content(filename):
-    filename_gz = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(filename))
+    filename_gz = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(filename))
     
     file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:'Courier New', Courier, monospace, sans-serif;\">".format(filename)
     if os.path.isfile(filename_gz):
@@ -41,8 +47,6 @@ def get_script_content(filename):
     file_content += "</pre>\n</body>\n</html>"
     return file_content
 
-
-threads = []
 
 @app.route('/yara_scan', methods=["POST"])
 def run_yara_scan():
@@ -56,8 +60,8 @@ def post_script_content():
     # where the user isn't lying. we'll eventually check their hash later)
     req = json.loads(str(request.data, 'utf-8'))
     sha256_c = req.get('sha256')
-    filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt'.format(sha256_c))
-    filename_gz = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(sha256_c))
+    filename = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt'.format(sha256_c))
+    filename_gz = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(sha256_c))
     
     if os.path.isfile(filename_gz):
         return 'we already have this content'
@@ -74,7 +78,7 @@ def post_script_content():
         # TODO: auto-report cases where this check fails? this should never happen
         return "content / hash mismatch"
 
-    filename = os.path.join(SCRIPT_CONTENT_FOLDER, '{0}.txt.gz'.format(sha256))
+    filename = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(sha256))
     with gzip.open(filename, 'wb') as f:
         f.write(content.encode('utf-8'))
 

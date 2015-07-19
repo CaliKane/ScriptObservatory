@@ -2,9 +2,28 @@ A maximum of {{ config.MAX_HASHES }} hashes and {{ config.MAX_PAGES_PER_HASH }} 
 each hash will be shown here. To see full results, refine your YARA
 rule or query the server directly.
 
-Hash {{ hash }} matches with {{ scripts.count(scripts) }} hits, seen on:
-<a href="https://scriptobservatory.org/script-content/{{ hash }}">{{ hash }}</a>
+<br><br>
 
-{% for script in scripts -%}
-<a href="https://scriptobservatory.org/search/?query={{ script.pageview.url }}">{{ script.pageview.url }}</script>
+We found {{ matches | length }} matching hashes:
+
+<br><br>
+
+{% for match in matches -%}
+
+    Matching script: <a href="https://scriptobservatory.org/script-content/{{ match.hash }}">{{ match.hash }}</a>
+
+    <br><br>
+
+    Seen on {{ match.unique_urls | length }} webpages:
+
+    <br>
+
+    <ul>
+    {% for url in match.unique_urls -%}
+        <li><a href="https://scriptobservatory.org/search/?query={{ url }}">{{ url }}</a></li>
+    {% endfor -%}
+    </ul>
+
+    <br><br><br>
 {% endfor -%}
+
