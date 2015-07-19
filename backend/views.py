@@ -1,5 +1,6 @@
 import gzip
 import hashlib
+import html
 import json
 import os
 
