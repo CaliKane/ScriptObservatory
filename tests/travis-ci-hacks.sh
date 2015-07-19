@@ -1,8 +1,9 @@
 #!/bin/bash
-
+#
 # Holy shit batman!
 # https://github.com/travis-ci/travis-ci/issues/938
 # https://github.com/travis-ci/travis-ci/issues/2555
+#
 
 sudo apt-get install -y python-software-properties
 sudo apt-add-repository "deb http://dl.google.com/linux/chrome/deb/ stable main"
@@ -12,4 +13,7 @@ sudo apt-get update -qq
 sudo apt-get install -y google-chrome-stable
 
 sudo chmod 1777 /dev/shm
+
+# install yara & python3-yara
+sudo apt-get install python3-yara yara
 

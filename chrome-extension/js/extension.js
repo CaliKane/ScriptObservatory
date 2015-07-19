@@ -14,9 +14,9 @@
 /* 
  * Constants
  */
-WEBPAGE_API_URL = "https://scriptobservatory.org/api/webpage";
-PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
-SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
+WEBPAGE_API_URL = "http://127.0.0.1:5000/api/webpage";
+PAGEVIEW_API_URL = "http://127.0.0.1:5000/api/pageview";
+SCRIPTCONTENT_API_URL = "http://127.0.0.1:5000/script-content";
 
 
 /*
