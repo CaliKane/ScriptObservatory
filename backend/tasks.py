@@ -36,7 +36,6 @@ celery = make_celery(app)
 def yara_report_match(email, path, data):
     # TODO: eventually take a list of hashes, not just one
     hashes = [path.split('.')[0]]
-
     # TODO: enforce MAX_HASHES
     matches = []
     for hash in hashes:
@@ -56,7 +55,7 @@ def yara_scan_file_for_email(email, path):
 
     def matchcb(data):
         if data['matches']:
-            yara_report_match.delay(email, path, data)
+            yara_report_match.apply_async(args=(email, path, data), countdown=5)
         return yara.CALLBACK_CONTINUE
 
     try:
