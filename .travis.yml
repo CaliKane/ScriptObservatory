@@ -22,6 +22,8 @@ script:
   - unzip chromedriver_linux64.zip
   - echo "appending current directory to PATH"
   - export PATH=$(pwd):$PATH
+  - echo "renaming config.py.example to config.py"
+  - mv backend/config.py.example backend/config.py
   - echo "archiving robo-browser.py & extension.js before we patch them to point to the local backend"
   - mv chrome-extension/js/extension.js chrome-extension/js/extension.js-arch
   - mv robo-browser/robo-browser.py robo-browser/robo-browser.py-arch

@@ -35,7 +35,8 @@ import time
 
 
 # relative paths from tests/ directory
-PATH_TO_BACKEND = "../backend/backend.py"
+PATH_TO_PROJ_ROOT = "../"
+PATH_TO_BACKEND = "../runserver.py"
 PATH_TO_ROBO_BROWSER = "../robo-browser/"
 PATH_TO_CHROME_EXTENSION = "../chrome-extension/"
 
@@ -73,7 +74,7 @@ def json_get(url):
 def launch_backend():
     """ launches backend.py and returns the subprocess handle so it can be later terminated """
     logging.warn("launching backend.py")
-    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)])
+    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)], cwd=os.path.join(FILEPATH, PATH_TO_PROJ_ROOT))
     time.sleep(1)
     assert s.poll() is None
     return s
