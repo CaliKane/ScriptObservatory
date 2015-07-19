@@ -1,6 +1,9 @@
+import os
+
+
 SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
 CELERY_BROKER_URL = "redis://localhost:6379"
-SCRIPT_CONTENT_FOLDER = os.environ.get('PATH_TO_STORE_SCRIPTCONTENT', '/tmp')
+SCRIPT_CONTENT_FOLDER = os.environ.get('PATH_TO_STORE_SCRIPTCONTENT')
 MAX_SCRIPT_RESULTS = 250
 MAX_HASHES = 500
 MAX_PAGES_PER_HASH = 25
@@ -11,3 +14,5 @@ MAIL_PREFIX = "[ScriptObservatory] "
 SMTP_SERVER = "localhost"
 SMTP_PORT = 587
 SMTP_PASSWORD = ""
+
+assert SCRIPT_CONTENT_FOLDER  # set environ var "PATH_TO_STORE_SCRIPTCONTENT"!
