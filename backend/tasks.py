@@ -52,25 +52,26 @@ def yara_retroscan_for_rule(rule_id):
     sources = {rule.namespace: rule.source}
 
     try:
-        rule = yara.compile(sources=sources)
+        yara_rule = yara.compile(sources=sources)
     except:
-        sendmail(rule.email, "YARA Retroscan Results (error!)", render_template('email/yara_error.html'))
+        sendmail(rule.email, "YARA Retroscan Results (error in rule compilation!)", render_template('email/yara_error.html'))
     
-    os.nice(10)
+    os.nice(5)
+
     matches = []
-    for path in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
-        with gzip.open(os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], path), 'rb') as f:
-            try:
-                if rule.match(data=f.read()):
+    try:
+        for path in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
+            with gzip.open(os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], path), 'rb') as f:
+                if yara_rule.match(data=f.read()):
                     matches.append(path.split('.')[0]) 
                     if len(matches) > app.config['MAX_HASHES']:
                         break
-            except:
-                sendmail(rule.email, "YARA Retroscan Results (error!)", render_template('email/yara_error.html'))
-                break
+    except:
+        sendmail(rule.email, "YARA Retroscan Results (error while scanning!)", render_template('email/yara_error.html'))
+    else:
+        yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=5)
+    
     os.nice(0)
-
-    yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=5)
 
 
 @task
