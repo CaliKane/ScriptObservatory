@@ -33,29 +33,56 @@ celery = make_celery(app)
 
 
 @task
-def yara_report_match(email, path, data):
-    # TODO: eventually take a list of hashes, not just one
-    hashes = [path.split('.')[0]]
-    # TODO: enforce MAX_HASHES
+def yara_report_matches(email, namespace, hashes):
     matches = []
     for hash in hashes:
         record = Script.query.filter(Script.hash == hash).limit(app.config['MAX_PAGES_PER_HASH']).all() 
-        new_match = {'hash': hash, 'unique_urls': list(set([s.pageview.url for s in record]))}  # uniq-ify with set()
+        record_urls = list(set([s.pageview.url for s in record]))  # uniq-ify with set()
+        new_match = {'hash': hash, 'unique_urls': record_urls}
         matches.append(new_match)
 
-    sendmail(email, "YARA Scan Results (success!): {}".format(data['namespace']), render_template('email/yara_match.html', matches=matches))
+    sendmail(email, 
+             "YARA Scan Results (success!): {}".format(namespace), 
+             render_template('email/yara_match.html', matches=matches))
+
+
+@task 
+def yara_retroscan_for_rule(rule_id):
+    rule = YaraRuleset.query.filter_by(id=rule_id).all()
+    sources = {rule.namespace: rule.source}
+
+    try:
+        rule = yara.compile(sources=sources)
+    except:
+        sendmail(email, "YARA Retroscan Results (error!)", render_template('email/yara_error.html'))
+    
+    matches = []
+    for filename in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
+        with gzip.open(os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], path), 'rb') as f:
+            try:
+                if rules.match(data=f.read()):
+                    print(path)
+                    matches.append(path.split('.')[0]) 
+            except:
+                sendmail(email, "YARA Retroscan Results (error!)", render_template('email/yara_error.html'))
+        
+        if len(matches) > app.config['MAX_HASHES']:
+            break
+    
+    yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=5)
 
 
 @task
 def yara_scan_file_for_email(email, path):
     sources = {}
+    # TODO: filter for "scan_on_upload==True" too
     rulesets = YaraRuleset.query.filter_by(email=email).all()
     for r in rulesets:
         sources[r.namespace] = r.source
 
     def matchcb(data):
         if data['matches']:
-            yara_report_match.apply_async(args=(email, path, data), countdown=5)
+            yara_report_matches.apply_async(args=(email, data['namespace'], [path.split('.')[0]]), countdown=5)
         return yara.CALLBACK_CONTINUE
 
     try:
