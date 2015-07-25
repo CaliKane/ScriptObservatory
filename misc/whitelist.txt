@@ -1,3 +1,21 @@
+vzw.com
+liveperson.net
+edgekey.net
+zendesk.com
+rubiconproject.com
+turn.com
+bazaarvoice.com
+getclicky.com
+civicplus.com
+microsoft.com
+feedburner.com
+eventbrite.com
+fbcdn.net
+googlecode.com
+yandex.ru
+ustream.tv
+pubmatic.com
+weather.com
 github.com
 godaddy.com
 olark.com
@@ -140,3 +158,5 @@ voicefive.com
 go.com
 monetate.net
 convertlanguage.com
+youtube-nocookie.com
+yahoo.com
