@@ -43,7 +43,7 @@ def run_yara_scan():
 def get_script_content_file_path(hash):
     directory = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], hash[0:4])
     f = os.path.join(directory, hash)
-    return directory, f
+    return directory, "{0}.txt.gz".format(f)
 
 
 @app.route('/script-content/<path:filename>', methods=["GET"])

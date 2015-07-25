@@ -84,7 +84,7 @@ def yara_scan_file_for_email(email, path):
 
     def matchcb(data):
         if data['matches']:
-            yara_report_matches.apply_async(args=(email, data['namespace'], [path.split('.')[0]]), countdown=60)
+            yara_report_matches.apply_async(args=(email, data['namespace'], [path.split('/')[-1].split('.')[0]]), countdown=60)
         return yara.CALLBACK_CONTINUE
 
     try:
@@ -93,7 +93,7 @@ def yara_scan_file_for_email(email, path):
     except:
         sendmail(email, "YARA Scan Results (error!)", render_template('email/yara_error.html'))
 
-    with gzip.open(os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], path), 'rb') as f:
+    with gzip.open(path, 'rb') as f:
         try:
             rules.match(data=f.read(), callback=matchcb)
         except:
