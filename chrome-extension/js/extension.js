@@ -192,10 +192,6 @@ function httpGet(url){
  * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPatch(site_url, data){
-    // TMP: for now, we use these calls to flush the SC queue:
-    scriptcontentFlushQueue();
-    // END TMP
-
     for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
         if (site_url.match(UPLOAD_BLACKLIST[i])){
             console.log("we were going to send a PATCH, but " + site_url + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
@@ -217,6 +213,8 @@ function httpPatch(site_url, data){
     if (request.status == 404){
         httpPost(WEBPAGE_API_URL, {"id": url_hash, "url": site_url, "pageviews": [data]});
     }
+    
+    scriptcontentFlushQueue();
 }
 
 /*
@@ -249,7 +247,7 @@ function scriptcontentQueue(data, seen_on){
             if (seen_on.match(UPLOAD_BLACKLIST[i])){
                 console.log("we were going to queue a scriptcontent, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
                 return;
-            }    
+            }
         }
         
         SCRIPT_CONTENT_QUEUE[data["sha256"]] = data["content"];
@@ -276,20 +274,17 @@ function scriptcontentFlushQueue(){
     }
 
     var url = SCRIPTCONTENT_API_URL + "?hashes=" + Object.keys(SCRIPT_CONTENT_QUEUE).join(",");
-    console.log("querying script-content API with " + url);
     var resp = JSON.parse(httpGet(url));
 
-    var upload_content = [];
+    var newScriptContent = [];
     for (var key in resp){
         if (resp[key] == "false"){
-            upload_content.push({"sha256": key, "content": SCRIPT_CONTENT_QUEUE[key]});
+            newScriptContent.push({"sha256": key, "content": SCRIPT_CONTENT_QUEUE[key]});
         }
     }
     
-    if (upload_content.length > 0){
-        var data = {"upload": upload_content};
-        //console.log("sending " + JSON.stringify(data));
-        httpPost(SCRIPTCONTENT_API_URL, data);
+    if (newScriptContent.length > 0){
+        httpPost(SCRIPTCONTENT_API_URL, {"upload": newScriptContent});
     }
 
     SCRIPT_CONTENT_QUEUE = {};
