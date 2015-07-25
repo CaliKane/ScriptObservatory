@@ -69,7 +69,7 @@ def yara_retroscan_for_rule(rule_id):
     except:
         sendmail(rule.email, "YARA Retroscan Results (error while scanning!)", render_template('email/yara_error.html'))
     else:
-        yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=5)
+        yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=60)
     
     os.nice(0)
 
@@ -84,7 +84,7 @@ def yara_scan_file_for_email(email, path):
 
     def matchcb(data):
         if data['matches']:
-            yara_report_matches.apply_async(args=(email, data['namespace'], [path.split('.')[0]]), countdown=5)
+            yara_report_matches.apply_async(args=(email, data['namespace'], [path.split('.')[0]]), countdown=60)
         return yara.CALLBACK_CONTINUE
 
     try:
