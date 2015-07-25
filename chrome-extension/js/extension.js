@@ -279,15 +279,19 @@ function scriptcontentFlushQueue(){
     console.log("querying script-content API with " + url);
     var resp = JSON.parse(httpGet(url));
 
+    var upload_content = [];
     for (var key in resp){
-        console.log(key);
         if (resp[key] == "false"){
-            data = SCRIPT_CONTENT_QUEUE[key];
-            console.log("sending " + key);
-            httpPost(SCRIPTCONTENT_API_URL, {"sha256": key, "content": data}); 
+            upload_content.push({"sha256": key, "content": SCRIPT_CONTENT_QUEUE[key]});
         }
     }
     
+    if (upload_content.length > 0){
+        var data = {"upload": upload_content};
+        //console.log("sending " + JSON.stringify(data));
+        httpPost(SCRIPTCONTENT_API_URL, data);
+    }
+
     SCRIPT_CONTENT_QUEUE = {};
 }
 

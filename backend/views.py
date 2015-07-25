@@ -70,6 +70,7 @@ def get_script_content_new():
     # API:
     #  Request [content = true, hashes = list of hashes] --> Response [hashes = map of hash values to their content]
     #  Request [content = *anything else*, hashes = list of hashes] --> Response [hashes = map of hash values to True/False for if they're already present]
+    #
     # TODO:
     #  -merge with old API by adding a "prettify" parameter to decide whether to return JSON or HTML
     #
@@ -104,32 +105,34 @@ def post_script_content():
     # (let's avoid spending the effort to hash the user's data in the 99% case 
     # where the user isn't lying. we'll eventually check their hash later)
     req = json.loads(str(request.data, 'utf-8'))
-    sha256_c = req.get('sha256')
-    filedir, filename = get_script_content_file_path(sha256_c)
-    
-    if os.path.isfile(filename):
-        # TODO: return non-200 HTTP return code
-        return 'we already have this content'
-    
-    # we double check that the hash we've calculated matches the hash provided by the client
-    # and then write the file to disk
-    content = req.get('content')
-    sha256 = hashlib.sha256(content.encode('utf-8')).hexdigest()
-    
-    if sha256_c != sha256:
-        # TODO: auto-report cases where this check fails? this should never happen
-        return "content / hash mismatch"
+    upload_list = req.get('upload')
+    response = {}
 
-    os.makedirs(filedir, exist_ok=True)
-    with gzip.open(filename, 'wb') as f:
-        f.write(content.encode('utf-8'))
+    for data in upload_list:
+        sha256_c = data.get('sha256')
+        filedir, filename = get_script_content_file_path(sha256_c)
+        
+        if os.path.isfile(filename):
+            response[sha256_c] = "false"
+            break
 
-    # run yara scan on this new file
-    yara_scan_file.delay(filename)
+        # we double check that the hash we've calculated matches the hash provided by the client
+        # and then write the file to disk
+        content = data.get('content')
+        sha256 = hashlib.sha256(content.encode('utf-8')).hexdigest()
+        
+        if sha256_c != sha256:
+            # TODO: auto-report cases where this check fails? this should never happen
+            return "content / hash mismatch"
+
+        os.makedirs(filedir, exist_ok=True)
+        with gzip.open(filename, 'wb') as f:
+            f.write(content.encode('utf-8'))
+
+        yara_scan_file.delay(filename)
+        response[sha256_c] = "true"
     
-    return 'thanks!'
-    # TODO: eventually, we can have the chrome extension track hashes the server already has
-    # and not try to upload them to save bandwidth.
+    return jsonify(response)
 
 
 @app.route('/api/search', methods=["GET"])
