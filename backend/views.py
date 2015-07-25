@@ -81,7 +81,7 @@ def get_script_content(hash, beautify=False):
 def get_script_content_new():
     # API:
     #  Request [beautify = true, hashes = list of hashes] --> beautified view of scriptcontent from all of *hashes*
-    #  Request [content = true, hashes = list of hashes] --> unbeautified view of scriptcontent from all of *hashes*
+    #  Request [content = true, hashes = list of hashes] --> map of hash values to the scriptcontent ("false" if not present)
     #  Request [hashes = list of hashes] --> map of hash values to True/False (for if they're already present)
     beautify = True if request.args.get('beautify') == "true" else False
     return_content = True if beautify or request.args.get('content') == "true" else False
@@ -103,7 +103,7 @@ def get_script_content_new():
                 content = "true"
         response[sha256] = content
 
-    if beautify or content:
+    if beautify:
         template_content = []
         for sha256 in response.keys():
             c = response[sha256]
