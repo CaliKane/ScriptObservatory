@@ -51,7 +51,7 @@ TEST_ROBOTASK_API = "http://127.0.0.1:8080/api/robotask"
 TEST_WEBPAGE_API = "http://127.0.0.1:8080/api/webpage"
 TEST_PAGEVIEW_API = "http://127.0.0.1:8080/api/pageview"
 TEST_SCRIPT_API = "http://127.0.0.1:8080/api/script"
-TEST_SCRIPT_CONTENT_API = "http://127.0.0.1:8080/script-content/"
+TEST_SCRIPT_CONTENT_API = "http://127.0.0.1:8080/script-content"
 
 
 def json_post(url, content):
@@ -187,13 +187,12 @@ def ordered(obj):
 
 def check_script_content(h):
     """ checks that /script-content/*h* exists on the server and that the hash is correct """
-    url = "{0}{1}".format(TEST_SCRIPT_CONTENT_API, h)
+    url = "{0}?content=true&hashes={1}".format(TEST_SCRIPT_CONTENT_API, h)
 
     r = requests.get(url)
     assert r.status_code == 200
 
-    html_data = r.text
-    script_content = html_data.split('<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:\'Courier New\', Courier, monospace, sans-serif;\">')[1].split('</pre>')[0]
+    script_content = json.loads(r.text)[h]
     script_content = html.unescape(script_content).encode('utf-8')
 
     sha256 = hashlib.sha256(script_content).hexdigest()

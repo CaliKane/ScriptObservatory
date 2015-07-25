@@ -71,6 +71,8 @@ def get_script_content(hash, beautify=False):
 
     if beautify:
         content = external.jsbeautifier.beautify(content)
+    else:
+        content = html.escape(content)
 
     return render_template('script-content/view_script_content.html',
                            scriptcontent=[{'hash': hash, 'content': content}],
@@ -99,6 +101,8 @@ def get_script_content_new():
             if return_content:
                 with gzip.open(filename, 'rb') as f:
                     content = f.read().decode('utf-8')
+                    if not beautify:
+                        content = html.escape(content)
             else:
                 content = "true"
         response[sha256] = content
