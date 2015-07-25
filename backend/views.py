@@ -35,23 +35,29 @@ api_manager.create_api(Suggestions,
                        methods=["GET", "POST", "PUT"])
 
 
+@app.route('/yara_scan', methods=["POST"])
+def run_yara_scan():
+    return "Disabled for now"
+
+
+def get_script_content_file_path(hash):
+    directory = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], hash[0:4])
+    f = os.path.join(directory, hash)
+    return directory, f
+
+
 @app.route('/script-content/<path:filename>', methods=["GET"])
 def get_script_content(filename):
-    filename_gz = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(filename))
+    _, filename = get_script_content_file_path(filename)
     
     file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:'Courier New', Courier, monospace, sans-serif;\">".format(filename)
-    if os.path.isfile(filename_gz):
-        with gzip.open(filename_gz, 'rb') as f:
+    if os.path.isfile(filename):
+        with gzip.open(filename, 'rb') as f:
             file_content += html.escape(f.read().decode('utf-8'))
     else:
         file_content += "content not found"
     file_content += "</pre>\n</body>\n</html>"
     return file_content
-
-
-@app.route('/yara_scan', methods=["POST"])
-def run_yara_scan():
-    return "Disabled for now"
 
 
 @app.route('/script-content', methods=["POST"])
@@ -61,15 +67,12 @@ def post_script_content():
     # where the user isn't lying. we'll eventually check their hash later)
     req = json.loads(str(request.data, 'utf-8'))
     sha256_c = req.get('sha256')
-    filename = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt'.format(sha256_c))
-    filename_gz = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(sha256_c))
-    
-    if os.path.isfile(filename_gz):
-        return 'we already have this content'
+    filedir, filename = get_script_content_file_path(sha256_c)
     
     if os.path.isfile(filename):
+        # TODO: return non-200 HTTP return code
         return 'we already have this content'
-
+    
     # we double check that the hash we've calculated matches the hash provided by the client
     # and then write the file to disk
     content = req.get('content')
@@ -79,12 +82,12 @@ def post_script_content():
         # TODO: auto-report cases where this check fails? this should never happen
         return "content / hash mismatch"
 
-    filename = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], '{0}.txt.gz'.format(sha256))
+    os.makedirs(filedir, exist_ok=True)
     with gzip.open(filename, 'wb') as f:
         f.write(content.encode('utf-8'))
 
     # run yara scan on this new file
-    yara_scan_file.delay('{}.txt.gz'.format(sha256))
+    yara_scan_file.delay(filename)
     
     return 'thanks!'
     # TODO: eventually, we can have the chrome extension track hashes the server already has
