@@ -27,12 +27,14 @@ SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
  * - scripts_to_send --> temporarily global until refactor (TODO)
  */
 var SCRIPTS = {};
+var SCRIPT_CONTENT_QUEUE = {};
 var GENERAL_REPORTING_ON = true; 
 var SCRIPT_CONTENT_UPLOADING_ON = true;
 var POST_IFRAME_CONTENT = true;
 var UPLOAD_BLACKLIST = [];
 var DEFAULT_UPLOAD_BLACKLIST = [new RegExp("^https?:\\/\\/www.google.com\\/maps", 'i')];
 var scripts_to_send = [];
+var MAX_SCRIPT_CONTENT_QUEUE_LENGTH = 5;
 
 
 /*
@@ -190,6 +192,10 @@ function httpGet(url){
  * TODO: check return code & callback-ify this and make it asynchronous
  */
 function httpPatch(site_url, data){
+    // TMP: for now, we use these calls to flush the SC queue:
+    scriptcontentFlushQueue();
+    // END TMP
+
     for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
         if (site_url.match(UPLOAD_BLACKLIST[i])){
             console.log("we were going to send a PATCH, but " + site_url + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
@@ -230,23 +236,59 @@ function httpPost(url, data){
     request.send(JSON.stringify(data));
 }
 
+
 /*
- * scriptcontentPost(data)
- * -----------------------
- * Send json-ified script-content *data* 
+ * scriptcontentQueue(data)
+ * ------------------------
+ * Queue json-ified scriptcontent *data* to be sent later, with the 
+ * send action triggered by a scriptcontentFlushQueue() call.
  */
-function scriptcontentPost(data, seen_on){
+function scriptcontentQueue(data, seen_on){
     if (SCRIPT_CONTENT_UPLOADING_ON){
         for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
             if (seen_on.match(UPLOAD_BLACKLIST[i])){
-                console.log("we were going to POST scriptcontent, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
+                console.log("we were going to queue a scriptcontent, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
                 return;
             }    
         }
         
-        console.log("posting scriptcontent " + data["sha256"] + " from page " + seen_on);
-        httpPost(SCRIPTCONTENT_API_URL, data); 
+        SCRIPT_CONTENT_QUEUE[data["sha256"]] = data["content"];
+
+        if (Object.keys(SCRIPT_CONTENT_QUEUE).length > MAX_SCRIPT_CONTENT_QUEUE_LENGTH){
+            scriptcontentFlushQueue();
+        }
     }
+}
+
+
+/*
+ * scriptcontentFlushQueue()
+ * -----------------------
+ * Go through everything stored in SCRIPT_CONTENT_QUEUE and send it
+ * off to *SCRIPTCONTENT_API_URL*.
+ *
+ * TODO: make asynchronous
+ *
+ */
+function scriptcontentFlushQueue(){
+    if (Object.keys(SCRIPT_CONTENT_QUEUE).length == 0){
+        return;
+    }
+
+    var url = SCRIPTCONTENT_API_URL + "?hashes=" + Object.keys(SCRIPT_CONTENT_QUEUE).join(",");
+    console.log("querying script-content API with " + url);
+    var resp = JSON.parse(httpGet(url));
+
+    for (var key in resp){
+        console.log(key);
+        if (resp[key] == "false"){
+            data = SCRIPT_CONTENT_QUEUE[key];
+            console.log("sending " + key);
+            httpPost(SCRIPTCONTENT_API_URL, {"sha256": key, "content": data}); 
+        }
+    }
+    
+    SCRIPT_CONTENT_QUEUE = {};
 }
 
 
@@ -304,7 +346,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             // Upload the content to the scriptcontent API:
             if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
                 if (details.url.slice(0, 13) != "inline_script"){ /// <-- this may not be necessary TODO
-                    scriptcontentPost({"sha256": hash, "content": data}, SCRIPTS[tabId]["url"]);
+                    scriptcontentQueue({"sha256": hash, "content": data}, SCRIPTS[tabId]["url"]);
                 }
             }
             
@@ -321,7 +363,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                         var url = "inline_script_" + hash.slice(0,18);
                         var script_content_data = {"sha256": hash, "content": inline_script_content};
                         
-                        scriptcontentPost(script_content_data, SCRIPTS[tabId]["url"]);
+                        scriptcontentQueue(script_content_data, SCRIPTS[tabId]["url"]);
 
                         if (tabId in SCRIPTS) {
                             SCRIPTS[tabId]["scripts"].push({"url": url, "hash": hash});
@@ -427,7 +469,7 @@ var onCompleteListener = function(details){
                 var url = "inline_script_" + hash.slice(0,18);
                 
                 scripts_to_send.push({"url": url, "hash": hash});
-                scriptcontentPost({"sha256": hash, "content": data}, details.url);
+                scriptcontentQueue({"sha256": hash, "content": data}, details.url);
             }
 
             httpPatch(details.url, {"scripts": scripts_to_send});

@@ -3,6 +3,7 @@ import hashlib
 import html
 import json
 import os
+import re
 
 from flask import request, jsonify, send_from_directory
 from flask.ext.restless import APIManager
@@ -58,6 +59,43 @@ def get_script_content(filename):
         file_content += "content not found"
     file_content += "</pre>\n</body>\n</html>"
     return file_content
+
+
+def is_valid_sha256(h, regex=re.compile(r'^[a-f0-9]{64}$').search):
+    return bool(regex(h))
+
+
+@app.route('/script-content', methods=["GET"])
+def get_script_content_new():
+    # API:
+    #  Request [content = true, hashes = list of hashes] --> Response [hashes = map of hash values to their content]
+    #  Request [content = *anything else*, hashes = list of hashes] --> Response [hashes = map of hash values to True/False for if they're already present]
+    # TODO:
+    #  -merge with old API by adding a "prettify" parameter to decide whether to return JSON or HTML
+    #
+    return_content = True if request.args.get('content') == "true" else False
+    hash_list = request.args.get('hashes').split(',')
+    
+    response = {}
+    
+    for sha256 in hash_list:
+        if not is_valid_sha256(sha256):
+            # TODO: auto-report these?
+            return "invalid hash"
+
+        _, filename = get_script_content_file_path(sha256)
+        content = "false"
+        
+        if os.path.isfile(filename):
+            if return_content:
+                with gzip.open(filename, 'rb') as f:
+                    content = f.read().decode('utf-8')
+            else:
+                content = "true"
+        
+        response[sha256] = content
+
+    return jsonify(response)
 
 
 @app.route('/script-content', methods=["POST"])
