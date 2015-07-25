@@ -43,7 +43,7 @@ for n, pv in enumerate(pageviews):
     t = int(pv[2])
     obs_so_far += 1  # len(pv["scripts"])
 
-    if t > time_vals[time_vals_ind]:
+    if len(time_vals) > time_vals_ind and t > time_vals[time_vals_ind]:
         #print obs_so_far / hours_per_tv
         y.append(obs_so_far * 0.001 / hours_per_tv)
         labels.append(t)
