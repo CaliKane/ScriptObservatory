@@ -4,14 +4,18 @@ import html
 import json
 import os
 import re
+import sys
 
-from flask import request, jsonify, send_from_directory
+from flask import request, jsonify, send_from_directory, render_template
 from flask.ext.restless import APIManager
 
 from backend import app
 from backend import db
 from backend.models import Webpage, Pageview, Script, RoboTask, Suggestions
 from backend.tasks import yara_scan_file
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
+import external.jsbeautifier
 
 
 api_manager = APIManager(app, flask_sqlalchemy_db=db)
@@ -47,38 +51,43 @@ def get_script_content_file_path(hash):
     return directory, "{0}.txt.gz".format(f)
 
 
-@app.route('/script-content/<path:filename>', methods=["GET"])
-def get_script_content(filename):
-    _, filename = get_script_content_file_path(filename)
-    
-    file_content = "<html>\n<head></head>\n<body><h2>Script Content for {0}:</h2>\n<pre style=\"white-space:pre-wrap; width:95%; font-size:12px; font-family:'Courier New', Courier, monospace, sans-serif;\">".format(filename)
-    if os.path.isfile(filename):
-        with gzip.open(filename, 'rb') as f:
-            file_content += html.escape(f.read().decode('utf-8'))
-    else:
-        file_content += "content not found"
-    file_content += "</pre>\n</body>\n</html>"
-    return file_content
-
-
 def is_valid_sha256(h, regex=re.compile(r'^[a-f0-9]{64}$').search):
     return bool(regex(h))
+
+
+@app.route('/script-content/<path:hash>', methods=["GET"])
+def get_script_content_pretty(hash):
+    return get_script_content(hash, beautify=True)
+
+
+@app.route('/script-content-raw/<path:hash>', methods=["GET"])
+def get_script_content(hash, beautify=False):
+    _, filename = get_script_content_file_path(hash)
+    
+    content = "content not found"
+    if os.path.isfile(filename):
+        with gzip.open(filename, 'rb') as f:
+            content = f.read().decode('utf-8')
+
+    if beautify:
+        content = external.jsbeautifier.beautify(content)
+
+    return render_template('script-content/view_script_content.html',
+                           scriptcontent=[{'hash': hash, 'content': content}],
+                           beautified=beautify)
 
 
 @app.route('/script-content', methods=["GET"])
 def get_script_content_new():
     # API:
-    #  Request [content = true, hashes = list of hashes] --> Response [hashes = map of hash values to their content]
-    #  Request [content = *anything else*, hashes = list of hashes] --> Response [hashes = map of hash values to True/False for if they're already present]
-    #
-    # TODO:
-    #  -merge with old API by adding a "prettify" parameter to decide whether to return JSON or HTML
-    #
-    return_content = True if request.args.get('content') == "true" else False
+    #  Request [beautify = true, hashes = list of hashes] --> beautified view of scriptcontent from all of *hashes*
+    #  Request [content = true, hashes = list of hashes] --> unbeautified view of scriptcontent from all of *hashes*
+    #  Request [hashes = list of hashes] --> map of hash values to True/False (for if they're already present)
+    beautify = True if request.args.get('beautify') == "true" else False
+    return_content = True if beautify or request.args.get('content') == "true" else False
     hash_list = request.args.get('hashes').split(',')
     
     response = {}
-    
     for sha256 in hash_list:
         if not is_valid_sha256(sha256):
             # TODO: auto-report these?
@@ -86,17 +95,26 @@ def get_script_content_new():
 
         _, filename = get_script_content_file_path(sha256)
         content = "false"
-        
         if os.path.isfile(filename):
             if return_content:
                 with gzip.open(filename, 'rb') as f:
                     content = f.read().decode('utf-8')
             else:
                 content = "true"
-        
         response[sha256] = content
 
-    return jsonify(response)
+    if beautify or content:
+        template_content = []
+        for sha256 in response.keys():
+            c = response[sha256]
+            if beautify: c = external.jsbeautifier.beautify(c)
+            template_content.append({'hash': sha256, 'content': c})
+
+        return render_template('script-content/view_script_content.html',
+                               scriptcontent=template_content,
+                               beautified=beautify)
+    else:
+        return jsonify(response)
 
 
 @app.route('/script-content', methods=["POST"])

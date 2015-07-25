@@ -1,0 +1,19 @@
+<html>
+<head></head>
+<body>
+  {% for sc in scriptcontent -%}
+  <h2>Script Content for {{ sc.hash }}:</h2>
+  {% if beautified %}
+  <i> 
+    This JS has been cleaned up with <a href="https://github.com/beautify-web/js-beautify">js-beautify</a>. 
+    To view the original, click <a href="https://scriptobservatory.org/script-content-raw/{{ sc.hash }}">here</a>.
+  </i>
+  {% endif %}
+
+  <pre style="white-space:pre-wrap; width:95%; font-size:12px; font-family:'Courier New', Courier, monospace, sans-serif;">{{ sc.content }}</pre>
+
+  <hr>
+  {% endfor -%}
+</body>
+</html>
+
