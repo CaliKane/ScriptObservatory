@@ -34,7 +34,7 @@ var POST_IFRAME_CONTENT = true;
 var UPLOAD_BLACKLIST = [];
 var DEFAULT_UPLOAD_BLACKLIST = [new RegExp("^https?:\\/\\/www.google.com\\/maps", 'i')];
 var scripts_to_send = [];
-var MAX_SCRIPT_CONTENT_QUEUE_LENGTH = 5;
+var MAX_SCRIPT_CONTENT_QUEUE_LENGTH = 9;
 
 
 /*
