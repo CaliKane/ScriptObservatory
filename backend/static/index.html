@@ -3,11 +3,12 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>ScriptObservatory</title>
-  <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
-  <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
-  <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
-  <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
-  <script src="https://scriptobservatory.org/js/app.js"></script>
+  <link rel="stylesheet" href="http://127.0.0.1:8080/css/bootstrap-3.3.4.min.css">
+  <link rel="stylesheet" href="http://127.0.0.1:8080/css/style.css">
+  <script src="http://127.0.0.1:8080/js/angular-1.2.16.js"></script>
+  <script src="http://127.0.0.1:8080/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <script src="http://127.0.0.1:8080/js/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 </head>
 
 <body ng-app="app" ng-controller="AppCtrl as app">
@@ -17,7 +18,7 @@
     <p class="unselectable">a project to record and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
   </header>
 
-  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://scriptobservatory.org/img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="https://scriptobservatory.org/img/forkme_right_darkblue_121621.png"></a>
+  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://127.0.0.1:8080/img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="http://127.0.0.1:8080/img/forkme_right_darkblue_121621.png"></a>
 
   <div class="bodycontainer">
     <div class="container">
@@ -34,7 +35,7 @@
         <br><br>
         <h3><i>Getting Started</i></h3>
         Click the <i>"Explore the Data"</i> tab to query the database. Or, drag this 
-        <a href="javascript:q=location.href;open('https://scriptobservatory.org/search/?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
+        <a href="javascript:q=location.href;open('http://127.0.0.1:8080/search/?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
         bookmarklet to your bookmarks bar to quickly jump to the analysis page for whatever website you have open.
         <br><br>
         <h3><i>Are you looking for a project to get involved with?</i></h3>
@@ -53,7 +54,7 @@
           <div class="form-group" align="center">
             <div class="col-sm-2"></div>
             <div class="col-sm-6">
-              <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 (https://scriptobservatory.org)"> 
+              <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 (http://127.0.0.1:8080)"> 
             </div>
             <div class="col-sm-1">
             <label for="queryField"> 
@@ -67,7 +68,7 @@
         <div ng-show="QRY_STATUS == 'WAITING_FOR_QRY'" id="info_section">
           <h3><i>Some sample webpage queries:</i></h3>
           <ul>
-            <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
+            <li><a href="#" ng-click='submitQuery("http://127.0.0.1:8080");'>http://127.0.0.1:8080</a></li>
             <li><a href="#" ng-click='submitQuery("vt.edu");'>vt.edu</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.studentsforafreetibet.org");'>https://www.studentsforafreetibet.org</a></li>
@@ -88,7 +89,7 @@
           </ul>
           <br>
           <h3><i>Got YARA signatures? (experimental)</i></h3>
-          <p> Click <a href="https://scriptobservatory.org/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
+          <p> Click <a href="http://127.0.0.1:8080/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
         </div>
         
         <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="script_query_section">
@@ -98,7 +99,7 @@
               <span ng-if="app.scriptQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
+                <td> <a href="http://127.0.0.1:8080/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
           </table>
         </div>
@@ -110,7 +111,7 @@
               <span ng-if="app.scriptQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
             <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
+                <td> <a href="http://127.0.0.1:8080/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
           </table>
         </div>
@@ -248,11 +249,11 @@
           I started scanning in April 2015. Here are some plots that get updated every 12 hours:
           <br><br>
           <div align="center">
-          <img src="https://scriptobservatory.org/img/entries-over-time.png"></img>
+          <img src="http://127.0.0.1:8080/img/entries-over-time.png"></img>
           <br><br>
-          <img src="https://scriptobservatory.org/img/new-entries-per-hour.png"></img>
+          <img src="http://127.0.0.1:8080/img/new-entries-per-hour.png"></img>
           <br><br>
-          <img src="https://scriptobservatory.org/img/unique-webpages-over-time.png"></img>
+          <img src="http://127.0.0.1:8080/img/unique-webpages-over-time.png"></img>
           
           </div>
         </p>
@@ -260,14 +261,6 @@
       
       </tab>
  
-      <!--
-      <tab heading="Blog">
-        <br><br>
-        <p align="center"> Coming soon. </p>
-        <br><br>
-      </tab>
-      -->
-
       </tabset>
     </div>
 
@@ -278,7 +271,7 @@
       </div>
 
       <div class="modal-body">
-        <h4><u>Observed Scripts</u></h4>
+        <h4><u>Observed Scripts</u> (<a href="http://127.0.0.1:8080/api/get_aligned_data?url={{ currentObj.url }}" target="_blank">Experimental View</a>) </h4>
         <span ng-if="(currentObj.scripts | object2Array ).length == 0"> No scripts found. </span>
         <table class="table-condensed table-hover" style="background-color:inherit;">
           <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
@@ -325,7 +318,7 @@
         <ul>
           <li> View <a target="_blank" href="{{ currentObj.url }}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
           <li ng-if="webpageUrl != ''"> View <a target="_blank" href="{{ webpageUrl }}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
+          <li> See <a href="http://127.0.0.1:8080/search/?query={{currentObj.url}}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.url }}">VirusTotal</a> </li>
         </ul>
       </div>
@@ -343,10 +336,10 @@
       <div class="modal-body">
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View <a href="https://scriptobservatory.org/script-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li> View <a href="http://127.0.0.1:8080/script-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
           <li ng-if="scriptUrl != ''"> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
           <li ng-if="webpageUrl != ''"> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
+          <li> See <a href="http://127.0.0.1:8080/search/?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>
         </ul>
       </div>

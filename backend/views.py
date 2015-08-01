@@ -5,6 +5,8 @@ import json
 import os
 import re
 import sys
+from operator import itemgetter
+from urllib.parse import urlparse
 
 from flask import request, jsonify, send_from_directory, render_template
 from flask.ext.restless import APIManager
@@ -205,6 +207,123 @@ def api_search():
         json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
 
     return jsonify(json)
+
+
+def date_collision_present(list_a, list_b):
+    for a in list_a:
+        for b in list_b:
+            if a['date'] == b['date']:
+                return True
+    return False
+
+@app.route('/api/get_aligned_data', methods=["GET"])
+def align_webpage_data():
+    """ TODO: do matching against *any*, not just first entry in res[] """
+
+    url = request.args.get('url')
+    if not url: return "please supply a URL parameter"
+    webpage = Webpage.query.filter(Webpage.url == url).one()
+
+    # pull out all relevant script objects
+    resources = []
+    for pv in webpage.pageviews:
+        for s in pv.scripts:
+            resources.append({'url': s.url, 'hash': s.hash, 
+                             'parent_url': s.pageview.url, 'date': s.pageview.date})     
+
+
+    ## C1 - line up those with equal hash values
+    new_resources = []
+    for o in resources:
+        placed = False
+        for r in new_resources:
+            if o['hash'] == r[0]['hash'] and not date_collision_present([o], r):
+                r.append(o)
+                placed = True
+                break
+ 
+        if placed == False:
+            new_resources.append([o])
+    resources = new_resources
+
+    ## C2 - line up those with equal URLs
+    new_resources = []
+    for o in resources:
+        placed = False
+        for r in new_resources:
+            if o[0]['url'] == r[0]['url'] and not date_collision_present(o, r):
+                r += o
+                placed = True
+                break
+
+        if placed == False:
+            new_resources.append(o)
+    resources = new_resources
+
+    ## C3 - line up those with equal filepaths
+    new_resources = []
+    for o in resources:
+        placed = False
+        for r in new_resources:
+            if urlparse(o[0]['url']).path.split('/')[-1] == urlparse(r[0]['url']).path.split('/')[-1] and not date_collision_present(o, r):
+                r += o
+                placed = True
+                break
+
+        if placed == False:
+            new_resources.append(o)
+    resources = new_resources
+
+    ## C4 - line up those with equal subdomains & paths
+    new_resources = []
+    for o in resources:
+        placed = False
+        for r in new_resources:
+            if o[0]['url'].split('/')[:-1] == r[0]['url'].split('/')[:-1] and not date_collision_present(o, r):
+                r += o
+                placed = True
+                break
+
+        if placed == False:
+            new_resources.append(o)
+    resources = new_resources
+
+    ## C5 - line up those with equal subdomains
+    new_resources = []
+    for o in resources:
+        placed = False
+        for r in new_resources:
+            if urlparse(o[0]['url']).netloc == urlparse(r[0]['url']).netloc and not date_collision_present(o, r):
+                r += o
+                placed = True
+                break
+
+        if placed == False:
+            new_resources.append(o)
+    resources = new_resources
+
+    FIRST_T = 1428799569220
+    # reduce to expected JSON format
+    final_resources = []
+    for ind, resource in enumerate(resources):
+        for view in resource: 
+            view['date'] = int((view['date'] - FIRST_T) / (24 * 60 * 60 * 1000))
+        
+        view_list = []
+        for view in resource:
+            try:
+                i = list(map(itemgetter('date'), view_list)).index(view['date'])
+                view_list[i]['n'] += 1
+                view_list[i]['details'].append("{0} - {1}".format(view['url'], view['hash']))
+            except ValueError:
+                view_list.append({'date': view['date'], 'n': 1, 'details': ["{0} - {1}".format(view['url'], view['hash'])]})
+
+        final_resources.append({'name': "Resource #{0}".format(ind),
+                                'views': view_list,
+                                'total': len(resource)})
+
+    return render_template('visualizations/aligned_scripts.html',
+                           json_data=json.dumps(final_resources))
 
 
 @app.route('/')
