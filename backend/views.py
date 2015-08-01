@@ -6,12 +6,14 @@ import os
 import re
 import sys
 
-from flask import request, jsonify, send_from_directory, render_template
+from flask import flash, jsonify, redirect, render_template, request, \
+    send_from_directory, url_for
 from flask.ext.restless import APIManager
 
 from backend import app
 from backend import db
-from backend.models import Webpage, Pageview, Script, RoboTask, Suggestions
+from backend.models import Webpage, Pageview, Script, RoboTask, Suggestions, \
+    YaraRuleset
 from backend.tasks import yara_scan_file
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
@@ -40,9 +42,43 @@ api_manager.create_api(Suggestions,
                        methods=["GET", "POST", "PUT"])
 
 
-@app.route('/yara_scan', methods=["POST"])
-def run_yara_scan():
-    return "Disabled for now"
+@app.route('/yara', methods=['GET', 'POST'])
+def yara_index():
+    errors = []
+
+    if request.method == 'POST':
+        email = request.form['email'].strip()
+        if len(email) <= 0:
+            errors.append("You must provide an email address")
+        elif email not in app.config['YARA_EMAIL_WHITELIST']:
+            errors.append("Email address not in whitelist")
+
+        namespace = request.form['namespace'].strip()
+        if len(namespace) <= 0:
+            errors.append("You must provide a namespace")
+        else:
+            dups = YaraRuleset.query.filter_by(email=email,
+                                               namespace=namespace).count()
+            if dups > 0:
+                errors.append("The namespace you have provided has already "
+                              "been used for that email address. Please "
+                              "choose a new one.")
+
+        source = request.form['source'].strip()
+        if len(source) <= 0:
+            errors.append("You must provide some Yara rules")
+
+        # TODO: compile and sanity-check yara rules (with celery task)
+
+        if len(errors) <= 0:
+            ruleset = YaraRuleset(email, namespace, source)
+            db.session.add(ruleset)
+            db.session.commit()
+
+            flash("Rules added")
+            return redirect(url_for('yara_index'))
+
+    return render_template('yara/index.html', errors=errors)
 
 
 def get_script_content_file_path(hash):

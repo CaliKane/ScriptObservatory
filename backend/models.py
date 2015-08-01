@@ -49,3 +49,8 @@ class YaraRuleset(db.Model):
     email = db.Column(db.Unicode(255))
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.UnicodeText)
+
+    def __init__(self, email, namespace, source):
+        self.email = email
+        self.namespace = namespace
+        self.source = source
