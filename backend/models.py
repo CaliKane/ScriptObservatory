@@ -21,6 +21,8 @@ class Pageview(db.Model):
         super(Pageview, self).__init__(**kwargs)
         self.date = int(1000*time.time())
 
+    def __repr__(self):
+        return "pv[{0} @ {1}]".format(self.url, self.date)
 
 class Script(db.Model):
     __tablename__ = "script"
@@ -29,6 +31,8 @@ class Script(db.Model):
     url = db.Column(db.Text, unique=False)
     hash = db.Column(db.Text, unique=False)
 
+    def __repr__(self):
+        return "script[{0} / {1} @ {2}]".format(self.url, self.hash[:8], self.pageview.date)
 
 class RoboTask(db.Model):
     __tablename__ = "robotask"
