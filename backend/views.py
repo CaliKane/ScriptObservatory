@@ -1,3 +1,4 @@
+import functools
 import gzip
 import hashlib
 import html
@@ -225,105 +226,147 @@ def align_webpage_data():
     webpage = Webpage.query.filter(Webpage.url == url).one()
 
     # pull out all relevant script objects
-    resources = []
+    resources = {}
+    resource_n = 0
+    FIRST_T = 9999999999999999
     for pv in webpage.pageviews:
         for s in pv.scripts:
-            resources.append({'url': s.url, 'hash': s.hash, 
-                             'parent_url': s.pageview.url, 'date': s.pageview.date})     
-
-
-    ## C1 - line up those with equal hash values
-    new_resources = []
-    for o in resources:
+            resources[resource_n] = [{'url': s.url, 'hash': s.hash, 'parent_url': s.pageview.url, 'date': s.pageview.date}]
+            resource_n += 1
+    
+        if pv.date < FIRST_T:
+            FIRST_T = pv.date
+   
+    ## C1 - line up those with equal URLs
+    new_resources = {}
+    for k in resources.keys():
         placed = False
-        for r in new_resources:
-            if o['hash'] == r[0]['hash'] and not date_collision_present([o], r):
-                r.append(o)
-                placed = True
-                break
- 
-        if placed == False:
-            new_resources.append([o])
-    resources = new_resources
-
-    ## C2 - line up those with equal URLs
-    new_resources = []
-    for o in resources:
-        placed = False
-        for r in new_resources:
-            if o[0]['url'] == r[0]['url'] and not date_collision_present(o, r):
-                r += o
+        for new_k in new_resources.keys():
+            if new_resources[new_k][0]['url'] == resources[k][0]['url'] and not date_collision_present(resources[k], new_resources[new_k]):
+                new_resources[new_k] += resources[k]
                 placed = True
                 break
 
         if placed == False:
-            new_resources.append(o)
+            new_resources[resources[k][0]['url']] = resources[k]
     resources = new_resources
-
-    ## C3 - line up those with equal filepaths
-    new_resources = []
-    for o in resources:
+    
+    ## C2 - line up those with equal filenames
+    new_resources = {}
+    for k in resources.keys():
         placed = False
-        for r in new_resources:
-            if urlparse(o[0]['url']).path.split('/')[-1] == urlparse(r[0]['url']).path.split('/')[-1] and not date_collision_present(o, r):
-                r += o
+        for new_k in new_resources.keys():
+            if urlparse(resources[k][0]['url']).path.split('/')[-1] == urlparse(new_resources[new_k][0]['url']).path.split('/')[-1] and not date_collision_present(resources[k], new_resources[new_k]):
+                new_key = urlparse(resources[k][0]['url']).path.split('/')[-1] 
+                new_val = resources[k] + new_resources[new_k]
+                del new_resources[new_k]
+                new_resources[new_key] = new_val
                 placed = True
                 break
 
         if placed == False:
-            new_resources.append(o)
+            new_resources[k] = resources[k]
     resources = new_resources
+    
 
+    ## C3 - line up those with equal hash values
+    new_resources = {}
+    for k in resources.keys():
+        placed = False
+        for new_k in new_resources.keys():
+            if new_resources[new_k][0]['hash'] == resources[k][0]['hash'] and not date_collision_present(resources[k], new_resources[new_k]):
+                new_key = new_resources[new_k][0]['hash']
+                new_val = resources[k] + new_resources[new_k]
+                del new_resources[new_k]
+                new_resources[new_key] = new_val
+                placed = True
+                break
+
+        if placed == False:
+            new_resources[k] = resources[k]
+    resources = new_resources
+    
+    
     ## C4 - line up those with equal subdomains & paths
-    new_resources = []
-    for o in resources:
+    new_resources = {}
+    for k in resources.keys():
         placed = False
-        for r in new_resources:
-            if o[0]['url'].split('/')[:-1] == r[0]['url'].split('/')[:-1] and not date_collision_present(o, r):
-                r += o
+        for new_k in new_resources.keys():
+            if resources[k][0]['url'].startswith("inline_script_"): continue
+            if new_resources[new_k][0]['url'].split('/')[:-1] == resources[k][0]['url'].split('/')[:-1] and not date_collision_present(resources[k], new_resources[new_k]):
+                new_key = "Resource from {0}".format(urlparse(new_resources[new_k][0]['url']).netloc)
+                new_val = resources[k] + new_resources[new_k]
+                del new_resources[new_k]
+                new_resources[new_key] = new_val
                 placed = True
                 break
 
         if placed == False:
-            new_resources.append(o)
+            new_resources[k] = resources[k]
     resources = new_resources
 
-    ## C5 - line up those with equal subdomains
-    new_resources = []
-    for o in resources:
+     
+    ## C5 - collapse inline_scripts as much as possible
+    new_resources = {}
+    for k in resources.keys():
         placed = False
-        for r in new_resources:
-            if urlparse(o[0]['url']).netloc == urlparse(r[0]['url']).netloc and not date_collision_present(o, r):
-                r += o
+        for new_k in new_resources.keys():
+            if not resources[k][0]['url'].startswith("inline_script_"): continue
+            if not date_collision_present(resources[k], new_resources[new_k]):
+                new_key = "inline_script_*"
+                new_val = resources[k] + new_resources[new_k]
+                del new_resources[new_k]
+                new_resources[new_key] = new_val
                 placed = True
                 break
 
         if placed == False:
-            new_resources.append(o)
+            new_resources[k] = resources[k]
     resources = new_resources
 
-    FIRST_T = 1428799569220
+  
     # reduce to expected JSON format
     final_resources = []
-    for ind, resource in enumerate(resources):
-        for view in resource: 
+    for ind, key in enumerate(resources.keys()):
+        # scale our time value to new scale (days)
+        for view in resources[key]: 
             view['date'] = int((view['date'] - FIRST_T) / (24 * 60 * 60 * 1000))
         
+        # because we plot one dot per day and we may have multiple views of a given resource on one day, we
+        # need to go through and consolidate those views, increasing 'n' when we have more than one occurrance
         view_list = []
-        for view in resource:
+        for view in resources[key]:
             try:
                 i = list(map(itemgetter('date'), view_list)).index(view['date'])
                 view_list[i]['n'] += 1
-                view_list[i]['details'].append("{0} - {1}".format(view['url'], view['hash']))
+                view_list[i]['details'].append({'url': view['url'], 'hash': view['hash']})
             except ValueError:
-                view_list.append({'date': view['date'], 'n': 1, 'details': ["{0} - {1}".format(view['url'], view['hash'])]})
+                view_list.append({'date': view['date'], 'n': 1, 'details': [{'url': view['url'], 'hash': view['hash']}]})
 
-        final_resources.append({'name': "Resource #{0}".format(ind),
+        final_resources.append({'name': key,
                                 'views': view_list,
-                                'total': len(resource)})
+                                'total': len(resources[key])})
 
+    # sort final_resources:
+    final_resources = sorted(final_resources, key=functools.cmp_to_key(view_list_sorter))
     return render_template('visualizations/aligned_scripts.html',
                            json_data=json.dumps(final_resources))
+
+
+def view_list_sorter(a, b):
+    # put inline_scripts_ last by default
+    if a['name'].startswith("inline_script_") and not b['name'].startswith("inline_script_"): return 1
+    elif b['name'].startswith("inline_script_") and not a['name'].startswith("inline_script_"): return -1
+
+    # then put those with the most entries towards the top
+    if a['total'] > b['total']: return -1
+    elif b['total'] > a['total']: return 1
+    
+    # then try to put those with more recent "last seen" dates towards the top
+    if a['views'][-1]['date'] > b['views'][-1]['date']: return -1
+    elif b['views'][-1]['date'] > a['views'][-1]['date']: return 1
+
+    return 0
 
 
 @app.route('/')

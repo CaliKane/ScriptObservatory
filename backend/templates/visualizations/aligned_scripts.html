@@ -14,16 +14,15 @@
 <body>
 
 <script type="text/javascript">
-function truncate(str, maxLength, suffix) {
+function truncate(str, maxLength) {
     if(str.length > maxLength) {
         str = str.substring(0, maxLength + 1); 
-        str = str.substring(0, Math.min(str.length, str.lastIndexOf(" ")));
-        str = str + suffix;
+        str = str + "...";
     }
     return str;
 }
 
-var margin = {top: 20, right: 200, bottom: 0, left: 20}, width = 900, height = 650;
+var margin = {top: 20, right: 200, bottom: 0, left: 20}, width = 1000, height = 1000;
 var start_day = 0, end_day = 100;
 
 var c = d3.scale.category20c();
@@ -41,18 +40,19 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+function get_color_from_hash(h){
+    return "#" + h.substring(0,6);
+}
+    
 function initialize_data(){
     data = {{ json_data | safe }};
 
     x.domain([start_day, end_day]);
     var xScale = d3.scale.linear()
         .domain([start_day, end_day])
-        .range([0, width]);
+        .range([350, width]);
 
-    //svg.append("g")
-    //    .attr("class", "x axis")
-    //    .attr("transform", "translate(0," + 0 + ")")
-    //    .call(xAxis);
 
     for (var j = 0; j < data.length; j++) {
         var g = svg.append("g").attr("class","resource");
@@ -68,17 +68,17 @@ function initialize_data(){
             .append("text");
 
         circles
-            .attr("cx", function(d, i) { return 150 + xScale(d['date']); })
+            .attr("cx", function(d, i) { return xScale(d['date']); })
             .attr("cy", j*20+20)
             .attr("r", function(d) { return 2 + d['n']; })
-            .style("fill", function(d) { return c(j); });
+            .style("fill", function(d, i) { return get_color_from_hash(d['details'][0]['hash']); });
 
         g.append("text")
             .attr("y", j*20+25)
             .attr("x", 0)
             .attr("class","label")
-            .text(truncate(data[j]['name'],30,"..."))
-            .style("fill", function(d) { return c(j); })
+            .text(truncate(data[j]['name'], 45))
+            .style("fill", function(d, i) { return j; })
             .on("mouseover", mouseover)
             .on("mouseout", mouseout);
     };
