@@ -312,6 +312,7 @@ def align_webpage_data():
         placed = False
         for new_k in new_resources.keys():
             if not resources[k][0]['url'].startswith("inline_script_"): continue
+            if not new_resources[new_k][0]['url'].startswith("inline_script_"): continue
             if not date_collision_present(resources[k], new_resources[new_k]):
                 new_key = "inline_script_*"
                 new_val = resources[k] + new_resources[new_k]
