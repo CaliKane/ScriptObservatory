@@ -40,6 +40,11 @@ api_manager.create_api(Suggestions,
                        methods=["GET", "POST", "PUT"])
 
 
+opts = external.jsbeautifier.default_options()
+opts.unescape_strings = True
+opts.eval_code = True
+
+
 @app.route('/yara_scan', methods=["POST"])
 def run_yara_scan():
     return "Disabled for now"
@@ -70,7 +75,7 @@ def get_script_content(hash, beautify=False):
             content = f.read().decode('utf-8')
 
     if beautify:
-        content = external.jsbeautifier.beautify(content)
+        content = external.jsbeautifier.beautify(content, opts)
     else:
         content = html.escape(content)
 
@@ -111,7 +116,7 @@ def get_script_content_new():
         template_content = []
         for sha256 in response.keys():
             c = response[sha256]
-            if beautify: c = external.jsbeautifier.beautify(c)
+            if beautify: c = external.jsbeautifier.beautify(c, opts)
             template_content.append({'hash': sha256, 'content': c})
 
         return render_template('script-content/view_script_content.html',

@@ -1,5 +1,6 @@
 import gzip
 import os
+import sys
 import yara
 from backend import app
 from backend.lib import sendmail
@@ -37,8 +38,8 @@ def yara_report_matches(email, namespace, hashes):
     matches = []
     for hash in hashes:
         record = Script.query.filter(Script.hash == hash).limit(app.config['MAX_PAGES_PER_HASH']).all() 
-        record_urls = list(set([s.pageview.url for s in record]))  # uniq-ify with set()
-        new_match = {'hash': hash, 'unique_urls': record_urls}
+        urls = [{"webpage_url": s.pageview.url, "script_url": s.url} for s in record]
+        new_match = {'hash': hash, 'urls': urls}
         matches.append(new_match)
 
     sendmail(email, 
@@ -60,16 +61,22 @@ def yara_retroscan_for_rule(rule_id):
 
     matches = []
     try:
-        for path in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
-            with gzip.open(os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], path), 'rb') as f:
-                if yara_rule.match(data=f.read()):
-                    matches.append(path.split('.')[0]) 
-                    if len(matches) > app.config['MAX_HASHES']:
-                        break
+        for subdir in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
+            if subdir.endswith(".txt.gz"): continue  # TEMPORARY
+            try:  # TEMPORARY
+                subdir = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], subdir)
+                for path in os.listdir(subdir):
+                    with gzip.open(os.path.join(subdir, path), 'rb') as f:
+                        if yara_rule.match(data=f.read()):
+                            matches.append(path.split('.')[0]) 
+                            if len(matches) > app.config['MAX_HASHES']:
+                                break
+            except NotADirectoryError:
+                pass
     except:
-        sendmail(rule.email, "YARA Retroscan Results (error while scanning!)", render_template('email/yara_error.html'))
+        sendmail(rule.email, "YARA Retroscan Error ({0})".format(sys.exc_info()), render_template('email/yara_error.html'))
     else:
-        yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches), countdown=60)
+        yara_report_matches.apply_async(args=(rule.email, rule.namespace, matches))
     
     os.nice(0)
 
@@ -91,13 +98,13 @@ def yara_scan_file_for_email(email, path):
         # TODO: store compiled rules in database to avoid re-compiling?
         rules = yara.compile(sources=sources)
     except:
-        sendmail(email, "YARA Scan Results (error!)", render_template('email/yara_error.html'))
+        sendmail(email, "YARA Livescan Results (error in rule compilation!)", render_template('email/yara_error.html'))
 
     with gzip.open(path, 'rb') as f:
         try:
             rules.match(data=f.read(), callback=matchcb)
         except:
-            sendmail(email, "YARA Scan Results (error!)", render_template('email/yara_error.html'))
+            sendmail(email, "YARA Livescan Results (error while reading file / matching ruleset!)", render_template('email/yara_error.html'))
 
 
 @task
