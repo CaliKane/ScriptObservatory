@@ -14,13 +14,13 @@ We found {{ matches | length }} matching hashes:
 
     <br><br>
 
-    Seen on {{ match.unique_urls | length }} webpages:
+    Seen {{ match.urls | length }} times:
 
     <br>
 
     <ul>
-    {% for url in match.unique_urls -%}
-        <li><a href="https://scriptobservatory.org/search/?query={{ url }}">{{ url }}</a></li>
+    {% for url in match.urls -%}
+        <li><a href="https://scriptobservatory.org/search/?query={{ url.webpage_url }}">{{ url.webpage_url }}</a> (<a href="https://scriptobservatory.org/search/?query={{ url.script_url }}">{{ url.script_url }}</a>)</li>
     {% endfor -%}
     </ul>
 
