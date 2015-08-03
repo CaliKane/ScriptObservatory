@@ -6,6 +6,7 @@ import json
 import os
 import re
 import sys
+import time
 from operator import itemgetter
 from urllib.parse import urlparse
 
@@ -353,10 +354,13 @@ def align_webpage_data():
                                 'views': view_list,
                                 'total': len(resources[key])})
 
+    first_t_in_days_ago = int((time.time()*1000 - FIRST_T) / (24 * 60 * 60 * 1000))
+
     # sort final_resources:
     final_resources = sorted(final_resources, key=functools.cmp_to_key(view_list_sorter))
     return render_template('visualizations/aligned_scripts.html',
-                           json_data=json.dumps(final_resources))
+                           json_data=json.dumps(final_resources),
+                           first_t_in_days_ago=first_t_in_days_ago)
 
 
 def view_list_sorter(a, b):
