@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>ScriptObservatory</title>
   <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/aligned_visualization.css">
   <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
   <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
   <script src="https://scriptobservatory.org/js/app.js"></script>
@@ -13,25 +14,42 @@
 
 <body>
 <h2>Experimental View</h2>
-<p>Hover over a dot below to see more information. Click it to lock.</p>
-
+<p>Hover over a dot below to see more information. Click a dot to lock the information tab and bring up query links for it.</p>
+<div align="center">
+<pre id="cur"><br></pre>
+</div>
 <script type="text/javascript">
+var first_t_in_days_ago = {{ first_t_in_days_ago }};
+console.log("we have " + first_t_in_days_ago + " days of logs");
+
 var data = {{ json_data | safe }};
-console.log(data.length);
 
 var margin = {top: 20, right: 20, bottom: 20, left: 20};
-var width = 600;
-var height = 20*data.length;
+var width = 800;
+var height = 20*data.length + 45;
 var start_day = 0;
-var end_day = 100;
+var end_day = first_t_in_days_ago;
 
 var c = d3.scale.category20c();
 
-var x = d3.scale.linear().range([0, width]);
-var xAxis = d3.svg.axis().scale(x).orient("top");
+var NAME_OFFSET = 300;
+var x_label;
+var x = d3.scale.linear().range([0, width - NAME_OFFSET]);
 
-var formatDays = d3.format("0");
-xAxis.tickFormat(formatDays);
+if (first_t_in_days_ago >= 3*30){
+    x.domain([-end_day/30, 0]);
+    x_label = "months ago";
+}
+else { 
+    x.domain([-end_day/7, 0]);
+    x_label = "weeks ago";
+}
+
+var formatDays = d3.format("d");
+var xAxis = d3.svg.axis().scale(x).orient("top").tickFormat(formatDays);
+
+
+
 
 function e(id) {
     return document.getElementById(id);
@@ -59,17 +77,18 @@ function get_color_from_hash(h){
 }
     
 function initialize_data(){
-    x.domain([start_day, end_day]);
-    var xScale = d3.scale.linear()
-        .domain([start_day, end_day])
-        .range([300, width]);
-
+    var xScale = d3.scale.linear().domain([start_day, end_day]).range([NAME_OFFSET, width]);
+    
     var g = svg.append("g").attr("class","resource");
+    
     g.append("text")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("class","header")
-        .text("")
+        .attr("transform", "translate(" + ((width + NAME_OFFSET)/2) + ", 0)")
+        .text(x_label);
+
+    g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(" + NAME_OFFSET + ", 30)")
+        .call(xAxis)
 
     for (var j = 0; j < data.length; j++) {
         var g = svg.append("g").attr("class","resource");
@@ -86,7 +105,7 @@ function initialize_data(){
 
         circles
             .attr("cx", function(d, i) { return xScale(d['date']); })
-            .attr("cy", j*20)
+            .attr("cy", 40 + j*20)
             .attr("r", function(d) { return 3 + d['n']; })
             .style("fill", function(d, i) { return get_color_from_hash(d['details'][0]['hash']); })
             .on("click", click)
@@ -95,7 +114,7 @@ function initialize_data(){
         
         g.append("text")
             .attr("x", 0)
-            .attr("y", 5 + j*20)
+            .attr("y", 45 + j*20)
             .attr("class","label")
             .text(truncate(data[j]['name'], 45))
             .style("fill", function(d, i) { return j; })
@@ -132,7 +151,7 @@ function initialize_data(){
         var out = "";
         var i = detailsList.length;
         while (i--) {
-            var truncated_url = truncate(detailsList[i].url, 45);
+            var truncated_url = truncate(detailsList[i].url, 50);
             var truncated_hash = detailsList[i].hash.substr(0,8);
 
             if (clickable){
@@ -143,7 +162,7 @@ function initialize_data(){
                 out += truncated_url + " (" + truncated_hash + ")";
             }
 
-            if (i > 0) out += ",<br>";
+            if (i > 0) out += ", ";
         }
 
         if (clickable) out += " [<a href='#' onclick='view_locked=false; e(\"cur\").innerHTML = \"<br>\"'>unlock</a>]";
@@ -180,8 +199,6 @@ function initialize_data(){
 var view_locked = false;
 initialize_data();
 </script>
-
-<pre id="cur"><br></pre>
 
 
 </body>
