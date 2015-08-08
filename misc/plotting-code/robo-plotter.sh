@@ -9,7 +9,7 @@ do
     ./plot-unique-webpages-over-time.py /home/andy/projects/ScriptObservatory/backend/static/img/
     echo "done!"
     
-    sleep 43200  # 12h
+    sleep 86400  # 24h
 
 done
 
