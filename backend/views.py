@@ -5,6 +5,7 @@ import html
 import json
 import os
 import re
+import requests
 import sys
 import time
 from operator import itemgetter
@@ -25,6 +26,14 @@ import external.jsbeautifier
 def verify_ip_is_authorized(**kw):
     if app.config['API_IP_WHITELIST_ENABLED']:
         if request.remote_addr not in app.config['API_IP_WHITELIST']:
+            # this IP is not authorized! log it to the suggestions api for now...
+            report = {'content': "Something funny is coming from {0}".format(request.remote_addr)}
+   
+            r = requests.post('https://scriptobservatory.org/api/suggestions',
+                              data=json.dumps(report),
+                              headers={"content-type": "application/json"},
+                              verify=False)
+
             raise ProcessingException(description='Not Authorized',
                                       code=401)
     
@@ -163,6 +172,9 @@ def get_script_content_new():
 
 @app.route('/script-content', methods=["POST"])
 def post_script_content():
+    # check to see if it's coming from an authorized IP address:
+    verify_ip_is_authorized()
+
     # first we check to see if the file exists for the hash the client provides 
     # (let's avoid spending the effort to hash the user's data in the 99% case 
     # where the user isn't lying. we'll eventually check their hash later)
