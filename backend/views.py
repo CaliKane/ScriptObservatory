@@ -22,22 +22,53 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
 import external.jsbeautifier
 
 
+def verify_ip_is_authorized(**kw):
+    if app.config['API_IP_WHITELIST_ENABLED']:
+        if request.remote_addr not in app.config['API_IP_WHITELIST']:
+            raise ProcessingException(description='Not Authorized',
+                                      code=401)
+    
+
 api_manager = APIManager(app, flask_sqlalchemy_db=db)
 api_manager.create_api(Webpage,
                        max_results_per_page=0,
-                       methods=["GET", "POST", "PUT", "PATCH"])
+                       methods=["GET", "POST", "PUT", "PATCH"],
+                       preprocessors={
+                           'POST': [verify_ip_is_authorized],
+                           'PATCH_SINGLE': [verify_ip_is_authorized],
+                           'PATCH_MANY': [verify_ip_is_authorized],
+                           'PUT_SINGLE': [verify_ip_is_authorized],
+                           'PUT_MANY': [verify_ip_is_authorized]
+                       })
 
 api_manager.create_api(Pageview,
                        max_results_per_page=0,
-                       methods=["GET", "POST", "PUT", "PATCH"])
+                       methods=["GET", "POST", "PUT", "PATCH"],
+                       preprocessors={
+                           'POST': [verify_ip_is_authorized],
+                           'PATCH_SINGLE': [verify_ip_is_authorized],
+                           'PATCH_MANY': [verify_ip_is_authorized],
+                           'PUT_SINGLE': [verify_ip_is_authorized],
+                           'PUT_MANY': [verify_ip_is_authorized]
+                       })
 
 api_manager.create_api(Script,
                        max_results_per_page=0,
-                       methods=["GET", "POST", "PUT", "PATCH"])
+                       methods=["GET", "POST", "PUT", "PATCH"],
+                       preprocessors={
+                           'POST': [verify_ip_is_authorized],
+                           'PATCH_SINGLE': [verify_ip_is_authorized],
+                           'PATCH_MANY': [verify_ip_is_authorized],
+                           'PUT_SINGLE': [verify_ip_is_authorized],
+                           'PUT_MANY': [verify_ip_is_authorized]
+                       })
 
 api_manager.create_api(RoboTask,
                        results_per_page=100,
-                       methods=["GET", "POST", "DELETE", "PUT"])
+                       methods=["GET", "POST", "DELETE", "PUT"],
+                       preprocessors={
+                           'DELETE': [verify_ip_is_authorized],
+                       })
 
 api_manager.create_api(Suggestions,
                        max_results_per_page=0,
