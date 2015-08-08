@@ -25,8 +25,9 @@ console.log("we have " + first_t_in_days_ago + " days of logs");
 var data = {{ json_data | safe }};
 
 var margin = {top: 20, right: 20, bottom: 20, left: 20};
+var height_per_row = 15;
 var width = 800;
-var height = 20*data.length + 45;
+var height = height_per_row*data.length + 45;
 var start_day = 0;
 var end_day = first_t_in_days_ago;
 
@@ -40,9 +41,13 @@ if (first_t_in_days_ago >= 3*30){
     x.domain([-end_day/30, 0]);
     x_label = "months ago";
 }
-else { 
+else if (first_t_in_days_ago > 3*7){ 
     x.domain([-end_day/7, 0]);
     x_label = "weeks ago";
+}
+else {
+    x.domain([-end_day, 0]);
+    x_label = "days ago";
 }
 
 var formatDays = d3.format("d");
@@ -105,7 +110,7 @@ function initialize_data(){
 
         circles
             .attr("cx", function(d, i) { return xScale(d['date']); })
-            .attr("cy", 40 + j*20)
+            .attr("cy", 40 + j*height_per_row)
             .attr("r", function(d) { return 3 + d['n']; })
             .style("fill", function(d, i) { return get_color_from_hash(d['details'][0]['hash']); })
             .on("click", click)
@@ -114,7 +119,7 @@ function initialize_data(){
         
         g.append("text")
             .attr("x", 0)
-            .attr("y", 45 + j*20)
+            .attr("y", 45 + j*height_per_row)
             .attr("class","label")
             .text(truncate(data[j]['name'], 45))
             .style("fill", function(d, i) { return j; })
