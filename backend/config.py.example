@@ -11,6 +11,7 @@ MAX_SCRIPT_RESULTS = 250
 MAX_HASHES = 500
 MAX_PAGES_PER_HASH = 25
 YARA_SCAN_TIMEOUT = 1500
+MAX_QUERY_TIME = 10
 
 MAIL_FROM = "scriptobservatory@gmail.com"
 MAIL_PREFIX = "[ScriptObservatory] "

@@ -316,6 +316,9 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
+            else if (data.objects[0] == "error") {
+                $scope.QRY_STATUS = "QRY_ERROR";
+            }
             else {
                 $scope.QRY_STATUS = "HAVE_WEBPAGE_RESULTS";
             }
@@ -374,6 +377,8 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 app.sites.push(to_add);
             }
             
+        }).error(function(data){
+            $scope.QRY_STATUS = "QRY_ERROR";
         });
     }
 
