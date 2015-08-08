@@ -210,25 +210,6 @@ def post_script_content():
     return jsonify(response)
 
 
-class Timeout():
-    """Timeout class using ALARM signal."""
-    class Timeout(Exception):
-        pass
-
-    def __init__(self, sec):
-        self.sec = sec
-
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.raise_timeout)
-        signal.alarm(self.sec)
-
-    def __exit__(self, *args):
-        signal.alarm(0)    # disable alarm
-
-    def raise_timeout(self, *args):
-        raise Timeout.Timeout()
-
-
 @app.route('/api/search', methods=["GET"])
 def api_search():
     url = request.args.get('url')
@@ -241,48 +222,41 @@ def api_search():
 
     json = {'objects': []}
  
-    try:
-        with Timeout(app.config['MAX_QUERY_TIME']):
-            if url_hash or url:
-                if url_hash is not None:
-                    websites = [db.session.query(Webpage).get(url_hash)]
-                elif url is not None:   
-                    websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
-                
-                if len(websites) > app.config['MAX_WEBPAGE_RESULTS']:
-                    websites = websites[:app.config['MAX_WEBPAGE_RESULTS']]
+    if url_hash or url:
+        if url_hash is not None:
+            websites = [db.session.query(Webpage).get(url_hash)]
+        elif url is not None:   
+            websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).limit(app.config['MAX_WEBPAGE_RESULTS']).all()
 
-                for site in websites:
-                    json_site = {}
-                    json_site['url'] = site.url
-                    json_site['id'] = site.id
-                    json_site['pageviews'] = []
+        for site in websites:
+            json_site = {}
+            json_site['url'] = site.url
+            json_site['id'] = site.id
+            json_site['pageviews'] = []
 
-                    for pv in site.pageviews:
-                        json_pv = {}
-                        json_pv['date'] = pv.date
-                        json_pv['scripts'] = []
+            for pv in site.pageviews:
+                json_pv = {}
+                json_pv['date'] = pv.date
+                json_pv['scripts'] = []
 
-                        for script in pv.scripts:
-                            json_script = {}
-                            json_script['url'] = script.url
-                            json_script['hash'] = script.hash
-                            json_pv['scripts'].append(json_script)
+                for script in pv.scripts:
+                    json_script = {}
+                    json_script['url'] = script.url
+                    json_script['hash'] = script.hash
+                    json_pv['scripts'].append(json_script)
 
-                        json_site['pageviews'].append(json_pv)
+                json_site['pageviews'].append(json_pv)
 
-                    json['objects'].append(json_site)    
-            
-            elif script_by_url or script_by_hash:
-                if script_by_url is not None:   
-                    scripts = db.session.query(Script).filter(Script.url == script_by_url).limit(app.config['MAX_SCRIPT_RESULTS']).all()
-                elif script_by_hash is not None:   
-                    scripts = db.session.query(Script).filter(Script.hash == script_by_hash).limit(app.config['MAX_SCRIPT_RESULTS']).all()
-                
-                json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
-    except Timeout.Timeout:
-        json = {'objects': ["error"]}        
-
+            json['objects'].append(json_site)    
+    
+    elif script_by_url or script_by_hash:
+        if script_by_url is not None:   
+            scripts = db.session.query(Script).filter(Script.url == script_by_url).limit(app.config['MAX_SCRIPT_RESULTS']).all()
+        elif script_by_hash is not None:   
+            scripts = db.session.query(Script).filter(Script.hash == script_by_hash).limit(app.config['MAX_SCRIPT_RESULTS']).all()
+        
+        json['objects'] = list(set([s.pageview.url for s in scripts]))  # de-dup with set()
+    
     return jsonify(json)
 
 
