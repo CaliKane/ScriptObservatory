@@ -184,6 +184,9 @@ def api_search():
         elif url is not None:   
             websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
         
+        if len(websites) > app.config['MAX_WEBPAGE_RESULTS']:
+            websites = websites[:app.config['MAX_WEBPAGE_RESULTS']]
+
         for site in websites:
             json_site = {}
             json_site['url'] = site.url
