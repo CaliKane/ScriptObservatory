@@ -13,13 +13,13 @@ class Webpage(db.Model):
 class Pageview(db.Model):
     __tablename__ = "pageview"
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.Integer, db.ForeignKey("webpage.url"))
+    url = db.Column(db.Text, db.ForeignKey("webpage.url"))
     date = db.Column(db.Integer, unique=False)
     scripts = db.relationship("Script", backref=db.backref("pageview", lazy='subquery'), lazy='subquery')
     
     def __init__(self, **kwargs):
         super(Pageview, self).__init__(**kwargs)
-        self.date = int(1000*time.time())
+        self.date = time.time()
 
     def __repr__(self):
         return "pv[{0} @ {1}]".format(self.url, self.date)
