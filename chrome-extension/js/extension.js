@@ -436,7 +436,7 @@ var onCompleteListener = function(details){
     if ("resources" in details && typeof details["resources"] != 'undefined'){
         // we were triggered by a main_frame request
         // TODO: hacky & should be refactored
-        resources_to_send = details.scripts;
+        resources_to_send = details.resources;
     }
     else {
         // we were triggered by onCompleted
