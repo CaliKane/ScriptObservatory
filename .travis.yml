@@ -6,7 +6,7 @@ addons:
   hosts:
     - scriptobservatory.org
 
-env: PATH_TO_STORE_SCRIPTCONTENT=/tmp/ BACKEND_PORT=8080 LOG_FILEPATH=/tmp/
+env: RESOURCE_CONTENT_FOLDER=/tmp/ BACKEND_PORT=8080 LOG_FILEPATH=/tmp/
 
 python:
   - "3.4"
