@@ -74,7 +74,8 @@ def json_get(url):
 def launch_backend():
     """ launches backend.py and returns the subprocess handle so it can be later terminated """
     logging.warn("launching backend.py")
-    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)], cwd=os.path.join(FILEPATH, PATH_TO_PROJ_ROOT))
+    s = subprocess.Popen(["python3.4", os.path.join(FILEPATH, PATH_TO_BACKEND)], 
+                         cwd=os.path.join(FILEPATH, PATH_TO_PROJ_ROOT))
     time.sleep(1)
     assert s.poll() is None
     return s
@@ -83,7 +84,8 @@ def launch_backend():
 def launch_robobrowser():
     """ launches robo-browser.py and returns the subprocess handle so it can be later terminated """
     logging.warn("launching robo-browser.sh")
-    s = subprocess.Popen(["bash", "./robo-browser.sh"], cwd=os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER))
+    s = subprocess.Popen(["bash", "./robo-browser.sh"],
+                         cwd=os.path.join(FILEPATH, PATH_TO_ROBO_BROWSER))
     time.sleep(1)
     assert s.poll() is None
     return s
