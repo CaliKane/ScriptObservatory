@@ -8,7 +8,13 @@ class Webpage(db.Model):
     id = db.Column(db.Text, primary_key=True)
     url = db.Column(db.Text, unique=True)
     pageviews = db.relationship("Pageview", backref="webpage", lazy='subquery')
+    tags = db.relationship("Tag", backref="webpage", lazy="subquery")
 
+class Tag(db.Model):
+    __tablename__ = "tag"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, unique=True)
+    webpage_id = db.Column(db.Integer, db.ForeignKey("webpage.id"))
 
 class Pageview(db.Model):
     __tablename__ = "pageview"
@@ -46,6 +52,11 @@ class Suggestions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, unique=False)
 
+class Errors(db.Model):
+    __tablename__ = "errors"
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Integer, unique=False)
+    content = db.Column(db.Text, unique=False)
 
 class YaraRuleset(db.Model):
     __tablename__ = "yara_ruleset"
@@ -53,3 +64,5 @@ class YaraRuleset(db.Model):
     email = db.Column(db.Unicode(255))
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.UnicodeText)
+    scan_on_upload = db.Column(db.Boolean)
+
