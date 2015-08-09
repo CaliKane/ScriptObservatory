@@ -1,68 +1,68 @@
-import time
+import datetime
 
 from backend import db
 
 
 class Webpage(db.Model):
-    __tablename__ = "webpage"
+    __tablename__ = 'webpage'
     id = db.Column(db.Text, primary_key=True)
-    url = db.Column(db.Text, unique=True)
-    pageviews = db.relationship("Pageview", backref="webpage", lazy='subquery')
-    tags = db.relationship("Tag", backref="webpage", lazy="subquery")
+    url = db.Column(db.UnicodeText, unique=True)
+    pageviews = db.relationship('Pageview', backref='webpage')
+    tags = db.relationship('Tag', backref='webpage')
 
-class Tag(db.Model):
-    __tablename__ = "tag"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, unique=True)
-    webpage_id = db.Column(db.Integer, db.ForeignKey("webpage.id"))
 
 class Pageview(db.Model):
-    __tablename__ = "pageview"
+    __tablename__ = 'pageview'
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.Text, db.ForeignKey("webpage.url"))
-    date = db.Column(db.Integer, unique=False)
-    scripts = db.relationship("Script", backref=db.backref("pageview", lazy='subquery'), lazy='subquery')
-    
+    url = db.Column(db.UnicodeText, db.ForeignKey('webpage.url'))
+    date = db.Column(db.DateTime, unique=False)
+    resources = db.relationship('Resource', backref='pageview')
+
     def __init__(self, **kwargs):
         super(Pageview, self).__init__(**kwargs)
-        self.date = time.time()
+        self.date = datetime.datetime.now()
 
-    def __repr__(self):
-        return "pv[{0} @ {1}]".format(self.url, self.date)
 
-class Script(db.Model):
-    __tablename__ = "script"
+class Resource(db.Model):
+    __tablename__ = 'resource'
     id = db.Column(db.Integer, primary_key=True)
-    pageview_id = db.Column(db.Integer, db.ForeignKey("pageview.id"))
-    url = db.Column(db.Text, unique=False)
+    pageview_id = db.Column(db.Integer, db.ForeignKey('pageview.id'))
+    url = db.Column(db.UnicodeText, unique=False)
     hash = db.Column(db.Text, unique=False)
+    type = db.Column(db.Unicode(32), unique=False)
 
-    def __repr__(self):
-        return "script[{0} / {1} @ {2}]".format(self.url, self.hash[:8], self.pageview.date)
+
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Unicode(255), unique=True)
+    webpage_id = db.Column(db.Text, db.ForeignKey('webpage.id'))
+
 
 class RoboTask(db.Model):
-    __tablename__ = "robotask"
+    __tablename__ = 'robotask'
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.Text, unique=False)
+    url = db.Column(db.UnicodeText, unique=False)
     priority = db.Column(db.Integer, unique=False)
 
 
 class Suggestions(db.Model):
-    __tablename__ = "suggestions"
+    __tablename__ = 'suggestions'
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, unique=False)
+    content = db.Column(db.UnicodeText, unique=False)
+
 
 class Errors(db.Model):
-    __tablename__ = "errors"
+    __tablename__ = 'errors'
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Integer, unique=False)
-    content = db.Column(db.Text, unique=False)
+    date = db.Column(db.DateTime, unique=False)
+    content = db.Column(db.UnicodeText, unique=False)
+
 
 class YaraRuleset(db.Model):
-    __tablename__ = "yara_ruleset"
+    __tablename__ = 'yara_ruleset'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Unicode(255))
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.UnicodeText)
     scan_on_upload = db.Column(db.Boolean)
-
