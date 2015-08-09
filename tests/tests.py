@@ -50,8 +50,8 @@ TEST_SUGGESTIONS_API = "http://127.0.0.1:8080/api/suggestions"
 TEST_ROBOTASK_API = "http://127.0.0.1:8080/api/robotask"
 TEST_WEBPAGE_API = "http://127.0.0.1:8080/api/webpage"
 TEST_PAGEVIEW_API = "http://127.0.0.1:8080/api/pageview"
-TEST_SCRIPT_API = "http://127.0.0.1:8080/api/script"
-TEST_SCRIPT_CONTENT_API = "http://127.0.0.1:8080/script-content"
+TEST_RESOURCE_API = "http://127.0.0.1:8080/api/resource"
+TEST_RESOURCE_CONTENT_API = "http://127.0.0.1:8080/api/resource-content"
 
 
 def json_post(url, content):
@@ -122,7 +122,7 @@ def check_sanity_webpage_pageview_script_api():
     """ sanity-check webpage, pageview, script APIs """
     n_webpages = get_number_entries(TEST_WEBPAGE_API)
     n_pageviews = get_number_entries(TEST_PAGEVIEW_API)
-    n_scripts = get_number_entries(TEST_SCRIPT_API)
+    n_scripts = get_number_entries(TEST_RESOURCE_API)
 
     webpage = {"id": "b0852f543b380fd1515112b0a4943cd4ab890d476698598e6b98357784901d1d",
                "url": "https://scriptobservatory.org/",
@@ -136,7 +136,7 @@ def check_sanity_webpage_pageview_script_api():
     
     assert get_number_entries(TEST_WEBPAGE_API) == n_webpages + 1
     assert get_number_entries(TEST_PAGEVIEW_API) == n_pageviews + 1
-    assert get_number_entries(TEST_SCRIPT_API) == n_scripts + 1
+    assert get_number_entries(TEST_RESOURCE_API) == n_scripts + 1
 
 
 def wait_for_robotask_to_be_emptied(timeout):
@@ -189,7 +189,7 @@ def ordered(obj):
 
 def check_script_content(h):
     """ checks that /script-content/*h* exists on the server and that the hash is correct """
-    url = "{0}?content=true&hashes={1}".format(TEST_SCRIPT_CONTENT_API, h)
+    url = "{0}?content=true&hashes={1}".format(TEST_RESOURCE_CONTENT_API, h)
 
     r = requests.get(url)
     assert r.status_code == 200
@@ -210,7 +210,7 @@ def test_all():
     # Test that all APIs are up and empty:
     assert get_number_entries(TEST_WEBPAGE_API) == 0
     assert get_number_entries(TEST_PAGEVIEW_API) == 0
-    assert get_number_entries(TEST_SCRIPT_API) == 0
+    assert get_number_entries(TEST_RESOURCE_API) == 0
     assert get_number_entries(TEST_ROBOTASK_API) == 0
     assert get_number_entries(TEST_SUGGESTIONS_API) == 0
     
