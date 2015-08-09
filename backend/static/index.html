@@ -59,7 +59,7 @@
             <div class="col-sm-1">
             <label for="queryField"> 
               <input type="submit" id="submit" value="Submit" class="btn"> </input> 
-            </label>
+           </label>
             </div>
             <div class="col-sm-1"></div>
           </div>   
@@ -89,25 +89,25 @@
           <p> Click <a href="https://scriptobservatory.org/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
         </div>
         
-        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="script_query_section">
-          <p> Results found for <a href="#" ng-click="openHash({'hash':app.scriptQuery}, '', '')">{{ app.scriptQuery }}</a>:</p>
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="resource_query_section">
+          <p> Results found for <a href="#" ng-click="openHash({'hash':app.resourceQuery}, '', '')">{{ app.resourceQuery }}</a>:</p>
           <table class="table table-hover table-bordered table-condensed">
             <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
-              <span ng-if="app.scriptQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+              <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
-            <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
+            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
                 <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
           </table>
         </div>
         
-        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="script_query_section">
-          <p> Results found for <a href="#" ng-click="openScript({'url':app.scriptQuery}, '')">{{ app.scriptQuery }}</a>:</p>
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="resource_query_section">
+          <p> Results found for <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{{ app.resourceQuery }}</a>:</p>
           <table class="table table-hover table-bordered table-condensed">
             <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
-              <span ng-if="app.scriptQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+              <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
-            <tr ng-repeat="site in app.scriptQueryResults | filter:search.url ">
+            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
                 <td> <a href="https://scriptobservatory.org/search/?query={{ site }}">{{ site  | limitTo:100 }}{{ site.length > 100 ? '...' : ''}}</a> </td>
             </tr>
           </table>
@@ -117,7 +117,6 @@
           <table class="table table-bordered table-hover table-condensed">
             <th style="width:30%; text-align:center;"> Site URL <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
             <th style="width:5%; text-align:center;"> Number of Observations</th>
-            <!--<th style="width:65%; text-align:center;"> Scripts </th>-->
             <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
                 <td style="text-align: center;">
                   <a href="#" ng-click="openWebsite(site)">{{ site.url | limitTo: 67 }}{{ site.url.length > 67 ? '...' : '' }}</a>
@@ -125,16 +124,6 @@
                 <td style="text-align: center;">
                   {{ site.occur }}
                 </td>
-                <!--
-                <td>
-                  <table class="table-condensed table-hover" style="background-color:inherit;">
-                    <tr ng-repeat="script in site.scripts | object2Array | orderBy:'-occur'"> 
-                      <td style="width:85%;"> <a href="#" ng-click="openScript(script, site.url);"> {{ script.url | limitTo:75 }}{{ script.url.length > 75 ? '...':'' }} </a> </td>
-                      <td style="width:15%;"> {{ script.occur.toFixed(1) }}% </td>
-                    </tr>
-                  </table>
-                </td>
-                -->
             </tr>
           </table>
         </div>
@@ -269,14 +258,14 @@
 
       <div class="modal-body">
         <h4><u>Observed Scripts</u> (<a href="https://scriptobservatory.org/api/get_aligned_data?url={{ currentObj.url }}" target="_blank">Experimental View</a>) </h4>
-        <span ng-if="(currentObj.scripts | object2Array ).length == 0"> No scripts found. </span>
+        <span ng-if="(currentObj.resources | object2Array ).length == 0"> No scripts found. </span>
         <table class="table-condensed table-hover" style="background-color:inherit;">
-          <tr ng-repeat="script in currentObj.scripts | object2Array | orderBy:'-occur'"> 
-            <td style="width:65%;"> <a href="#" ng-click="openObj(script, 'script', currentObj.url, '');"> {{ script.url | limitTo:80 }}{{ script.url.length > 80 ? '...':'' }} </a> </td>
-            <td style="width:10%;"> {{ script.occur.toFixed(1) }}% </td>
+          <tr ng-repeat="resource in currentObj.resources | object2Array | orderBy:'-occur'"> 
+            <td style="width:65%;"> <a href="#" ng-click="openObj(resource, 'resource', currentObj.url, '');"> {{ resource.url | limitTo:80 }}{{ resource.url.length > 80 ? '...':'' }} </a> </td>
+            <td style="width:10%;"> {{ resource.occur.toFixed(1) }}% </td>
             <td style="width:25%;">
-              <span ng-repeat="hash in script.hashes | object2Array | orderBy:'-occur'"> 
-                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, script.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ','}} </a><br>
+              <span ng-repeat="hash in resource.hashes | object2Array | orderBy:'-occur'"> 
+                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, resource.url);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ','}} </a><br>
               </span>
             </td>
           </tr>
@@ -295,7 +284,7 @@
       </div>
     </script>
 
-    <script class="modal" type="text/ng-template" id="scriptModalContent.html">
+    <script class="modal" type="text/ng-template" id="resourceModalContent.html">
       <div class="modal-header">
         <h3 class="modal-title">Script: <span class="modal-url">{{ currentObj.url }}</span></h3>
       </div>
@@ -304,7 +293,7 @@
         <h4><u>Observed Hashes</u></h4>
         <table class="table-condensed table-hover" style="background-color:inherit;">
           <span ng-if="webpageUrl != ''" ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
-            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, scriptUrl);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
+            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, resourceUrl);"> {{ hash.hash | limitTo:10 }} ({{ hash.occur.toFixed(1) }}%){{ $last ? '' : ', '}} </a>
           </span>
           <span ng-if="webpageUrl == ''">
             To see the observed hashes for this script, you need to look at the results coming from a specific webpage. Viewing all hashes seen across all webpages is coming soon. 
@@ -333,8 +322,8 @@
       <div class="modal-body">
         <h4><u>Actions</u></h4>
         <ul>
-          <li> View <a href="https://scriptobservatory.org/script-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
-          <li ng-if="scriptUrl != ''"> View <a href="{{scriptUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> View <a href="https://scriptobservatory.org/resource-content/{{ currentObj.hash }}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li ng-if="resourceUrl != ''"> View <a href="{{resourceUrl}}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
           <li ng-if="webpageUrl != ''"> View <a href="{{webpageUrl}}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
           <li> See <a href="https://scriptobservatory.org/search/?query={{currentObj.hash}}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{{ currentObj.hash}}">VirusTotal</a> </li>

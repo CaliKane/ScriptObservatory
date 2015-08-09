@@ -60,9 +60,9 @@ def yara_retroscan_for_rule(rule_id):
     os.nice(5)
     matches = []
     try:
-        for subdir in os.listdir(app.config['SCRIPT_CONTENT_FOLDER']):
+        for subdir in os.listdir(app.config['RESOURCE_CONTENT_FOLDER']):
             try:
-                subdir = os.path.join(app.config['SCRIPT_CONTENT_FOLDER'], subdir)
+                subdir = os.path.join(app.config['RESOURCE_CONTENT_FOLDER'], subdir)
                 for path in os.listdir(subdir):
                     with gzip.open(os.path.join(subdir, path), 'rb') as f:
                         if yara_rule.match(data=f.read()):

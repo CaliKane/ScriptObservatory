@@ -77,14 +77,14 @@ app.controller("AppCtrl", function($http, $scope, $modal){
           webpageUrl: function () {
             return site.url;
           },
-          scriptUrl: function () {
+          resourceUrl: function () {
             return "";
           },
           openWebsite: function() {
             return $scope.openWebsite;
           },
-          openScript: function() {
-            return $scope.openScript;
+          openResource: function() {
+            return $scope.openResource;
           },
           openHash: function() {
             return $scope.openHash;
@@ -93,26 +93,26 @@ app.controller("AppCtrl", function($http, $scope, $modal){
       });
     };
 
-    $scope.openScript = function (script, webpageUrl) {
+    $scope.openResource = function (resource, webpageUrl) {
       var modalInstance = $modal.open({
-        templateUrl: 'scriptModalContent.html',
+        templateUrl: 'resourceModalContent.html',
         controller: 'ModalInstanceCtrl',
         size: 'lg',
         resolve: {
           currentObj: function () {
-            return script;
+            return resource;
           },
           webpageUrl: function () {
             return webpageUrl;
           },
-          scriptUrl: function () {
-            return script.url;
+          resourceUrl: function () {
+            return resource.url;
           },
           openWebsite: function() {
             return $scope.openWebsite;
           },
-          openScript: function() {
-            return $scope.openScript;
+          openResource: function() {
+            return $scope.openResource;
           },
           openHash: function() {
             return $scope.openHash;
@@ -122,7 +122,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     };
 
 
-    $scope.openHash = function (hash, scriptUrl, webpageUrl) {
+    $scope.openHash = function (hash, resourceUrl, webpageUrl) {
       var modalInstance = $modal.open({
         templateUrl: 'hashModalContent.html',
         controller: 'ModalInstanceCtrl',
@@ -134,14 +134,14 @@ app.controller("AppCtrl", function($http, $scope, $modal){
           webpageUrl: function () {
             return webpageUrl;
           },
-          scriptUrl: function () {
-            return scriptUrl;
+          resourceUrl: function () {
+            return resourceUrl;
           },
           openWebsite: function() {
             return $scope.openWebsite;
           },
-          openScript: function() {
-            return $scope.openScript;
+          openResource: function() {
+            return $scope.openResource;
           },
           openHash: function() {
             return $scope.openHash;
@@ -244,11 +244,11 @@ app.controller("AppCtrl", function($http, $scope, $modal){
         if (query != "") {
             if (query.length == 64 && isValidHash(query)){
                 // this is a hash query
-                $scope.makeScriptQueryByHash(query);
+                $scope.makeResourceQueryByHash(query);
             }
             else if (query.slice(-3) == ".js" || query.slice(0, 14) == "inline_script_"){
                 // this is a javascript query
-                $scope.makeScriptQueryByUrl(query);
+                $scope.makeResourceQueryByUrl(query);
             }
             else {
                 // this is a webpage query
@@ -276,11 +276,11 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     $scope.SCRIPT_QRY_TIMEOUT = 10*1000;
     $scope.WEBPAGE_QRY_TIMEOUT = 15*1000;
 
-    $scope.makeScriptQueryByUrl = function(queryString){
+    $scope.makeResourceQueryByUrl = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
-        app.scriptQuery = queryString;
+        app.resourceQuery = queryString;
 
-        $http.get("/api/search?script_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+        $http.get("/api/search?resource_by_url=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
@@ -288,24 +288,24 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS_URL";
             }
 
-            app.scriptQueryResults = data.objects;
+            app.resourceQueryResults = data.objects;
         }).error(function(data){
             $scope.QRY_STATUS = "QRY_ERROR";
         });
     }
 
-    $scope.makeScriptQueryByHash = function(queryString){
+    $scope.makeResourceQueryByHash = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";
-        app.scriptQuery = queryString;
+        app.resourceQuery = queryString;
         
-        $http.get("/api/search?script_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
+        $http.get("/api/search?resource_by_hash=" + queryString, {timeout: $scope.SCRIPT_QRY_TIMEOUT}).success(function (data){
             if (data.objects.length == 0){
                 $scope.QRY_STATUS = "NO_RESULTS";
             }
             else {
                 $scope.QRY_STATUS = "HAVE_SCRIPT_RESULTS_HASH";
             }
-            app.scriptQueryResults = data.objects;
+            app.resourceQueryResults = data.objects;
         });
     }
 
@@ -336,41 +336,41 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 
                 var to_add = {"url": cur_site.url,
                               "occur": cur_site.pageviews.length,
-                              "scripts": {}};
+                              "resources": {}};
                 
                 for (var pv_ind = 0; pv_ind < app.records[i].pageviews.length; pv_ind++){
                     var cur_pageview = app.records[i].pageviews[pv_ind];
                     //alert("cur_pageview --> " + JSON.stringify(cur_pageview));
             
-                    for (var script_ind = 0; script_ind < cur_pageview.scripts.length; script_ind++){
-                        var script_url = cur_pageview.scripts[script_ind].url;
-                        var script_hash = cur_pageview.scripts[script_ind].hash;
+                    for (var script_ind = 0; script_ind < cur_pageview.resources.length; script_ind++){
+                        var script_url = cur_pageview.resources[script_ind].url;
+                        var script_hash = cur_pageview.resources[script_ind].hash;
 
-                        if (!(script_url in to_add.scripts)){
-                            to_add.scripts[script_url] = {};
-                            to_add.scripts[script_url].url = script_url; // might not be necessary
-                            to_add.scripts[script_url].hashes = {};
-                            to_add.scripts[script_url].occur = 0;
+                        if (!(script_url in to_add.resources)){
+                            to_add.resources[script_url] = {};
+                            to_add.resources[script_url].url = script_url; // might not be necessary
+                            to_add.resources[script_url].hashes = {};
+                            to_add.resources[script_url].occur = 0;
                         }
                         
-                        if (!(script_hash in to_add.scripts[script_url].hashes)){
-                            to_add.scripts[script_url].hashes[script_hash] = {};
-                            to_add.scripts[script_url].hashes[script_hash].hash = script_hash; // might not be necessary
-                            to_add.scripts[script_url].hashes[script_hash].occur = 0;
+                        if (!(script_hash in to_add.resources[script_url].hashes)){
+                            to_add.resources[script_url].hashes[script_hash] = {};
+                            to_add.resources[script_url].hashes[script_hash].hash = script_hash; // might not be necessary
+                            to_add.resources[script_url].hashes[script_hash].occur = 0;
                         }
                         
-                        to_add.scripts[script_url].occur += 1;
-                        to_add.scripts[script_url].hashes[script_hash].occur += 1;
+                        to_add.resources[script_url].occur += 1;
+                        to_add.resources[script_url].hashes[script_hash].occur += 1;
                     }
                 }
 
                 // convert hash occur values to percentages
-                for (var script_url in to_add.scripts){
-                    for (var hash_val in to_add.scripts[script_url].hashes){
-                        to_add.scripts[script_url].hashes[hash_val].occur *= (100.0 / to_add.scripts[script_url].occur);
+                for (var script_url in to_add.resources){
+                    for (var hash_val in to_add.resources[script_url].hashes){
+                        to_add.resources[script_url].hashes[hash_val].occur *= (100.0 / to_add.resources[script_url].occur);
                     }
                     
-                    to_add.scripts[script_url].occur *= (100.0 / to_add.occur);
+                    to_add.resources[script_url].occur *= (100.0 / to_add.occur);
                 }
 
                 //alert(to_add);
@@ -386,16 +386,16 @@ app.controller("AppCtrl", function($http, $scope, $modal){
 });
 
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, currentObj, scriptUrl, webpageUrl, openWebsite, openScript, openHash) {
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, currentObj, resourceUrl, webpageUrl, openWebsite, openResource, openHash) {
   $scope.currentObj = currentObj;
 
-  $scope.scriptUrl = scriptUrl;
+  $scope.resourceUrl = resourceUrl;
   $scope.webpageUrl = webpageUrl;
  
-  $scope.openObj = function(obj, type, webpageUrl, scriptUrl){
+  $scope.openObj = function(obj, type, webpageUrl, resourceUrl){
     if (type == "website") openWebsite(obj);
-    else if (type == "script") openScript(obj, webpageUrl);
-    else if (type == "hash") openHash(obj, scriptUrl, webpageUrl);
+    else if (type == "resource") openResource(obj, webpageUrl);
+    else if (type == "hash") openHash(obj, resourceUrl, webpageUrl);
   }
 
   $scope.ok = function () {
