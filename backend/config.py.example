@@ -1,7 +1,7 @@
 import os
 
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
+SQLALCHEMY_DATABASE_URI = "postgres://postgres@/postgres"
 CELERY_BROKER_URL = "redis://localhost:6379"
 RESOURCE_CONTENT_FOLDER = os.environ.get('RESOURCE_CONTENT_FOLDER')
 assert RESOURCE_CONTENT_FOLDER  # set environ var "RESOURCE_CONTENT_FOLDER"!
