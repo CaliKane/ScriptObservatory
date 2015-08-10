@@ -281,7 +281,7 @@ def align_webpage_data():
             placed = False
             for new_k in new_resources.keys():
                 if eval(eval_condition) and not date_collision_present(resources[k], new_resources[new_k]):
-                    eval(eval_rekey)
+                    new_key = eval(eval_rekey)
                     new_val = resources[k] + new_resources[new_k]
                     del new_resources[new_k]
                     new_resources[new_key] = new_val
@@ -323,24 +323,24 @@ def align_webpage_data():
     ##
     resources = exp_filter(resources, 
                            "new_resources[new_k][0]['url'] == resources[k][0]['url']", 
-                           "new_key = new_k")
+                           "new_k")
 
     resources = exp_filter(resources,   
                            "urlparse(resources[k][0]['url']).path.split('/')[-1] == urlparse(new_resources[new_k][0]['url']).path.split('/')[-1]", 
-                           "new_key = urlparse(resources[k][0]['url']).path.split('/')[-1]")
+                           "urlparse(resources[k][0]['url']).path.split('/')[-1]")
     
     resources = exp_filter(resources,
                            "new_resources[new_k][0]['hash'] == resources[k][0]['hash']",
-                           "new_key = new_resources[new_k][0]['hash']")
+                           "new_resources[new_k][0]['hash']")
 
     resources = exp_filter(resources,
                            "not resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].split('/')[:-1] == resources[k][0]['url'].split('/')[:-1]",
-                           "new_key = 'Resource from {0}'.format(urlparse(new_resources[new_k][0]['url']).netloc))")
+                           "'Resource from {0}'.format(urlparse(new_resources[new_k][0]['url']).netloc))")
      
     resources = exp_filter(resources,
                            "resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].startswith('inline_script_')",
-                           "new_key = 'inline_script_*'")
-
+                           "'inline_script_*'")
+    
     ## Reduce to expected JSON format
     final_resources = []
     for ind, key in enumerate(resources.keys()):
