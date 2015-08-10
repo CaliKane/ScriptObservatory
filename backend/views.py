@@ -225,8 +225,13 @@ def api_search():
     if url_hash or url:
         if url_hash is not None:
             websites = [db.session.query(Webpage).get(url_hash)]
-        elif url is not None:   
-            #websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).limit(app.config['MAX_WEBPAGE_RESULTS']).all()
+        elif url is not None:
+            # temp hack: check first to see the total # of webpages returned. if it >= MAX_WEBPAGE_RESULTS, don't run the query..
+            websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).limit(app.config['MAX_WEBPAGE_RESULTS']).all()
+            if len(websites) >= app.config['MAX_WEBPAGE_RESULTS']:
+                time.sleep(60)
+                return json
+            
             websites = db.session.query(Webpage).filter(Webpage.url.contains(url)).all()
 
         for site in websites:

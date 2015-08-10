@@ -274,7 +274,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     $scope.QRY_STATUS = "WAITING_FOR_QRY";
 
     $scope.SCRIPT_QRY_TIMEOUT = 10*1000;
-    $scope.WEBPAGE_QRY_TIMEOUT = 15*1000;
+    $scope.WEBPAGE_QRY_TIMEOUT = 45*1000;
 
     $scope.makeScriptQueryByUrl = function(queryString){
         $scope.QRY_STATUS = "PROCESSING_QRY";

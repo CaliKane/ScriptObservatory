@@ -69,7 +69,7 @@
           <h3><i>Some sample webpage queries:</i></h3>
           <ul>
             <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
-            <li><a href="#" ng-click='submitQuery("vt.edu");'>vt.edu</a></li>
+            <li><a href="#" ng-click='submitQuery(".vt.edu");'>.vt.edu</a></li>
             <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
             <li><a href="#" ng-click='submitQuery("https://www.studentsforafreetibet.org");'>https://www.studentsforafreetibet.org</a></li>
             <li><a href="#" ng-click='submitQuery("http://www.betterweather.net");'>http://www.betterweather.net</a></li>
@@ -144,7 +144,7 @@
         </div>
 
         <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
-          <span> Something went wrong. An error report has been logged. <br><br> If you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (this is the most common cause of this error) </span>
+          <span> Something went wrong. An error report has been logged. <br><br> Either enter a more specific query, or, if you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (these are the most common causes of this error) </span>
         </div>
 
         <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
