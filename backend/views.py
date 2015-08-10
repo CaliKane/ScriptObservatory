@@ -335,7 +335,7 @@ def align_webpage_data():
 
     resources = exp_filter(resources,
                            "not resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].split('/')[:-1] == resources[k][0]['url'].split('/')[:-1]",
-                           "'Resource from {0}'.format(urlparse(new_resources[new_k][0]['url']).netloc))")
+                           "'Resource from {0}'.format(urlparse(new_resources[new_k][0]['url']).netloc)")
      
     resources = exp_filter(resources,
                            "resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].startswith('inline_script_')",
