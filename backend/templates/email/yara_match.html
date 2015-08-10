@@ -20,7 +20,7 @@ We found {{ matches | length }} matching hashes:
 
     <ul>
     {% for url in match.urls -%}
-        <li><a href="https://scriptobservatory.org/search/?query={{ url.webpage_url }}">{{ url.webpage_url }}</a> (<a href="https://scriptobservatory.org/search/?query={{ url.script_url }}">{{ url.script_url }}</a>)</li>
+        <li><a href="https://scriptobservatory.org/search/?query={{ url.webpage_url }}">{{ url.webpage_url }}</a> (<a href="https://scriptobservatory.org/search/?query={{ url.resource_url }}">{{ url.resource_url }}</a>)</li>
     {% endfor -%}
     </ul>
 
