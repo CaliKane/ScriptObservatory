@@ -16,25 +16,25 @@
  */
 WEBPAGE_API_URL = "https://scriptobservatory.org/api/webpage";
 PAGEVIEW_API_URL = "https://scriptobservatory.org/api/pageview";
-SCRIPTCONTENT_API_URL = "https://scriptobservatory.org/script-content";
+CONTENT_API_URL = "https://scriptobservatory.org/api/resource-content";
 
 
 /*
  * Global Variables / Data Structures
  * ----------------------------------
- * - SCRIPTS: Maps the tabId to a dictionary containing the tab's URL and loaded JavaScript
+ * - RESOURCES: Maps the tabId to a dictionary containing the tab's URL and loaded JavaScript
  * - GENERAL_REPORTING_ON: true if chrome extension should report observations to the backend
- * - scripts_to_send --> temporarily global until refactor (TODO)
+ * - resources_to_send --> temporarily global until refactor (TODO)
  */
-var SCRIPTS = {};
-var SCRIPT_CONTENT_QUEUE = {};
+var RESOURCES = {};
+var CONTENT_QUEUE = {};
 var GENERAL_REPORTING_ON = true; 
-var SCRIPT_CONTENT_UPLOADING_ON = true;
+var CONTENT_UPLOADING_ON = true;
 var POST_IFRAME_CONTENT = true;
 var UPLOAD_BLACKLIST = [];
 var DEFAULT_UPLOAD_BLACKLIST = [new RegExp("^https?:\\/\\/www.google.com\\/maps", 'i')];
-var scripts_to_send = [];
-var MAX_SCRIPT_CONTENT_QUEUE_LENGTH = 9;
+var resources_to_send = [];
+var MAX_CONTENT_QUEUE_LENGTH = 9;
 
 
 /*
@@ -46,11 +46,11 @@ var MAX_SCRIPT_CONTENT_QUEUE_LENGTH = 9;
  */
 function toggleReportingState(){
     GENERAL_REPORTING_ON = !GENERAL_REPORTING_ON;
-    SCRIPTS = {};
+    RESOURCES = {};
 
-    if (GENERAL_REPORTING_ON == false && SCRIPT_CONTENT_UPLOADING_ON == true){
+    if (GENERAL_REPORTING_ON == false && CONTENT_UPLOADING_ON == true){
         // if GENERAL_REPORTING_ON was just turned false, we want to make sure 
-        // SCRIPT_CONTENT_UPLOADING_ON is also false
+        // CONTENT_UPLOADING_ON is also false
         toggleScriptContentUploadingState();
     }
 
@@ -58,11 +58,11 @@ function toggleReportingState(){
 }
 
 function toggleScriptContentUploadingState(){
-    if (SCRIPT_CONTENT_UPLOADING_ON == false && GENERAL_REPORTING_ON == false){
+    if (CONTENT_UPLOADING_ON == false && GENERAL_REPORTING_ON == false){
         // GENERAL_REPORTING_ON must be true in order to report script content!
         return;
     }             
-    SCRIPT_CONTENT_UPLOADING_ON = !SCRIPT_CONTENT_UPLOADING_ON;
+    CONTENT_UPLOADING_ON = !CONTENT_UPLOADING_ON;
 
     setSettings();
 }
@@ -72,7 +72,7 @@ function getReportingState(){
 }
 
 function getScriptContentReportingState(){
-    return SCRIPT_CONTENT_UPLOADING_ON;
+    return CONTENT_UPLOADING_ON;
 }
 
 function getFilters(){
@@ -97,7 +97,7 @@ function removeFilter(filter_ind){
 function setSettings(){
     // TODO: rename 
     chrome.storage.sync.set({'GENERAL_REPORTING_ON': GENERAL_REPORTING_ON,
-                             'SCRIPT_CONTENT_UPLOADING_ON': SCRIPT_CONTENT_UPLOADING_ON,
+                             'CONTENT_UPLOADING_ON': CONTENT_UPLOADING_ON,
                              'POST_IFRAME_CONTENT': POST_IFRAME_CONTENT,
                              'UPLOAD_BLACKLIST': UPLOAD_BLACKLIST.map(regexArrayToStrings)}, 
                             function(){
@@ -121,14 +121,14 @@ function getSettings(){
         }
     });
     
-    chrome.storage.sync.get('SCRIPT_CONTENT_UPLOADING_ON', function(items) {
+    chrome.storage.sync.get('CONTENT_UPLOADING_ON', function(items) {
         if (isEmpty(items)){ 
-            console.log("no stored SCRIPT_CONTENT_UPLOADING_ON value found, defaulting to True."); 
-            SCRIPT_CONTENT_UPLOADING_ON = true;
+            console.log("no stored CONTENT_UPLOADING_ON value found, defaulting to True."); 
+            CONTENT_UPLOADING_ON = true;
         }
         else { 
-            console.log("SCRIPT_CONTENT_UPLOADING_ON --> " + JSON.stringify(items));
-            SCRIPT_CONTENT_UPLOADING_ON = items["SCRIPT_CONTENT_UPLOADING_ON"];
+            console.log("CONTENT_UPLOADING_ON --> " + JSON.stringify(items));
+            CONTENT_UPLOADING_ON = items["CONTENT_UPLOADING_ON"];
         }
     });
     
@@ -214,7 +214,7 @@ function httpPatch(site_url, data){
         httpPost(WEBPAGE_API_URL, {"id": url_hash, "url": site_url, "pageviews": [data]});
     }
     
-    scriptcontentFlushQueue();
+    contentFlushQueue();
 }
 
 /*
@@ -222,7 +222,7 @@ function httpPatch(site_url, data){
  * -------------------
  * Send json-ified *data* with a HTTP POST request to *url*
  *
- * WARNING: this should only be invoked via httpPatch or scriptcontentPost!
+ * WARNING: this should only be invoked via httpPatch or contentPost!
  *           (UPLOAD_BLACKLIST checks take place there, instead!)
  *
  * TODO: check return code & callback-ify this and make it asynchronous
@@ -236,58 +236,58 @@ function httpPost(url, data){
 
 
 /*
- * scriptcontentQueue(data)
+ * contentQueue(data)
  * ------------------------
- * Queue json-ified scriptcontent *data* to be sent later, with the 
- * send action triggered by a scriptcontentFlushQueue() call.
+ * Queue json-ified content *data* to be sent later, with the 
+ * send action triggered by a contentFlushQueue() call.
  */
-function scriptcontentQueue(data, seen_on){
-    if (SCRIPT_CONTENT_UPLOADING_ON){
+function contentQueue(data, seen_on){
+    if (CONTENT_UPLOADING_ON){
         for (var i=0; i<UPLOAD_BLACKLIST.length; ++i){
             if (seen_on.match(UPLOAD_BLACKLIST[i])){
-                console.log("we were going to queue a scriptcontent, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
+                console.log("we were going to queue a content, but " + seen_on + " matches " + UPLOAD_BLACKLIST[i] + " in UPLOAD_BLACKLIST!");
                 return;
             }
         }
         
-        SCRIPT_CONTENT_QUEUE[data["sha256"]] = data["content"];
+        CONTENT_QUEUE[data["sha256"]] = data["content"];
 
-        if (Object.keys(SCRIPT_CONTENT_QUEUE).length > MAX_SCRIPT_CONTENT_QUEUE_LENGTH){
-            scriptcontentFlushQueue();
+        if (Object.keys(CONTENT_QUEUE).length > MAX_CONTENT_QUEUE_LENGTH){
+            contentFlushQueue();
         }
     }
 }
 
 
 /*
- * scriptcontentFlushQueue()
+ * contentFlushQueue()
  * -----------------------
- * Go through everything stored in SCRIPT_CONTENT_QUEUE and send it
- * off to *SCRIPTCONTENT_API_URL*.
+ * Go through everything stored in CONTENT_QUEUE and send it
+ * off to *CONTENT_API_URL*.
  *
  * TODO: make asynchronous
  *
  */
-function scriptcontentFlushQueue(){
-    if (Object.keys(SCRIPT_CONTENT_QUEUE).length == 0){
+function contentFlushQueue(){
+    if (Object.keys(CONTENT_QUEUE).length == 0){
         return;
     }
 
-    var url = SCRIPTCONTENT_API_URL + "?hashes=" + Object.keys(SCRIPT_CONTENT_QUEUE).join(",");
+    var url = CONTENT_API_URL + "?hashes=" + Object.keys(CONTENT_QUEUE).join(",");
     var resp = JSON.parse(httpGet(url));
 
     var newScriptContent = [];
     for (var key in resp){
         if (resp[key] == "false"){
-            newScriptContent.push({"sha256": key, "content": SCRIPT_CONTENT_QUEUE[key]});
+            newScriptContent.push({"sha256": key, "content": CONTENT_QUEUE[key]});
         }
     }
     
     if (newScriptContent.length > 0){
-        httpPost(SCRIPTCONTENT_API_URL, {"upload": newScriptContent});
+        httpPost(CONTENT_API_URL, {"upload": newScriptContent});
     }
 
-    SCRIPT_CONTENT_QUEUE = {};
+    CONTENT_QUEUE = {};
 }
 
 
@@ -300,7 +300,7 @@ function scriptcontentFlushQueue(){
  * 
  * For "script" and "sub_frame" requests, we perform our own download of the content 
  * and calculate the sha256 hash of what we receive from the server. After the download 
- * of the object is complete, if an entry is present in SCRIPTS for our current
+ * of the object is complete, if an entry is present in RESOURCES for our current
  * tabId, we add the data we have (script URL & hash) to it.
  * 
  * It would be nice if we could let the browser make the normal request for these 
@@ -333,19 +333,19 @@ chrome.webRequest.onBeforeRequest.addListener(
             data = httpGet(details.url);
             hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
 
-            // Add the data & hash to our SCRIPTS record:
-            if (tabId in SCRIPTS) {
-                SCRIPTS[tabId]["scripts"].push({"url": details.url, "hash": hash});
+            // Add the data & hash to our RESOURCES record:
+            if (tabId in RESOURCES) {
+                RESOURCES[tabId]["resources"].push({"url": details.url, "hash": hash, "type": details.type});
             }
             else {
                 // TODO: look into auto-reporting this error
                 console.log("no main_frame found for " + details.url + " on tabId " + tabId);
             }
             
-            // Upload the content to the scriptcontent API:
+            // Upload the content to the content API:
             if (details.type == "script" || (details.type == "sub_frame" && POST_IFRAME_CONTENT)){
                 if (details.url.slice(0, 13) != "inline_script"){ /// <-- this may not be necessary TODO
-                    scriptcontentQueue({"sha256": hash, "content": data}, SCRIPTS[tabId]["url"]);
+                    contentQueue({"sha256": hash, "content": data}, RESOURCES[tabId]["url"]);
                 }
             }
             
@@ -362,10 +362,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                         var url = "inline_script_" + hash.slice(0,18);
                         var script_content_data = {"sha256": hash, "content": inline_script_content};
                         
-                        scriptcontentQueue(script_content_data, SCRIPTS[tabId]["url"]);
+                        contentQueue(script_content_data, RESOURCES[tabId]["url"]);
 
-                        if (tabId in SCRIPTS) {
-                            SCRIPTS[tabId]["scripts"].push({"url": url, "hash": hash});
+                        if (tabId in RESOURCES) {
+                            RESOURCES[tabId]["resources"].push({"url": url, "hash": hash, "type": details.type});
                         }
                         else {
                             // TODO: look into auto-reporting this error
@@ -383,8 +383,8 @@ chrome.webRequest.onBeforeRequest.addListener(
         }
         
         if (details.type == "main_frame") {
-            if (tabId in SCRIPTS){
-                /* If we see a main_frame request go out while we SCRIPTS[tabId] is still defined, something
+            if (tabId in RESOURCES){
+                /* If we see a main_frame request go out while we RESOURCES[tabId] is still defined, something
                  * strange must have happened... for example, a piece of javascript dropped code that changes
                  * window.location, or the user started navigating to a new webpage before the current page
                  * finished loading. 
@@ -393,11 +393,11 @@ chrome.webRequest.onBeforeRequest.addListener(
                  * onCompleteListener in a (hacky) way to mimic what would happen if that page were to finish 
                  * loading on its own.
                  */
-                onCompleteListener({"tabId": tabId, "url": SCRIPTS[tabId]["url"], "scripts": SCRIPTS[tabId]["scripts"]});
+                onCompleteListener({"tabId": tabId, "url": RESOURCES[tabId]["url"], "resources": RESOURCES[tabId]["resources"]});
             }
             
-            // clear tabId's entry in SCRIPTS and let the main_frame request go through unaltered
-            SCRIPTS[tabId] = {"scripts": [], "url": details.url}; 
+            // clear tabId's entry in RESOURCES and let the main_frame request go through unaltered
+            RESOURCES[tabId] = {"resources": [], "url": details.url}; 
             return {cancel: false}; 
         }        
 
@@ -417,7 +417,7 @@ chrome.webRequest.onBeforeRequest.addListener(
  * We then grab those script bodies and calculate the SHA-256 hash of each of
  * them. Once we have this, we add these inline scripts to the scripts already
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
- * from SCRIPTS. 
+ * from RESOURCES. 
  */
 
 var onCompleteListener = function(details){
@@ -427,25 +427,25 @@ var onCompleteListener = function(details){
 
     var tabId = details.tabId;
     
-    if (!(tabId in SCRIPTS)){
+    if (!(tabId in RESOURCES)){
         // TODO: look into auto-reporting this error...
-        console.log("in listener, but tabId not in SCRIPTS!");
+        console.log("in listener, but tabId not in RESOURCES!");
         return;
     }
 
-    if ("scripts" in details && typeof details["scripts"] != 'undefined'){
+    if ("resources" in details && typeof details["resources"] != 'undefined'){
         // we were triggered by a main_frame request
         // TODO: hacky & should be refactored
-        scripts_to_send = details.scripts;
+        resources_to_send = details.resources;
     }
     else {
         // we were triggered by onCompleted
-        if (details.url != SCRIPTS[tabId]["url"]){
+        if (details.url != RESOURCES[tabId]["url"]){
             console.log("a main_frame request has already caused us to upload this pageview");
             return; 
         }
-        scripts_to_send = SCRIPTS[tabId]["scripts"];
-        delete SCRIPTS[tabId];
+        resources_to_send = RESOURCES[tabId]["resources"];
+        delete RESOURCES[tabId];
     }
 
     // TODO: Review this injected code for possible security issues before making
@@ -467,11 +467,11 @@ var onCompleteListener = function(details){
                 var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
                 var url = "inline_script_" + hash.slice(0,18);
                 
-                scripts_to_send.push({"url": url, "hash": hash});
-                scriptcontentQueue({"sha256": hash, "content": data}, details.url);
+                resources_to_send.push({"url": url, "hash": hash, "type": "script"});
+                contentQueue({"sha256": hash, "content": data}, details.url);
             }
 
-            httpPatch(details.url, {"scripts": scripts_to_send});
+            httpPatch(details.url, {"resources": resources_to_send});
         }
     });
 };
