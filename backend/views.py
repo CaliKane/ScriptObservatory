@@ -16,6 +16,7 @@ from flask import flash, jsonify, redirect, render_template, request, \
     send_from_directory, url_for
 from flask.ext.restless import APIManager
 
+import backend
 from backend import app
 from backend import db
 from backend.models import Webpage, Pageview, Resource, RoboTask, Suggestions, \
@@ -75,6 +76,7 @@ def view_list_sorter(a, b):
     return 0
 
 
+@backend.csrf.include
 @app.route('/yara', methods=['GET', 'POST'])
 def yara_index():
     errors = []
