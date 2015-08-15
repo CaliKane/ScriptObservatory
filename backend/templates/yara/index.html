@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>ScriptObservatory Yara</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1>ScriptObservatory Yara</h1>
+
+        <p>You can run Yara rules against all new scripts added to
+        ScriptObservatory. To start using this feature, your email address
+        needs to be on the list of approved addresses. <a
+        href="mailto:scriptobservatory@gmail.com" target="_blank">Send me
+        an email</a> and I'll add you.</p>
+
+        {% if errors|length > 0 -%}
+        <ul>
+            {% for error in errors -%}
+            <li>{{ error }}</li>
+            {% endfor -%}
+        </ul>
+        {% endif -%}
+
+        <form action="{{ url_for('yara_index') }}" method="post">
+            <input type="hidden" name="_csrf_token"
+                value="{{ csrf_token() }}" />
+
+            <div>
+                <label for="id_email">Email Address</label>
+                <input type="email" name="email" id="id_email"
+                    required="required" />
+            </div>
+
+            <div>
+                <label for="id_namespace">Namespace</label>
+                <input type="text" name="namespace" id="id_namespace"
+                    required="required" />
+            </div>
+
+            <div>
+                <label for="id_rules">Rules</label>
+                <textarea name="source" id="id_source" rows="20" cols="70"
+                    required="required"></textarea>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

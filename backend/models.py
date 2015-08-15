@@ -66,3 +66,9 @@ class YaraRuleset(db.Model):
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.Unicode(40960))
     scan_on_upload = db.Column(db.Boolean)
+
+    def __init__(self, email, namespace, source, scan):
+        self.email = email
+        self.namespace = namespace
+        self.source = source
+        sel.scan_on_upload = scan
