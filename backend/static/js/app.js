@@ -46,7 +46,12 @@ function getLength(obj) {
  */
 var app = angular.module("app", ['ui.bootstrap']);
 
+app.config(['$interpolateProvider', function($interpolateProvider) {
+  $interpolateProvider.startSymbol('{[');
+  $interpolateProvider.endSymbol(']}');
+}]);
   
+
 /*
  * add object2Array filter to let us sort Objects from Angular in the 
  * same way we sort Arrays.

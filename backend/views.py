@@ -12,12 +12,16 @@ import time
 from operator import itemgetter
 from urllib.parse import urlparse
 
-from flask import request, jsonify, send_from_directory, render_template
+from flask import flash, jsonify, redirect, render_template, request, \
+    send_from_directory, url_for
 from flask.ext.restless import APIManager
+import yara
 
+import backend
 from backend import app
 from backend import db
-from backend.models import Webpage, Pageview, Resource, RoboTask, Suggestions
+from backend.models import Webpage, Pageview, Resource, RoboTask, Suggestions, \
+    YaraRuleset
 from backend.tasks import yara_scan_file
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
 import external.jsbeautifier
@@ -71,6 +75,49 @@ def view_list_sorter(a, b):
     elif b['views'][-1]['date'] > a['views'][-1]['date']: return 1
 
     return 0
+
+
+@backend.csrf.include
+@app.route('/yara', methods=['GET', 'POST'])
+def yara_index():
+    errors = []
+
+    if request.method == 'POST':
+        email = request.form['email'].strip()
+        if len(email) <= 0:
+            errors.append("You must provide an email address")
+        elif email not in app.config['EMAIL_WHITELIST']:
+            errors.append("Email address not in whitelist")
+
+        namespace = request.form['namespace'].strip()
+        if len(namespace) <= 0:
+            errors.append("You must provide a namespace")
+        else:
+            dups = YaraRuleset.query.filter_by(email=email,
+                                               namespace=namespace).count()
+            if dups > 0:
+                errors.append("The namespace you have provided has already "
+                              "been used for that email address. Please "
+                              "choose a new one.")
+
+        source = request.form['source'].strip()
+        if len(source) <= 0:
+            errors.append("You must provide some Yara rules")
+
+        try:
+            if len(errors) <= 0:
+                ruleset = YaraRuleset(email, namespace, source, True)
+                db.session.add(ruleset)
+                db.session.commit()
+
+                flash("Rules successfully added!")
+                time.sleep(2)
+                return redirect(url_for('yara_index'))
+        
+        except yara.libyara_wrapper.YaraSyntaxError as e:
+            errors.append("Syntax error in yara rule: {}".format(e))
+
+    return render_template('yara/index.html', errors=errors)
 
 
 def is_valid_sha256(h, regex=re.compile(r'^[a-f0-9]{64}$').search):
@@ -153,13 +200,11 @@ def resource_content_api_post():
                          "content": "... content goes here ..."},
                         {"sha256": "5678efab5678efab5678efab5678efab5678",
                          "content": "... 2nd content here ..."},
-                                             . . 
                                              . .  
                                              . .  
-                                       . . . . . . . .
-                                         . . etc . . 
-                                           . . . . 
-                                             . .
+                                         . . . . . . 
+                                           . etc .  
+                                             . .  
                                               .
                        ]} 
         
@@ -305,22 +350,25 @@ def align_webpage_data():
     for pv in webpage.pageviews:
         for r in pv.resources:
             resources[str(i)] = [{'url': r.url, 
-                            'hash': r.hash, 
-                            'parent_url': r.pageview.url, 
-                            'date': pv.date}]
+                                  'hash': r.hash, 
+                                  'parent_url': r.pageview.url, 
+                                  'date': pv.date}]
             
             i += 1
 
         if not FIRST_T or pv.date < FIRST_T:
             FIRST_T = pv.date
     
-    ##
-    ## Align our resources as best we can
-    ## (order- equal urls, equal filenames, equal hash values, equal subdomains & paths, collapse inline_scripts as much as possible)
-    ##
-    ## TODO: do matching against *any*, not just first entry 
-    ## TODO: clean and only define one side of the equals sign
-    ##
+    #
+    # Align our resources as best we can, following the order:
+    # - equal urls
+    # - equal filenames
+    # - equal hash values
+    # - equal subdomains & paths
+    # - (lastly) collapse inline_scripts as much as possible
+    #
+    # TODO: do matching against *any*, not just first entry 
+    # TODO: clean and only define one side of the equals sign
     resources = exp_filter(resources, 
                            "new_resources[new_k][0]['url'] == resources[k][0]['url']", 
                            "new_k")
@@ -341,7 +389,7 @@ def align_webpage_data():
                            "resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].startswith('inline_script_')",
                            "'inline_script_*'")
     
-    ## Reduce to expected JSON format
+    # Reduce the results to the expected JSON format
     final_resources = []
     for ind, key in enumerate(resources.keys()):
         # scale our time values to a relative scale
@@ -369,11 +417,16 @@ def align_webpage_data():
 
     first_t_in_days_ago = (datetime.datetime.now() - FIRST_T).days
 
-    ## Sort & return final_resources
+    # Sort & return final_resources
     final_resources = sorted(final_resources, key=functools.cmp_to_key(view_list_sorter))
     return render_template('visualizations/aligned_scripts.html',
                            json_data=json.dumps(final_resources),
                            first_t_in_days_ago=first_t_in_days_ago)
+
+
+@app.route('/experimental.html')
+def experimental():
+    return render_template('index.html')
 
 
 @app.route('/')

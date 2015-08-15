@@ -1,5 +1,7 @@
 import datetime
 
+import yara
+
 from backend import db
 
 
@@ -66,3 +68,13 @@ class YaraRuleset(db.Model):
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.Unicode(40960))
     scan_on_upload = db.Column(db.Boolean)
+
+    def __init__(self, email, namespace, source, scan):
+        self.email = email
+        self.namespace = namespace
+        self.source = source
+        self.scan_on_upload = scan
+
+        test_sources = {self.namespace: self.source}
+        yara_rule = yara.compile(sources=test_sources)
+   
