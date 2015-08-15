@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from flask import flash, jsonify, redirect, render_template, request, \
     send_from_directory, url_for
 from flask.ext.restless import APIManager
+import yara
 
 import backend
 from backend import app
@@ -103,15 +104,18 @@ def yara_index():
         if len(source) <= 0:
             errors.append("You must provide some Yara rules")
 
-        # TODO: compile and sanity-check yara rules (with celery task)
+        try:
+            if len(errors) <= 0:
+                ruleset = YaraRuleset(email, namespace, source, True)
+                db.session.add(ruleset)
+                db.session.commit()
 
-        if len(errors) <= 0:
-            ruleset = YaraRuleset(email, namespace, source, True)
-            db.session.add(ruleset)
-            db.session.commit()
-
-            flash("Rules added")
-            return redirect(url_for('yara_index'))
+                flash("Rules successfully added!")
+                time.sleep(2)
+                return redirect(url_for('yara_index'))
+        
+        except yara.libyara_wrapper.YaraSyntaxError as e:
+            errors.append("Syntax error in yara rule: {}".format(e))
 
     return render_template('yara/index.html', errors=errors)
 

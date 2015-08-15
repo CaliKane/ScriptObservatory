@@ -13,6 +13,16 @@
         href="mailto:scriptobservatory@gmail.com" target="_blank">Send me
         an email</a> and I'll add you.</p>
 
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
         {% if errors|length > 0 -%}
         <ul>
             {% for error in errors -%}
