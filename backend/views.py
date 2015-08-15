@@ -429,6 +429,22 @@ def experimental():
     return render_template('index.html')
 
 
+@app.route('/explore.html')
+def explore():
+    return render_template('explore.html')
+
+
+@app.route('/faqs.html')
+def faqs():
+    return render_template('faqs.html')
+
+
+@app.route('/scan.html')
+def scan():
+    return render_template('scan.html')
+
+
+
 @app.route('/')
 def index():
     return app.send_static_file('index.html')

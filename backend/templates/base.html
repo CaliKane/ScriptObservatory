@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  {% block head %}
+  <meta charset="UTF-8">
+  <title>ScriptObservatory</title>
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
+  <script src="https://scriptobservatory.org/js/jquery.min.js"></script>
+  <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
+  <script src="https://scriptobservatory.org/js/bootstrap.min.js"></script>
+  <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <script src="https://scriptobservatory.org/js/app.js"></script>
+  <script src="https://scriptobservatory.org/js/d3.min.js" charset="utf-8"></script>
+  {% endblock %}
+</head>
+
+<body ng-app="app" ng-controller="AppCtrl as app">
+<div role="main">
+  {% block header %}
+  <header class="bs-header text-center" id="overview">
+    <h1><a class="unselectable" href="/">ScriptObservatory</a></h1> 
+    <p class="unselectable">a project to record and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
+  </header>
+
+  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://scriptobservatory.org/img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="https://scriptobservatory.org/img/forkme_right_darkblue_121621.png"></a>
+  {% endblock %}
+
+  <div class="bodycontainer">
+    <div class="container">
+    {% block nav %}
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li {% block home_active %}{% endblock %}><a href="/experimental.html">Home</a></li>
+              <li {% block explore_active %}{% endblock %}><a href="/explore.html">Explore the Data</a></li>
+              <li {% block scan_active %}{% endblock %}><a href="/scan.html">Scan a Website</a></li>
+              <li {% block faqs_active %}{% endblock %}><a href="/faqs.html">FAQs</a></li>
+            </ul>
+            <!--
+            <form class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Quick Search">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            -->
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+    {% endblock %}
+    
+    {% block body %}
+    {% endblock %}
+
+    {% block modal_defs %}
+    {% endblock %} 
+    </div>
+  </div>
+</body>
+</html>

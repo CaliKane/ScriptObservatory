@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block scan_active %} class = "active" {% endblock %}
+{% block body %}
+<p>
+  <h3><i>Is there a website you want us to scan right now?</i></h3>
+  <br>
+  <form class="form-horizontal" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
+  <div class="form-group" align="center">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-6"> 
+      <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> 
+    </div>
+    <div class="col-sm-1">
+    <label for="urlSubmission"> 
+      <input type="submit" id="submit" value="Submit" class="btn"> </input>
+    </label>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+  </form>
+    <div align="center">(Submit the website, wait a few minutes, then search for it under the "Explore the Data" tab. <br>If you don't see it after 10 minutes, feel free to <a target="_blank" href="mailto:scriptobservatory@gmail.com">send me an email</a>.)</div>
+  <br><br>
+  <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
+  <br>
+  <form class="form-horizontal" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
+  <div class="form-group" align="center">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-6">
+      <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText"></textarea>
+    </div>
+    <div class="col-sm-1"> 
+      <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+    </div>
+  </div>
+  </form>
+   <br>
+  <div align="center">
+    (These are manually reviewed before they're added to a list.)
+  </div>
+</p>
+<br><br>
+
+{% endblock %}

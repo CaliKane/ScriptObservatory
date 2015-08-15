@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block explore_active %} class = "active" {% endblock %}
+{% block body %}
+    <h3><i>Query the database:</i></h3>
+    <form class="form-horizontal" ng-submit="submitQueryForm(parentQueryText)">
+      <div class="form-group" align="center">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 (https://scriptobservatory.org)"> 
+        </div>
+        <div class="col-sm-1">
+        <label for="queryField"> 
+          <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+       </label>
+        </div>
+        <div class="col-sm-1"></div>
+      </div>   
+    </form>
+    <br>
+    <div ng-show="QRY_STATUS == 'WAITING_FOR_QRY'" id="info_section">
+      <h3><i>Some sample webpage queries:</i></h3>
+      <ul>
+        <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
+        <li><a href="#" ng-click='submitQuery(".vt.edu");'>.vt.edu</a></li>
+        <li><a href="#" ng-click='submitQuery("www.python.org");'>www.python.org</a></li>
+        <li><a href="#" ng-click='submitQuery("http://president.gov.af/");'>http://president.gov.af/</a></li>
+        <li><a href="#" ng-click='submitQuery("http://www.ieeehyd.org/");'>http://www.ieeehyd.org/</a></li>
+        <li><a href="#" ng-click='submitQuery("betterweather.net");'>betterweather.net</a></li>
+        <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov");'>https://www.dmv.ca.gov</a></li>
+      </ul>
+      <br>
+      <h3><i>Some sample script queries:</i></h3>
+      <ul>
+        <li><a href="#" ng-click='submitQuery("https://ssl.google-analytics.com/ga.js");'>https://ssl.google-analytics.com/ga.js</a></li>
+        <li><a href="#" ng-click='submitQuery("274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a");'>274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a</a></li>
+        <li><a href="#" ng-click='submitQuery("https://sb.scorecardresearch.com/beacon.js");'>https://sb.scorecardresearch.com/beacon.js</a></li>
+        <li><a href="#" ng-click='submitQuery("c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3");'>c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3</a></li>
+        <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
+      </ul>
+      <br>
+      <h3><i>Got YARA signatures? (experimental)</i></h3>
+      <p> Click <a href="https://scriptobservatory.org/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
+    </div>
+    
+    <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="resource_query_section">
+      <p> Results found for <a href="#" ng-click="openHash({'hash':app.resourceQuery}, '', '')">{[ app.resourceQuery ]}</a>:</p>
+      <table class="table table-hover table-bordered table-condensed">
+        <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
+          <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+        </th>
+        <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
+            <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="resource_query_section">
+      <p> Results found for <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{[ app.resourceQuery ]}</a>:</p>
+      <table class="table table-hover table-bordered table-condensed">
+        <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
+          <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+        </th>
+        <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
+            <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+        </tr>
+      </table>
+    </div>
+
+    <div ng-show="QRY_STATUS == 'HAVE_WEBPAGE_RESULTS'" id="website_query_section">
+      <table class="table table-bordered table-hover table-condensed">
+        <th style="width:30%; text-align:center;"> Site URL <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+        <th style="width:5%; text-align:center;"> Number of Observations</th>
+        <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
+            <td style="text-align: center;">
+              <a href="#" ng-click="openWebsite(site)">{[ site.url | limitTo: 67 ]}{[ site.url.length > 67 ? '...' : '' ]}</a>
+            </td>
+            <td style="text-align: center;">
+              {[ site.occur ]}
+            </td>
+        </tr>
+      </table>
+    </div>
+
+    <div ng-show="QRY_STATUS == 'PROCESSING_QRY'" align="center">
+      <span> Your query is in progress... <br> Most queries take less than 10 seconds but some can take up to a minute. </span>
+    </div>
+
+    <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
+      <span> Something went wrong. An error report has been logged. <br><br> Either enter a more specific query, or, if you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (these are the most common causes of this error) </span>
+    </div>
+
+    <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
+      <span> No results were found. </span>
+    </div>
+
+    <br>
+{% endblock %}
+
+{% block modal_defs %}
+    <script class="modal" type="text/ng-template" id="websiteModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Website: <span class="modal-url">{[ currentObj.url ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Observed Scripts</u> (<a href="https://scriptobservatory.org/api/get_aligned_data?url={[ currentObj.url ]}" target="_blank">Experimental View</a>) </h4>
+        <span ng-if="(currentObj.resources | object2Array ).length == 0"> No scripts found. </span>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
+          <tr ng-repeat="resource in currentObj.resources | object2Array | orderBy:'-occur'"> 
+            <td style="width:65%;"> <a href="#" ng-click="openObj(resource, 'resource', currentObj.url, '');"> {[ resource.url | limitTo:80 ]}{[ resource.url.length > 80 ? '...':'' ]} </a> </td>
+            <td style="width:10%;"> {[ resource.occur.toFixed(1) ]}% </td>
+            <td style="width:25%;">
+              <span ng-repeat="hash in resource.hashes | object2Array | orderBy:'-occur'"> 
+                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, resource.url);"> {[ hash.hash | limitTo:10 ]} ({[ hash.occur.toFixed(1) ]}%){[ $last ? '' : ',']} </a><br>
+              </span>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View on <a target="_blank" href="https://urlquery.net/">URLQuery</a> </li>  <!-- TODO: make direct link -->
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.url ]}">VirusTotal</a> </li>
+          <li> View on <a target="_blank" href="https://builtwith.com/{[ currentObj.url.substr(currentObj.url.indexOf('://')+3) ]}">BuiltWith.com</a></li>
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+
+    <script class="modal" type="text/ng-template" id="resourceModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Script: <span class="modal-url">{[ currentObj.url ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Observed Hashes</u></h4>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
+          <span ng-if="webpageUrl != ''" ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
+            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, resourceUrl);"> {[ hash.hash | limitTo:10 ]} ({[ hash.occur.toFixed(1) ]}%){[ $last ? '' : ', ']} </a>
+          </span>
+          <span ng-if="webpageUrl == ''">
+            To see the observed hashes for this script, you need to look at the results coming from a specific webpage. Viewing all hashes seen across all webpages is coming soon. 
+          </span>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View <a target="_blank" href="{[ currentObj.url ]}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a target="_blank" href="{[ webpageUrl ]}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.url]}">all other webpages that have included this script by its URL</a></li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.url ]}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+
+    <script class="modal" type="text/ng-template" id="hashModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Hash: <span class="modal-url">{[ currentObj.hash ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View <a href="https://scriptobservatory.org/resource-content/{[ currentObj.hash ]}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li ng-if="resourceUrl != ''"> View <a href="{[resourceUrl]}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a href="{[webpageUrl]}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.hash]}">all other websites that have included a script with this hash value</a></li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.hash]}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+{% endblock %}
+

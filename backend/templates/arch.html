@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>ScriptObservatory</title>
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/bootstrap-3.3.4.min.css">
+  <link rel="stylesheet" href="https://scriptobservatory.org/css/style.css">
+  <script src="https://scriptobservatory.org/js/angular-1.2.16.js"></script>
+  <script src="https://scriptobservatory.org/js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+  <script src="https://scriptobservatory.org/js/app.js"></script>
+  <script src="https://scriptobservatory.org/js/d3.min.js" charset="utf-8"></script>
+</head>
+
+<body ng-app="app" ng-controller="AppCtrl as app">
+<div role="main">
+  <header class="bs-header text-center" id="overview">
+    <h1><a class="unselectable" href="/">ScriptObservatory</a></h1> 
+    <p class="unselectable">a project to record and organize information about the <b><i>live content</i></b> people are seeing on the Internet.</p>
+  </header>
+
+  <a href="https://github.com/andy11/ScriptObservatory" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://scriptobservatory.org/img/fork-me-src" alt="Fork me on GitHub" data-canonical-src="https://scriptobservatory.org/img/forkme_right_darkblue_121621.png"></a>
+
+  <div class="bodycontainer">
+    <div class="container">
+      <tabset>
+      <tab heading="Home">
+        <p> 
+        <h3><i>Basic Information</i></h3>
+        The goal of the ScriptObservatory project is to extend the idea behind the <a href="https://www.eff.org/observatory" target="_blank">SSL Observatory</a>
+        by recording information about the <b><i>live content</i></b> people see on the Internet.
+        <br><br>
+        The long-term goal of this website is for it to be a place where anyone can analyze a record of what code people have been sent while on 
+        the Internet. The long-term goal for the <!-- <a href="https://github.com/andy11/ScriptObservatory#usage" target="_blank">Chrome extension</a>--> Chrome extension is to 
+        crowdsource the data collection and to act as a <b><i>content-aware</i></b> script blocker.
+        <br><br>
+        <h3><i>Getting Started</i></h3>
+        Click the <i>"Explore the Data"</i> tab to query the database. Or, drag this 
+        <a href="javascript:q=location.href;open('https://scriptobservatory.org/search/?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a>
+        bookmarklet to your bookmarks bar to quickly jump to the analysis page for whatever website you have open.
+        <br><br>
+        <h3><i>Are you looking for a project to get involved with?</i></h3>
+        <a target="_blank" href="mailto:scriptobservatory@gmail.com">Send me an email</a> to get in touch! 
+        <br><br>
+        Most of the coding is in Python (backend, analysis tools, scanning automation tools), AngularJS (webpage), plain JavaScript (chrome extension), and HTML/CSS/Bootstrap (webpage). All the code is on <a target="_blank" href="https://github.com/andy11/ScriptObservatory">GitHub</a>. 
+        <br><br>
+        If you're not interested in coding and just want to comb through the data we've collected, see the "Explore the Data" tab to get started.
+        <br><br>
+        </p>
+      </tab>
+     
+      <tab heading="Explore the Data" active="explore_tab">
+        <h3><i>Query the database:</i></h3>
+        <form class="form-horizontal" ng-submit="submitQueryForm(parentQueryText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 (https://scriptobservatory.org)"> 
+            </div>
+            <div class="col-sm-1">
+            <label for="queryField"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+           </label>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>   
+        </form>
+        <br>
+        <div ng-show="QRY_STATUS == 'WAITING_FOR_QRY'" id="info_section">
+          <h3><i>Some sample webpage queries:</i></h3>
+          <ul>
+            <li><a href="#" ng-click='submitQuery("https://scriptobservatory.org");'>https://scriptobservatory.org</a></li>
+            <li><a href="#" ng-click='submitQuery(".vt.edu");'>.vt.edu</a></li>
+            <li><a href="#" ng-click='submitQuery("http://malware-traffic-analysis.net");'>http://malware-traffic-analysis.net</a></li>
+            <li><a href="#" ng-click='submitQuery("https://www.studentsforafreetibet.org");'>https://www.studentsforafreetibet.org</a></li>
+            <li><a href="#" ng-click='submitQuery("http://www.betterweather.net");'>http://www.betterweather.net</a></li>
+            <li><a href="#" ng-click='submitQuery("https://www.dmv.ca.gov");'>https://www.dmv.ca.gov</a></li>
+          </ul>
+          <br>
+          <h3><i>Some sample script queries:</i></h3>
+          <ul>
+            <li><a href="#" ng-click='submitQuery("https://ssl.google-analytics.com/ga.js");'>https://ssl.google-analytics.com/ga.js</a></li>
+            <li><a href="#" ng-click='submitQuery("274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a");'>274f2ba69eb1b2369d0bcc01969f290b644c7d22b84a99d4d13287f65bdc576a</a></li>
+            <li><a href="#" ng-click='submitQuery("https://sb.scorecardresearch.com/beacon.js");'>https://sb.scorecardresearch.com/beacon.js</a></li>
+            <li><a href="#" ng-click='submitQuery("c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3");'>c3349ed9e0ee902ef3b6934531d42f2b4eae33aa312f3eeaef98974bed74abe3</a></li>
+            <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
+          </ul>
+          <br>
+          <h3><i>Got YARA signatures? (experimental)</i></h3>
+          <p> Click <a href="https://scriptobservatory.org/yara.html" target="_blank">here</a> to search through all the JavaScript we've collected for anything that matches a YARA signature.
+        </div>
+        
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="resource_query_section">
+          <p> Results found for <a href="#" ng-click="openHash({'hash':app.resourceQuery}, '', '')">{[ app.resourceQuery ]}</a>:</p>
+          <table class="table table-hover table-bordered table-condensed">
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
+              <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+            </th>
+            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
+                <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+            </tr>
+          </table>
+        </div>
+        
+        <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="resource_query_section">
+          <p> Results found for <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{[ app.resourceQuery ]}</a>:</p>
+          <table class="table table-hover table-bordered table-condensed">
+            <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
+              <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
+            </th>
+            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
+                <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'HAVE_WEBPAGE_RESULTS'" id="website_query_section">
+          <table class="table table-bordered table-hover table-condensed">
+            <th style="width:30%; text-align:center;"> Site URL <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
+            <th style="width:5%; text-align:center;"> Number of Observations</th>
+            <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
+                <td style="text-align: center;">
+                  <a href="#" ng-click="openWebsite(site)">{[ site.url | limitTo: 67 ]}{[ site.url.length > 67 ? '...' : '' ]}</a>
+                </td>
+                <td style="text-align: center;">
+                  {[ site.occur ]}
+                </td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'PROCESSING_QRY'" align="center">
+          <span> Your query is in progress... <br> Most queries take less than 10 seconds but some can take up to a minute. </span>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
+          <span> Something went wrong. An error report has been logged. <br><br> Either enter a more specific query, or, if you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (these are the most common causes of this error) </span>
+        </div>
+
+        <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
+          <span> No results were found. </span>
+        </div>
+
+        <br>
+      </tab>
+
+      <tab heading="Scan a Website">
+        <p>
+          <h3><i>Is there a website you want us to scan right now?</i></h3>
+          <br>
+          <form class="form-horizontal" ng-submit="submitUrlSubmissionForm(urlSubmissionText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6"> 
+              <input type="text" class="form-control" id="urlSubmission" ng-model="urlSubmissionText" placeholder="https://www.example.com"> 
+            </div>
+            <div class="col-sm-1">
+            <label for="urlSubmission"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input>
+            </label>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>
+          </form>
+            <div align="center">(Submit the website, wait a few minutes, then search for it under the "Explore the Data" tab. <br>If you don't see it after 10 minutes, feel free to <a target="_blank" href="mailto:scriptobservatory@gmail.com">send me an email</a>.)</div>
+          <br><br>
+          <h3><i>Do you have a list of websites you want to be scanned regularly?</i></h3>
+          <br>
+          <form class="form-horizontal" ng-submit="submitUrlSuggestionForm(urlSuggestionText)">
+          <div class="form-group" align="center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6">
+              <textarea class="form-control" rows="10" cols="65" ng-model="urlSuggestionText"></textarea>
+            </div>
+            <div class="col-sm-1"> 
+              <input type="submit" id="submit" value="Submit" class="btn"> </input> 
+            </div>
+          </div>
+          </form>
+           <br>
+          <div align="center">
+            (These are manually reviewed before they're added to a list.)
+          </div>
+        </p>
+        <br><br>
+      </tab>
+
+      <tab heading="FAQs">
+        <p>
+          <h3><i>Where did this data come from?</i></h3>
+          The data shown here was collected from browsers and web-crawlers using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
+          If you'd like to automatically add your observations to the database, the extension will be available for download in the next few months.
+          <br><br>
+          
+          <h3><i>How does the Chrome Extension collect the data?</i></h3>
+          The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
+          browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
+          back to the browser.
+          <br><br>
+          This way of grabbing the content isn't ideal performance-wise and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
+          code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/js/extension.js" target="_blank">chrome-extension/js/extension.js</a>
+          contains all the non-crypto code for the extension.)
+          <br><br>
+          With the ScriptObservatory Chrome extension installed, your browser will send these three pieces of information to the ScriptObservatory backend each time you view a webpage:
+          <ul>
+            <li>The URL of the webpage</li>
+            <li>The URL of each piece of JavaScript included on the page</li>
+            <li>The SHA-256 hash of the content of each script you observe (inline & remote)</li>
+          </ul>
+          <br>
+          <h3><i>Can the ScriptObservatory Chrome Extension block these scripts before I run them?</i></h3>
+          That's <a href="https://github.com/andy11/ScriptObservatory/blob/master/README.md#roadmap" target="_blank">on the roadmap</a>.
+          <br><br>
+          <h3><i>What does the Chrome Extension do to protect its users' privacy?</i></h3>
+          <ul>
+            <li>
+              The connection from you to the ScriptObservatory backend will always be 
+              <a href="https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org" target="_blank">encrypted with TLS</a>. 
+            </li>
+            <li>
+              Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded in the database. Your observations will be immediately mixed in with those of everyone else. If you see an IP address or User ID value in a URL string that made it past the filters, let me know and I'll remove the records and blacklist further reports for that website.</li>
+            <li>
+              The source code for both the client and the server will always be available for you to review.
+              (See the <a href="https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension" target="_blank">chrome-extension/</a> and 
+              <a href="https://github.com/andy11/ScriptObservatory/tree/master/backend" target="_blank">backend/</a> directories to get started.)
+            </li>
+          </ul>
+          If you have suggestions for ways to further improve, get in touch!
+         <br><br>
+         <h3><i>What have you found so far?</i></h3>
+          As of 2015-07-22, the record contains (at least) 67 webpages serving malicious content.
+         <br><br>
+          I'd like to do some kind of A/B testing to see if notifying webpage owners that their sites are serving exploits causes them to remediate faster, but I don't have enough time. <i>If you'd be interested in helping out with this, get in touch!</i>
+         <br><br>
+         <h3><i>How much data have you collected?</i></h3>
+          I started scanning in April 2015. Here are some plots that get updated every 12 hours:
+          <br><br>
+          <div align="center">
+          <img src="https://scriptobservatory.org/img/entries-over-time.png"></img>
+          <br><br>
+          <img src="https://scriptobservatory.org/img/new-entries-per-hour.png"></img>
+          <br><br>
+          <img src="https://scriptobservatory.org/img/unique-webpages-over-time.png"></img>
+          
+          </div>
+        </p>
+
+      
+      </tab>
+ 
+      </tabset>
+    </div>
+
+
+    <script class="modal" type="text/ng-template" id="websiteModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Website: <span class="modal-url">{[ currentObj.url ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Observed Scripts</u> (<a href="https://scriptobservatory.org/api/get_aligned_data?url={[ currentObj.url ]}" target="_blank">Experimental View</a>) </h4>
+        <span ng-if="(currentObj.resources | object2Array ).length == 0"> No scripts found. </span>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
+          <tr ng-repeat="resource in currentObj.resources | object2Array | orderBy:'-occur'"> 
+            <td style="width:65%;"> <a href="#" ng-click="openObj(resource, 'resource', currentObj.url, '');"> {[ resource.url | limitTo:80 ]}{[ resource.url.length > 80 ? '...':'' ]} </a> </td>
+            <td style="width:10%;"> {[ resource.occur.toFixed(1) ]}% </td>
+            <td style="width:25%;">
+              <span ng-repeat="hash in resource.hashes | object2Array | orderBy:'-occur'"> 
+                <a href="#" ng-click="openObj(hash, 'hash', currentObj.url, resource.url);"> {[ hash.hash | limitTo:10 ]} ({[ hash.occur.toFixed(1) ]}%){[ $last ? '' : ',']} </a><br>
+              </span>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View on <a target="_blank" href="https://urlquery.net/">URLQuery</a> </li>  <!-- TODO: make direct link -->
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.url ]}">VirusTotal</a> </li>
+          <li> View on <a target="_blank" href="https://builtwith.com/{[ currentObj.url.substr(currentObj.url.indexOf('://')+3) ]}">BuiltWith.com</a></li>
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+
+    <script class="modal" type="text/ng-template" id="resourceModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Script: <span class="modal-url">{[ currentObj.url ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Observed Hashes</u></h4>
+        <table class="table-condensed table-hover" style="background-color:inherit;">
+          <span ng-if="webpageUrl != ''" ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
+            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, resourceUrl);"> {[ hash.hash | limitTo:10 ]} ({[ hash.occur.toFixed(1) ]}%){[ $last ? '' : ', ']} </a>
+          </span>
+          <span ng-if="webpageUrl == ''">
+            To see the observed hashes for this script, you need to look at the results coming from a specific webpage. Viewing all hashes seen across all webpages is coming soon. 
+          </span>
+        </table>
+        <br>
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View <a target="_blank" href="{[ currentObj.url ]}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a target="_blank" href="{[ webpageUrl ]}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.url]}">all other webpages that have included this script by its URL</a></li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.url ]}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+
+    <script class="modal" type="text/ng-template" id="hashModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Hash: <span class="modal-url">{[ currentObj.hash ]}</span></h3>
+      </div>
+
+      <div class="modal-body">
+        <h4><u>Actions</u></h4>
+        <ul>
+          <li> View <a href="https://scriptobservatory.org/resource-content/{[ currentObj.hash ]}" target="_blank">Archived Script Content</a> (if available)</li>
+          <li ng-if="resourceUrl != ''"> View <a href="{[resourceUrl]}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
+          <li ng-if="webpageUrl != ''"> View <a href="{[webpageUrl]}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
+          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.hash]}">all other websites that have included a script with this hash value</a></li>
+          <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.hash]}">VirusTotal</a> </li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn" ng-click="ok()">OK</button>
+      </div>
+    </script>
+  </div>
+  </div>
+</body>
+</html>
