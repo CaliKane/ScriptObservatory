@@ -350,22 +350,25 @@ def align_webpage_data():
     for pv in webpage.pageviews:
         for r in pv.resources:
             resources[str(i)] = [{'url': r.url, 
-                            'hash': r.hash, 
-                            'parent_url': r.pageview.url, 
-                            'date': pv.date}]
+                                  'hash': r.hash, 
+                                  'parent_url': r.pageview.url, 
+                                  'date': pv.date}]
             
             i += 1
 
         if not FIRST_T or pv.date < FIRST_T:
             FIRST_T = pv.date
     
-    ##
-    ## Align our resources as best we can
-    ## (order- equal urls, equal filenames, equal hash values, equal subdomains & paths, collapse inline_scripts as much as possible)
-    ##
-    ## TODO: do matching against *any*, not just first entry 
-    ## TODO: clean and only define one side of the equals sign
-    ##
+    #
+    # Align our resources as best we can, following the order:
+    # - equal urls
+    # - equal filenames
+    # - equal hash values
+    # - equal subdomains & paths
+    # - (lastly) collapse inline_scripts as much as possible
+    #
+    # TODO: do matching against *any*, not just first entry 
+    # TODO: clean and only define one side of the equals sign
     resources = exp_filter(resources, 
                            "new_resources[new_k][0]['url'] == resources[k][0]['url']", 
                            "new_k")
@@ -386,7 +389,7 @@ def align_webpage_data():
                            "resources[k][0]['url'].startswith('inline_script_') and new_resources[new_k][0]['url'].startswith('inline_script_')",
                            "'inline_script_*'")
     
-    ## Reduce to expected JSON format
+    # Reduce the results to the expected JSON format
     final_resources = []
     for ind, key in enumerate(resources.keys()):
         # scale our time values to a relative scale
@@ -414,11 +417,16 @@ def align_webpage_data():
 
     first_t_in_days_ago = (datetime.datetime.now() - FIRST_T).days
 
-    ## Sort & return final_resources
+    # Sort & return final_resources
     final_resources = sorted(final_resources, key=functools.cmp_to_key(view_list_sorter))
     return render_template('visualizations/aligned_scripts.html',
                            json_data=json.dumps(final_resources),
                            first_t_in_days_ago=first_t_in_days_ago)
+
+
+@app.route('/experimental.html')
+def index():
+    return render_template('index.html')
 
 
 @app.route('/')
