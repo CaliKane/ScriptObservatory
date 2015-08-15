@@ -83,7 +83,7 @@ def yara_index():
         email = request.form['email'].strip()
         if len(email) <= 0:
             errors.append("You must provide an email address")
-        elif email not in app.config['YARA_EMAIL_WHITELIST']:
+        elif email not in app.config['EMAIL_WHITELIST']:
             errors.append("Email address not in whitelist")
 
         namespace = request.form['namespace'].strip()
@@ -104,7 +104,7 @@ def yara_index():
         # TODO: compile and sanity-check yara rules (with celery task)
 
         if len(errors) <= 0:
-            ruleset = YaraRuleset(email, namespace, source)
+            ruleset = YaraRuleset(email, namespace, source, True)
             db.session.add(ruleset)
             db.session.commit()
 

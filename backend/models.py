@@ -71,4 +71,4 @@ class YaraRuleset(db.Model):
         self.email = email
         self.namespace = namespace
         self.source = source
-        sel.scan_on_upload = scan
+        self.scan_on_upload = scan
