@@ -9,6 +9,7 @@ from backend import config
 
 app = Flask(__name__, static_url_path='')
 app.config.from_object(config)
+app.secret_key = app.config['SECRET_KEY']
 csrf = SeaSurf(app)
 db = SQLAlchemy(app)
 
