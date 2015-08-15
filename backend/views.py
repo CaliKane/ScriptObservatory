@@ -425,7 +425,7 @@ def align_webpage_data():
 
 
 @app.route('/experimental.html')
-def index():
+def experimental():
     return render_template('index.html')
 
 
