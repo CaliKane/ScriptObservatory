@@ -281,6 +281,9 @@ def search_api():
             json_site = {}
             json_site['url'] = site.url
             json_site['id'] = site.id
+            json_site['occur'] = len(site.pageviews)
+
+            """
             json_site['pageviews'] = []
 
             for pv in site.pageviews:
@@ -295,7 +298,7 @@ def search_api():
                     json_pv['resources'].append(json_script)
 
                 json_site['pageviews'].append(json_pv)
-
+            """
             json['objects'].append(json_site)    
     
     elif resource_by_url or resource_by_hash:
@@ -304,16 +307,14 @@ def search_api():
         elif resource_by_hash is not None:   
             resources = db.session.query(Resource).filter(Resource.hash == resource_by_hash).limit(app.config['MAX_RESOURCE_RESULTS']).all()
         
-        json['objects'] = list(set([r.pageview.url for r in resources]))
+        objects = list(set([r.pageview.webpage for r in resources]))
+        json['objects'] =  [{"url": w.url, "id": w.id} for w in objects]
     
     return jsonify(json)
 
 
-@app.route('/api/get_aligned_data', methods=['GET'])
-def align_webpage_data():
-    """ Code for the experimental visualization. This should be used as a starting point for
-        the new UI and should eventually be pulled out of the /api/ path. """ 
-    
+@app.route('/webpage/<hash>', methods=['GET'])
+def webpage_view(hash):
     def exp_filter(resources, eval_condition, eval_rekey):
         """ Helper function that combines two resource lists if there's no date collision and 
             *eval_condition* is met. The *resources* dict is rekeyed with *eval_rekey* after
@@ -338,10 +339,9 @@ def align_webpage_data():
         
         return new_resources
 
-    url = request.args.get('url')
-    if not url: return 'please supply a URL parameter'
-    
-    webpage = Webpage.query.filter(Webpage.url == url).one()
+    webpage = Webpage.query.filter(Webpage.id == hash).first()
+    if webpage is None:
+        return "No result found."
 
     ## Pull out all relevant resources
     FIRST_T = False
@@ -419,14 +419,10 @@ def align_webpage_data():
 
     # Sort & return final_resources
     final_resources = sorted(final_resources, key=functools.cmp_to_key(view_list_sorter))
-    return render_template('visualizations/aligned_scripts.html',
+    return render_template('webpage.html',
+                           webpage=webpage,
                            json_data=json.dumps(final_resources),
                            first_t_in_days_ago=first_t_in_days_ago)
-
-
-@app.route('/experimental.html')
-def experimental():
-    return render_template('index.html')
 
 
 @app.route('/explore.html')
@@ -444,17 +440,9 @@ def scan():
     return render_template('scan.html')
 
 
-
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
-
-
-@app.route('/search/')
-def search():
-    """ this is a temporary hack to let us serve query links that end in ?query=XXX off of
-        a path that's been added to the robots.txt file to prevent google from indexing them """
-    return app.send_static_file('index.html')
+    return render_template('index.html')
 
 
 opts = external.jsbeautifier.default_options()

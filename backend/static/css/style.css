@@ -101,6 +101,20 @@ table {
   user-select: none;
 }
 
+/* navbar */
+.navbar-default {
+    background-color: #C2C5C8;
+    border-color: #C2C5C8;
+}
+/* link */
+.navbar-default .navbar-nav > li > a {
+    color: #555;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #990000;
+}
+
 .nav>li>a {
   position: relative;
   display: block;

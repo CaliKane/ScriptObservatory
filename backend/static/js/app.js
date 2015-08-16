@@ -340,9 +340,10 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                 //alert("cur_site --> " + JSON.stringify(cur_site));
 
                 var to_add = {"url": cur_site.url,
-                              "occur": cur_site.pageviews.length,
+                              "id": cur_site.id,
+                              "occur": cur_site.occur,
                               "resources": {}};
-                
+                /*
                 for (var pv_ind = 0; pv_ind < app.records[i].pageviews.length; pv_ind++){
                     var cur_pageview = app.records[i].pageviews[pv_ind];
                     //alert("cur_pageview --> " + JSON.stringify(cur_pageview));
@@ -377,7 +378,7 @@ app.controller("AppCtrl", function($http, $scope, $modal){
                     
                     to_add.resources[script_url].occur *= (100.0 / to_add.occur);
                 }
-
+                */
                 //alert(to_add);
                 app.sites.push(to_add);
             }

@@ -44,42 +44,34 @@
     </div>
     
     <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="resource_query_section">
-      <p> Results found for <a href="#" ng-click="openHash({'hash':app.resourceQuery}, '', '')">{[ app.resourceQuery ]}</a>:</p>
-      <table class="table table-hover table-bordered table-condensed">
-        <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
-          <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
-        </th>
-        <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
-            <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
-        </tr>
-      </table>
+      <p> The hash <a href="#" ng-click="openHash({'hash':app.resourceQuery}, '', '')">{[ app.resourceQuery ]}</a> has been seen on:
+      </p>
+        <ul>
+            <li ng-repeat="site in app.resourceQueryResults">
+              <a href="https://scriptobservatory.org/webpage/{[ site.id ]}">{[ site.url  | limitTo:100 ]}{[ site.url.length > 100 ? '...' : '']}</a>
+            </li>
+        </ul>
+      <p ng-if="app.resourceQueryResults.length >= 200"><i>(just the first 250!)</i></p>
     </div>
     
     <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="resource_query_section">
-      <p> Results found for <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{[ app.resourceQuery ]}</a>:</p>
-      <table class="table table-hover table-bordered table-condensed">
-        <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
-          <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
-        </th>
-        <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
-            <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
-        </tr>
-      </table>
+      <p> The URL <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{[ app.resourceQuery ]}</a> has been seen on:
+      </p>
+        <ul>
+          <li ng-repeat="site in app.resourceQueryResults">
+            <a href="https://scriptobservatory.org/webpage/{[ site.id ]}">{[ site.url  | limitTo:100 ]}{[ site.url.length > 100 ? '...' : '']}</a>
+          </li>
+        </ul>
+      <p ng-if="app.resourceQueryResults.length >= 200"><i>(just the first 250!)</i></p>
     </div>
 
     <div ng-show="QRY_STATUS == 'HAVE_WEBPAGE_RESULTS'" id="website_query_section">
-      <table class="table table-bordered table-hover table-condensed">
-        <th style="width:30%; text-align:center;"> Site URL <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> </th>
-        <th style="width:5%; text-align:center;"> Number of Observations</th>
-        <tr ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
-            <td style="text-align: center;">
-              <a href="#" ng-click="openWebsite(site)">{[ site.url | limitTo: 67 ]}{[ site.url.length > 67 ? '...' : '' ]}</a>
-            </td>
-            <td style="text-align: center;">
-              {[ site.occur ]}
-            </td>
-        </tr>
-      </table>
+      <p> Your search matches the following webpages: </p>
+      <ul>
+        <li ng-repeat="site in app.sites | filter:search.url | orderBy:'-occur'">
+          <a ng-href="https://scriptobservatory.org/webpage/{[ site.id ]}">{[ site.url | limitTo: 67 ]}{[ site.url.length > 67 ? '...' : '' ]}</a>
+        </li>
+      </ul>
     </div>
 
     <div ng-show="QRY_STATUS == 'PROCESSING_QRY'" align="center">

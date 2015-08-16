@@ -96,8 +96,8 @@
             <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> --> 
               <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
-            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+            <tr ng-repeat="site in app.resourceQueryResults">
+                <td> <a href="https://scriptobservatory.org/search/?query={[ site.id ]}">{[ site.url  | limitTo:100 ]}{[ site.url.length > 100 ? '...' : '']}</a> </td>
             </tr>
           </table>
         </div>
@@ -108,8 +108,8 @@
             <th style="width:50%; text-align:center;"> Webpages <!-- <br> <input ng-model="search.url" placeholder="Filter by URL"> -->
               <span ng-if="app.resourceQueryResults.length >= 200"> (just showing the first 250 results!) </span>
             </th>
-            <tr ng-repeat="site in app.resourceQueryResults | filter:search.url ">
-                <td> <a href="https://scriptobservatory.org/search/?query={[ site ]}">{[ site  | limitTo:100 ]}{[ site.length > 100 ? '...' : '']}</a> </td>
+            <tr ng-repeat="site in app.resourceQueryResults">
+                <td> <a href="https://scriptobservatory.org/search/?query={[ site.id ]}">{[ site.url  | limitTo:100 ]}{[ site.url.length > 100 ? '...' : '']}</a> </td>
             </tr>
           </table>
         </div>
