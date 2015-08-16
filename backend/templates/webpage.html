@@ -5,19 +5,25 @@
 
 <div align="center">
 <h3> Website: <b>{{ webpage.url }}</b></h3>
-<plot></plot>
-<p>
+<p id="info">
+  <plot></plot>
   Hover over a dot to see more information. Click it to lock the text and make the links clickable. <br>
- (If you find a webpage where the visualization looks bad, send me an email.)
+  (If you find a webpage where the visualization looks bad, send me an email.)
+  <pre id="cur"></pre>
 </p>
 
-<pre id="cur"></pre>
 
 <script type="text/javascript">
-    var first_t_in_days_ago = {{ first_t_in_days_ago }};
-    console.log("we have " + first_t_in_days_ago + " days of logs");
+    function e(id) {
+        return document.getElementById(id);
+    }
 
+    var first_t_in_days_ago = {{ first_t_in_days_ago }};
     var data = {{ json_data | safe }};
+
+    if (data.length == 0){
+        e("info").innerHTML = "no scripts seen";
+    }
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20};
     var height_per_row = 15;
@@ -51,10 +57,6 @@
 
     var formatDays = d3.format("d");
     var xAxis = d3.svg.axis().scale(x).orient("top").tickFormat(formatDays);
-
-    function e(id) {
-        return document.getElementById(id);
-    }
 
     function truncate(str, maxLength) {
         if(str.length > maxLength) {
@@ -197,8 +199,10 @@
         }
     };
 
-    var view_locked = false;
-    initialize_data();
+    if (data.length != 0){
+        var view_locked = false;
+        initialize_data();
+    }
 
 </script>
 
