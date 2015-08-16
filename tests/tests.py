@@ -160,7 +160,7 @@ def wait_for_additions_to_webpage_api(webpage_entries, timeout):
 
     
 def check_search_data(url, expected):
-    r = json_get("{0}/api/search?url={1}".format(TEST_BASE_URL, url))
+    r = json_get("{0}/api/search?url={1}&details=true".format(TEST_BASE_URL, url))
     
     correct = ordered(expected)
     output = ordered(r)

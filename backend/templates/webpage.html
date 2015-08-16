@@ -6,7 +6,11 @@
 <div align="center">
 <h3> Website: <b>{{ webpage.url }}</b></h3>
 <plot></plot>
-<p>Hover over a dot below to see more information. Click a dot to lock the information tab and bring up query links for it.</p>
+<p>
+  Hover over a dot to see more information. Click it to lock the text and make the links clickable. <br>
+ (If you find a webpage where the visualization looks bad, send me an email.)
+</p>
+
 <pre id="cur"></pre>
 
 <script type="text/javascript">
@@ -35,6 +39,10 @@
     else if (first_t_in_days_ago > 3*7){ 
         x.domain([-end_day/7, 0]);
         x_label = "weeks ago";
+    }
+    else if (first_t_in_days_ago == 0){
+        x.domain([-end_day, 0]);
+        x_label = "(first seen today)";
     }
     else {
         x.domain([-end_day, 0]);
@@ -106,7 +114,7 @@
                 .attr("x", 0)
                 .attr("y", 45 + j*height_per_row)
                 .attr("class","label")
-                .text(truncate(data[j]['name'], 40))
+                .text(truncate(data[j]['name'], 35))
                 .style("fill", function(d, i) { return j; })
         };
 
