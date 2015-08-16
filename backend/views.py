@@ -289,7 +289,6 @@ def search_api():
                 json_site = {}
                 json_site['url'] = site.url
                 json_site['id'] = site.id
-                json_site['occur'] = len(site.pageviews)
 
                 json_site['pageviews'] = []
                 for pv in site.pageviews:
