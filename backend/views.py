@@ -88,6 +88,34 @@ def view_list_sorter(a, b):
 
 
 @backend.csrf.include
+@app.route('/yara_remove.html', methods=['GET', 'POST'])
+def yara_remove():
+    """ yara rule removal UI view """
+    errors = []
+    if request.method == 'POST':
+        code = request.form['removal_code'].strip()
+        if len(code) <= 0:
+            errors.append("You must provide a removal code")
+        else:
+            rule = YaraRuleset.query.filter_by(removal_code=code).first()
+            if not rule:
+                errors.append("Could not find an active YARA rule with that "
+                              "removal code.")
+ 
+        if len(errors) == 0:
+            sendmail(rule.email,
+                    'YARA Rule Removed ({})'.format(rule.namespace),
+                    render_template('email/yara_goodbye.html', rule=rule))
+            
+            db.session.delete(rule)
+            db.session.commit()
+
+            flash("Rules successfully removed")
+    
+    return render_template('yara/remove.html', errors=errors)
+
+
+@backend.csrf.include
 @app.route('/yara.html', methods=['GET', 'POST'])
 def yara_index():
     """ yara rule submission UI view """
@@ -121,7 +149,7 @@ def yara_index():
                 db.session.commit()
 
                 # send email
-                r = {'email': email, 'content': source, 'removal_code': 'xxx'}
+                r = {'email': email, 'content': source, 'removal_code': ruleset.removal_code}
                 sendmail(email,
                         'New YARA Rule Added! {}'.format(namespace),
                         render_template('email/yara_welcome.html', rule=r))
