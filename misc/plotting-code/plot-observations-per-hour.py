@@ -21,13 +21,13 @@ x = []
 start_t = end_t = datetime.datetime(2015, 4, 1)
 while True:
     start_t = end_t
-    end_t += datetime.timedelta(days=1)
+    end_t += datetime.timedelta(days=2)
     
     if end_t > datetime.datetime.now(): break
 
     views = Pageview.query.filter(Pageview.date < end_t).filter(Pageview.date >= start_t).all()
     
-    y.append(len(views) / 1000)
+    y.append(len(views) / (24 * 1000))
     x.append(start_t)
 
 plt.plot(range(len(y)), y, 'r-')
@@ -38,11 +38,11 @@ xmin, xmax, ymin, ymax = plt.axis()
 plt.axis([xmin, xmax, 0, ymax])
 
 n_entries = len(x)
-n_labels = len(axes.get_xticklabels())
+n_labels = len(axes.get_xticklabels()) - 1
 time_labels = []
 for i in range(n_entries):
-    if i % (n_entries // n_labels) == (n_entries // n_labels) - 1:
-        time_labels.append(x[i].strftime('%m/%d'))
+    if i % (n_entries // n_labels) == 0:
+        time_labels.insert(0, x[-1 - i].strftime('%m/%d'))
 time_labels[0] = ""
 axes.set_xticklabels(time_labels)
 
