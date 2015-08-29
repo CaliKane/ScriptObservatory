@@ -1,21 +1,25 @@
-A maximum of {{ config.MAX_HASHES }} hashes and {{ config.MAX_PAGES_PER_HASH }} webpages for
-each hash will be shown here. To see full results, refine your YARA
-rule or query the server directly.
+Someone reported seeing something that matches your Yara rule!
+
+<br><br>
+
+This email shows a maximum of {{ config.MAX_HASHES }} hashes and a maximum of 
+{{ config.MAX_PAGES_PER_HASH }} webpages for each hash. 
 
 <br><br>
 
 For your reference, this rule has {{ tokens }} email tokens left. These will automatically replenish
-over time. For more information about the rate limiting system, see the main Yara page.
+over time. For more information about the "email token" rate limiting system, see the 
+<a href="https://scriptobservatory.org/yara.html">main Yara page</a>.
 
 <br><br>
 
-We found {{ matches | length }} matching hashes:
+This time, there were {{ matches | length }} matching resource(s) seen:
 
 <br><br>
 
 {% for match in matches -%}
 
-    Matching resource: <a href="https://scriptobservatory.org/resource-content/{{ match.hash }}">{{ match.hash }}</a>
+    Match: <a href="https://scriptobservatory.org/resource-content/{{ match.hash }}">{{ match.hash }}</a>
 
     <br><br>
 
@@ -32,8 +36,11 @@ We found {{ matches | length }} matching hashes:
     {% endfor -%}
     </ul>
 
-    <br><br><br>
+    <br><br>
 {% endfor -%}
 
-<br><br>
+That's all for now... As always, feel free to <a href="mailto:scriptobservatory@gmail.com">send me an email</a> 
+if you have thoughts on how the system could be made better.
+
+Happy Hunting!
 

@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>ScriptObservatory Yara</title>
-        <meta charset="utf-8"/>
-    </head>
-    <body>
-        <h1>ScriptObservatory Yara</h1>
+{% extends "base.html" %}
+
+{% block explore_active %} class = "active" {% endblock %}
+{% block body %}
+        <h3><i>Remove a Yara Rule</i></h3>
+        <p>
+        To <i>add</i> a Yara rule to the database, 
+        <a href="https://scriptobservatory.org/yara.html">click here</a>.
+        </p>
 
         <p>To remove a previously-uploaded Yara rule, please enter
-        the code you received in the original welcome email below:</p>
+        the code you received in the original welcome email. If you've lost the original
+        email and can't find your code, you can always 
+        <a href="mailto:scriptobservatory@gmail.com">send me an email</a>, however it 
+        may take longer for me to remove it for you.</p>
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -32,13 +36,21 @@
             <input type="hidden" name="_csrf_token"
                 value="{{ csrf_token() }}" />
 
-            <div>
+            <div class="row">
+            <div class="col-sm-4">
                 <label for="id_code">Removal Code</label>
-                <input type="text" name="removal_code" id="id_code"
+                <input class="form-control" type="text" name="removal_code" id="id_code"
                     required="required" />
             </div>
+            </div>
+            <br>
+            <div class="row">
+            <div class="col-sm-2">
+                <button class="btn" type="submit">Submit</button>
+            </div>
+            </div>
 
-            <button type="submit">Submit</button>
         </form>
-    </body>
-</html>
+            
+        <br><br>
+{% endblock %}

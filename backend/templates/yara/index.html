@@ -1,17 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>ScriptObservatory Yara</title>
-        <meta charset="utf-8"/>
-    </head>
-    <body>
-        <h1>ScriptObservatory Yara</h1>
+{% extends "base.html" %}
 
-        <p>You can run Yara rules against all new scripts added to
-        ScriptObservatory. To start using this feature, your email address
-        needs to be on the list of approved addresses. <a
-        href="mailto:scriptobservatory@gmail.com" target="_blank">Send me
-        an email</a> and I'll add you.</p>
+{% block explore_active %} class = "active" {% endblock %}
+{% block body %}
+        <h3><i>ScriptObservatory Yara Alerting</i></h3>
+        <p>
+        Yara support is still experimental, but you can now be alerted whenever
+        a resource is observed that matches a given Yara rule.
+        
+        <br><br>
+        
+        To start using this feature, your email address needs to be on the list 
+        of approved addresses. If you'd like to be added, 
+        <a href="mailto:scriptobservatory@gmail.com" target="_blank">
+        send me an email</a>.
+
+        <br><br>
+
+        If you'd like to <i>remove</i> a previously-submitted Yara rule,
+        <a href="https://scriptobservatory.org/yara_remove.html">click here</a>.
+   
+        <br><br>
+   
+        The alerting system uses a <a href="https://en.wikipedia.org/wiki/Token_bucket#Overview" target="_blank">
+        "token bucket" scheme</a> to prevent a surge of matches from overloading your mailbox with emails. When you 
+        add a rule, it starts with 5 tokens. Each time an observed resource matches the rule, a token is taken away 
+        before an email is sent. Tokens are replenished at a rate of one token per minute, and each rule can have a maximum
+        of 10 tokens at one time.  If the token balance ever reaches zero, the rule is automatically removed from the database. 
+   
+        <br><br>
+   
+        If a rule's balance ever reaches zero, you'll receive the same notification email you would have received 
+        if you had manually removed it by submitting the removal code.
+ 
+        <br><br>
+        
+        If you're already registered, submit a new rule by filling out the form below.
+          
+        </p>
+
+        <br>
+
+        <h3><i>Submit a Yara Rule</i></h3>
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -35,25 +64,39 @@
             <input type="hidden" name="_csrf_token"
                 value="{{ csrf_token() }}" />
 
-            <div>
-                <label for="id_email">Email Address</label>
-                <input type="email" name="email" id="id_email"
+            <div class="row">
+            <div class="col-sm-4">
+                <label for="id_email">Email Address:</label>
+                <input class="form-control" type="email" name="email" id="id_email"
                     required="required" />
             </div>
-
-            <div>
-                <label for="id_namespace">Namespace</label>
-                <input type="text" name="namespace" id="id_namespace"
+            </div>
+            <br>
+            <div class="row">
+            <div class="col-sm-4">
+                <label for="id_namespace">Label:</label>
+                <input class="form-control" type="text" name="namespace" id="id_namespace"
                     required="required" />
             </div>
-
-            <div>
-                <label for="id_rules">Rules</label>
-                <textarea name="source" id="id_source" rows="20" cols="70"
+            </div>
+            <br>
+            <div class="row">
+            <div class="col-sm-8">
+                <label for="id_rules">Rules:</label><br>
+                <textarea class="form-control" name="source" id="id_source" rows="20" cols="70"
                     required="required"></textarea>
             </div>
+            </div>
+            
+            <br>
 
-            <button type="submit">Submit</button>
+            <div class="row">
+            <div class="col-sm-1">
+                <button class="btn" type="submit">Submit</button>
+            </div>
+            </div>
         </form>
-    </body>
-</html>
+        
+        <br><br>
+
+{% endblock %}
