@@ -8,16 +8,16 @@ the internet.
 
 The long-term goal of the [website](https://www.scriptobservatory.org)
 is for it to be a place where anyone can analyze the record of 
-what code people have seen while on the internet. The 
+what people have seen while on the internet. The 
 long-term goal for the 
 [Chrome extension](https://github.com/andy11/ScriptObservatory#usage)
 is to crowdsource the data collection and to act as a 
 **_content-aware_** script blocker, letting you have finer control 
 over what runs on your computer. 
 
-Initially, the only objects that will be analyzed are JavaScript files. 
-Eventually, it might be extended to include other types of content like 
-flash objects and iframes. 
+Initially, the only objects that will be analyzed are JavaScript files 
+and iframes. Eventually, it might be extended to include other types 
+of content like flash objects. 
 
 
 Usage
@@ -49,8 +49,8 @@ Privacy
 With the ScriptObservatory Chrome extension installed, your browser will send these
 three pieces of information to the ScriptObservatory backend each time you view a webpage:
  1. The URL of the webpage
- 2. The URL of the each piece of JavaScript included on the webpage
- 3. The SHA-256 hash of the content of each script you observe (inline & remote)
+ 2. The URL of the each piece of JavaScript and iframe included on the webpage
+ 3. The SHA-256 hash of the content of each script and iframe you observe
 
 You can optionally have the Chrome extension send the content of the scripts you
 observe. This will be turned off by default in all released versions.
