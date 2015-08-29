@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>ScriptObservatory Yara</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1>ScriptObservatory Yara</h1>
+
+        <p>To remove a previously-uploaded Yara rule, please enter
+        the code you received in the original welcome email below:</p>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        {% if errors|length > 0 -%}
+        <ul>
+            {% for error in errors -%}
+            <li>{{ error }}</li>
+            {% endfor -%}
+        </ul>
+        {% endif -%}
+
+        <form action="{{ url_for('yara_remove') }}" method="post">
+            <input type="hidden" name="_csrf_token"
+                value="{{ csrf_token() }}" />
+
+            <div>
+                <label for="id_code">Removal Code</label>
+                <input type="text" name="removal_code" id="id_code"
+                    required="required" />
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
