@@ -2,14 +2,14 @@
 
 {% block explore_active %} class = "active" {% endblock %}
 {% block body %}
-        <h3><i>ScriptObservatory Yara Alerting</i></h3>
+        <h3><i>Support for Yara Alerts</i></h3>
         <p>
         Yara support is still experimental, but you can now be alerted whenever
         a resource is observed that matches a given Yara rule.
         
         <br><br>
         
-        To start using this feature, your email address needs to be on the list 
+        To start submitting rules, your email address needs to be on the list 
         of approved addresses. If you'd like to be added, 
         <a href="mailto:scriptobservatory@gmail.com" target="_blank">
         send me an email</a>.
@@ -22,18 +22,19 @@
         <br><br>
    
         The alerting system uses a <a href="https://en.wikipedia.org/wiki/Token_bucket#Overview" target="_blank">
-        "token bucket" scheme</a> to prevent a surge of matches from overloading your mailbox with emails. When you 
-        add a rule, it starts with 5 tokens. Each time an observed resource matches the rule, a token is taken away 
-        before an email is sent. Tokens are replenished at a rate of one token per minute, and each rule can have a maximum
-        of 10 tokens at one time.  If the token balance ever reaches zero, the rule is automatically removed from the database. 
+        "token bucket" scheme</a> to prevent a surge of matches from overloading your mailbox with emails. When a rule 
+        is added, it starts out with 5 "email tokens". Each time an observed resource is a match, a token is taken away 
+        and you're sent an alert by email. Tokens are replenished at a rate of one token per minute, and each rule has its
+        token balance capped at 10. If the token balance ever reaches zero, you'll be notified and the rule will be 
+        automatically removed from the database. 
    
         <br><br>
    
-        If a rule's balance ever reaches zero, you'll receive the same notification email you would have received 
-        if you had manually removed it by submitting the removal code.
- 
+        Retroactively scanning through everything that's been seen for files that match your Yara rule is 
+        coming soon.
+
         <br><br>
-        
+
         If you're already registered, submit a new rule by filling out the form below.
           
         </p>

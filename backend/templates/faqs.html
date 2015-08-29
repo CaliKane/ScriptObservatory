@@ -5,11 +5,11 @@
     <p>
       <h3><i>Where did this data come from?</i></h3>
       The data shown here was collected from browsers and web-crawlers using the <a target="_blank" href="https://github.com/andy11/ScriptObservatory#usage">ScriptObservatory Chrome Extension</a>. 
-      If you'd like to automatically add your observations to the database, the extension will be available for download in the next few months.
+      If you'd like to automatically add your observations to the database, the target release date for the extension is Fall 2015.
       <br><br>
       
       <h3><i>How does the Chrome Extension collect the data?</i></h3>
-      The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script". The extension stops the 
+      The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script" or "subframe". The extension stops the 
       browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
       back to the browser.
       <br><br>
@@ -20,8 +20,8 @@
       With the ScriptObservatory Chrome extension installed, your browser will send these three pieces of information to the ScriptObservatory backend each time you view a webpage:
       <ul>
         <li>The URL of the webpage</li>
-        <li>The URL of each piece of JavaScript included on the page</li>
-        <li>The SHA-256 hash of the content of each script you observe (inline & remote)</li>
+        <li>The URL of each piece of JavaScript and iframe included on the webpage</li>
+        <li>The SHA-256 hash of the content of each script and iframe you observe</li>
       </ul>
       <br>
       <h3><i>Can the ScriptObservatory Chrome Extension block these scripts before I run them?</i></h3>
