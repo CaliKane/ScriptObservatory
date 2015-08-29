@@ -22,6 +22,8 @@ from backend import db
 from backend.models import Webpage, Pageview, Resource, RoboTask, Suggestions, \
                            YaraRuleset
 from backend.tasks import yara_scan_file
+from backend.lib import sendmail
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
 import external.jsbeautifier
 
@@ -117,6 +119,12 @@ def yara_index():
                 ruleset = YaraRuleset(email, namespace, source, True)
                 db.session.add(ruleset)
                 db.session.commit()
+
+                # send email
+                r = {'email': email, 'content': source, 'removal_code': 'xxx'}
+                sendmail(email,
+                        'New YARA Rule Added! {}'.format(namespace),
+                        render_template('email/yara_welcome.html', rule=r))
 
                 flash("Rules successfully added!")
                 return redirect(url_for('yara_index'))
