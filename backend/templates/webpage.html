@@ -69,12 +69,20 @@
     var svg = d3.select("plot").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .style("margin-left", margin.left + "px")
+        .style("background-color", "#F0F0F0")
+        //.style("margin-left", margin.left + "px")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     function get_color_from_hash(h){
-        return "#" + h.substring(0,6);
+        var color = "#" + h.substring(0,6);
+        console.log(color);
+        // temp hack to reduce the very light-colored colors chosed
+        color = color.replace("f", "5");
+        color = color.replace("e", "4");
+        color = color.replace("d", "3");
+        console.log(color);
+        return color;
     }
         
     function initialize_data(){
