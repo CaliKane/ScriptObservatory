@@ -1,3 +1,4 @@
+import datetime
 import gzip
 import hashlib
 import os
@@ -9,7 +10,7 @@ from celery.decorators import task
 from flask import render_template
 import yara
 
-from backend import app
+from backend import app, db
 from backend.lib import sendmail
 from backend.models import Resource, YaraRuleset
 
@@ -39,6 +40,9 @@ celery = make_celery(app)
 
 @task(rate_limit="1/s")
 def yara_report_matches(email, namespace, hashes):
+    print("got match for {0} - {1} !".format(email, namespace))
+
+    now = datetime.datetime.now()
     matches = []
     
     for hash in hashes:
@@ -47,9 +51,37 @@ def yara_report_matches(email, namespace, hashes):
         new_match = {'hash': hash, 'urls': urls}
         matches.append(new_match)
 
+    rule = YaraRuleset.query.filter_by(email=email, namespace=namespace).first()
+    
+    if rule.email_tokens is None: 
+        rule.email_tokens = 5
+    
+    print("email tokens = {}".format(rule.email_tokens))
+
+    if rule.last_received_tokens is None:
+        rule.last_received_tokens = now
+
+    print("last rx tokens = {}".format(rule.last_received_tokens))
+
+    rule.email_tokens -= 1
+    rule.email_tokens = min(10, rule.email_tokens + (now - rule.last_received_tokens) // datetime.timedelta(minutes=1))
+    rule.last_received_tokens = now
+
+    print("at end, email tokens = {}".format(rule.email_tokens))
+
     sendmail(email, 
              'YARA Scan Results (success!): {}'.format(namespace), 
-             render_template('email/yara_match.html', matches=matches))
+             render_template('email/yara_match.html', matches=matches, tokens=rule.email_tokens))
+
+    if rule.email_tokens <= 0:
+        print("removing rule!")
+        sendmail(rule.email,
+                 'YARA Rule Removed ({})'.format(rule.namespace),
+                  render_template('email/yara_goodbye.html', rule=rule))
+
+        db.session.delete(rule)
+
+    db.session.commit()
 
 
 @task(time_limit=3600)
@@ -98,9 +130,10 @@ def yara_scan_file_for_email(email, path):
 
         def matchcb(data):
             if data['matches']:
-                yara_report_matches.apply_async(args=(email, data['namespace'], 
+                yara_report_matches.apply_async(args=(email, 
+                                                      data['namespace'], 
                                                       [path.split('/')[-1].split('.')[0]]), 
-                                                countdown=60)
+                                                countdown=10)
             return yara.CALLBACK_CONTINUE
 
         try:

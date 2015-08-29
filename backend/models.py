@@ -72,6 +72,7 @@ class YaraRuleset(db.Model):
     scan_on_upload = db.Column(db.Boolean)
     removal_code = db.Column(db.Unicode(255))
     email_tokens = db.Column(db.Integer)
+    last_received_tokens = db.Column(db.DateTime)
 
     def __init__(self, email, namespace, source, scan):
         self.email = email
@@ -79,7 +80,8 @@ class YaraRuleset(db.Model):
         self.source = source
         self.scan_on_upload = scan
         
-        self.email_tokens = 10
+        self.last_received_tokens = datetime.datetime.now()
+        self.email_tokens = 5
         self.removal_code = ''.join(random.choice(string.ascii_letters) for _ in range(32))
 
         # we test out compiling the yara rule now so that an

@@ -4,6 +4,11 @@ rule or query the server directly.
 
 <br><br>
 
+For your reference, this rule has {{ tokens }} email tokens left. These will automatically replenish
+over time. For more information about the rate limiting system, see the main Yara page.
+
+<br><br>
+
 We found {{ matches | length }} matching hashes:
 
 <br><br>
@@ -20,10 +25,15 @@ We found {{ matches | length }} matching hashes:
 
     <ul>
     {% for url in match.urls -%}
-        <li><a href="https://scriptobservatory.org/webpage/{{ url.webpage_hash }}">{{ url.webpage_url }}</a> (<a href="https://scriptobservatory.org/explore.html?query={{ url.resource_url }}">{{ url.resource_url }}</a>)</li>
+        <li>
+          <a href="https://scriptobservatory.org/webpage/{{ url.webpage_hash }}">{{ url.webpage_url }}</a> 
+          (<a href="https://scriptobservatory.org/explore.html?query={{ url.resource_url }}">{{ url.resource_url }}</a>)
+        </li>
     {% endfor -%}
     </ul>
 
     <br><br><br>
 {% endfor -%}
+
+<br><br>
 
