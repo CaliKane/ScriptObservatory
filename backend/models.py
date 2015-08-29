@@ -1,4 +1,6 @@
 import datetime
+import random
+import string
 
 import yara
 
@@ -68,13 +70,21 @@ class YaraRuleset(db.Model):
     namespace = db.Column(db.Unicode(255))
     source = db.Column(db.Unicode(40960))
     scan_on_upload = db.Column(db.Boolean)
+    removal_code = db.Column(db.Unicode(255))
+    email_tokens = db.Column(db.Integer)
 
     def __init__(self, email, namespace, source, scan):
         self.email = email
         self.namespace = namespace
         self.source = source
         self.scan_on_upload = scan
+        
+        self.email_tokens = 10
+        self.removal_code = ''.join(random.choice(string.ascii_letters) for _ in range(32))
 
+        # we test out compiling the yara rule now so that an
+        # invalid rule can not be instantiated, but instead 
+        # will throw an exception.
         test_sources = {self.namespace: self.source}
         yara_rule = yara.compile(sources=test_sources)
    
