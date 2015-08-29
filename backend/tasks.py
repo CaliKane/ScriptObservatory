@@ -1,5 +1,7 @@
 import gzip
+import hashlib
 import os
+import sqlalchemy
 import sys
 
 from celery import Celery
@@ -10,6 +12,10 @@ import yara
 from backend import app
 from backend.lib import sendmail
 from backend.models import Resource, YaraRuleset
+
+
+def sha256(string):
+    return hashlib.sha256(string.encode('utf-8')).hexdigest()
 
 
 def make_celery(app):
@@ -31,13 +37,13 @@ def make_celery(app):
 celery = make_celery(app)
 
 
-@task
+@task(rate_limit="1/s")
 def yara_report_matches(email, namespace, hashes):
     matches = []
     
     for hash in hashes:
         record = Resource.query.filter(Resource.hash == hash).limit(app.config['MAX_PAGES_PER_HASH']).all() 
-        urls = [{'webpage_url': r.pageview.url, 'resource_url': r.url} for r in record]
+        urls = [{'webpage_url': r.pageview.url, 'webpage_hash': sha256(r.pageview.url), 'resource_url': r.url} for r in record]
         new_match = {'hash': hash, 'urls': urls}
         matches.append(new_match)
 
@@ -79,41 +85,46 @@ def yara_retroscan_for_rule(rule_id):
     os.nice(0)
 
 
-@task
+@task(rate_limit="2/s")
 def yara_scan_file_for_email(email, path):
     # TODO: filter for 'scan_on_upload==True' too
     # TODO: store compiled rules in database to avoid re-compiling?
-    rulesets = YaraRuleset.query.filter_by(email=email).all()
-    sources = {}
-    
-    for r in rulesets:
-        sources[r.namespace] = r.source
-
-    def matchcb(data):
-        if data['matches']:
-            yara_report_matches.apply_async(args=(email, data['namespace'], 
-                                                  [path.split('/')[-1].split('.')[0]]), 
-                                            countdown=60)
-        return yara.CALLBACK_CONTINUE
-
     try:
-        rules = yara.compile(sources=sources)
-    except:
-        sendmail(email, 
-                 'YARA Scan Results (error in rule compilation!)', 
-                 render_template('email/yara_error.html'))
+        rulesets = YaraRuleset.query.filter_by(email=email).all()
+        sources = {}
+        
+        for r in rulesets:
+            sources[r.namespace] = r.source
 
-    with gzip.open(path, 'rb') as f:
+        def matchcb(data):
+            if data['matches']:
+                yara_report_matches.apply_async(args=(email, data['namespace'], 
+                                                      [path.split('/')[-1].split('.')[0]]), 
+                                                countdown=60)
+            return yara.CALLBACK_CONTINUE
+
         try:
-            rules.match(data=f.read(), callback=matchcb)
+            rules = yara.compile(sources=sources)
         except:
-            sendmail(email,
-                     'YARA Livescan Results (error while reading file / matching ruleset!)',
+            sendmail(email, 
+                     'YARA Scan Results (error in rule compilation!)', 
                      render_template('email/yara_error.html'))
 
+        with gzip.open(path, 'rb') as f:
+            try:
+                rules.match(data=f.read(), callback=matchcb)
+            except:
+                sendmail(email,
+                         'YARA Livescan Results (error while reading file / matching ruleset!)',
+                         render_template('email/yara_error.html'))
+    except (sqlalchemy.exc.DatabaseError, sqlalchemy.exc.OperationalError) as exc:
+        print("retrying....")
+        raise self.retry(exc=exc)
 
-@task
+
+@task(rate_limit="3/s")
 def yara_scan_file(path):
+    print(path)
     emails = YaraRuleset.query.with_entities(YaraRuleset.email).group_by(YaraRuleset.email).all()
     for email in emails:
         yara_scan_file_for_email.delay(email[0], path)
