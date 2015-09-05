@@ -38,7 +38,7 @@ def make_celery(app):
 celery = make_celery(app)
 
 
-@task(rate_limit="1/s")
+@task
 def yara_report_matches(email, namespace, hashes):
     print("got match for {0} - {1} !".format(email, namespace))
 
@@ -92,6 +92,7 @@ def yara_retroscan_for_rule(rule_id):
     try:
         yara_rule = yara.compile(sources=sources)
     except:
+        # TODO: this should never happen, so this email should go to the site admin
         sendmail(rule.email, 'YARA Retroscan Results (error in rule compilation!)', render_template('email/yara_error.html'))
         return
 
@@ -117,7 +118,7 @@ def yara_retroscan_for_rule(rule_id):
     os.nice(0)
 
 
-@task(rate_limit="2/s")
+@task
 def yara_scan_file_for_email(email, path):
     # TODO: filter for 'scan_on_upload==True' too
     # TODO: store compiled rules in database to avoid re-compiling?
@@ -136,26 +137,35 @@ def yara_scan_file_for_email(email, path):
                                                 countdown=10)
             return yara.CALLBACK_CONTINUE
 
+        # TODO: these "except" clauses should be consolidated and should catch
+        #       specific exceptions.
         try:
             rules = yara.compile(sources=sources)
+            
+            with gzip.open(path, 'rb') as f:
+                try:
+                    rules.match(data=f.read(), callback=matchcb)
+    
+                except:
+                    # TODO: this should never happen, so this email should 
+                    #       go to the site admin
+                    sendmail('scriptobservatory@gmail.com',
+                             'YARA Livescan Results (error while reading file / matching ruleset!)',
+                             render_template('email/yara_error.html'))
+
         except:
-            sendmail(email, 
+            # TODO: this should never happen, so this email should go to the site admin
+            sendmail('scriptobservatory@gmail.com', 
                      'YARA Scan Results (error in rule compilation!)', 
                      render_template('email/yara_error.html'))
 
-        with gzip.open(path, 'rb') as f:
-            try:
-                rules.match(data=f.read(), callback=matchcb)
-            except:
-                sendmail(email,
-                         'YARA Livescan Results (error while reading file / matching ruleset!)',
-                         render_template('email/yara_error.html'))
+
     except (sqlalchemy.exc.DatabaseError, sqlalchemy.exc.OperationalError) as exc:
         print("retrying....")
         raise self.retry(exc=exc)
 
 
-@task(rate_limit="3/s")
+@task
 def yara_scan_file(path):
     print(path)
     emails = YaraRuleset.query.with_entities(YaraRuleset.email).group_by(YaraRuleset.email).all()
