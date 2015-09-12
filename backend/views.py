@@ -387,14 +387,14 @@ def webpage_view(hash):
             after processing is finished.
             
             WARNING: neither *eval_condition* or *eval_rekey* should ever be user-controlled! """
-
-        new_rsc_dict = {}
-        print("timing: n old_rsc_dict keys: {}".format(len(old_rsc_dict.keys())))
         n = 0
-        for old_rsc_key in old_rsc_dict.keys():
+        new_rsc_dict = {}
+        for old_rsc_key in sorted(old_rsc_dict.keys(), key=lambda x: len(old_rsc_dict[x]), reverse=True):
+            # we iterate through the keys in order of decreasing numbers of values so that we first try
+            # to align the resources with the most observations, then settle on aligning the more sparsely
+            # seen resources. 
             placement_success = False
-            print("timing: n new_rsc_dict keys: {}".format(len(new_rsc_dict.keys())))
-            for new_rsc_key in new_rsc_dict.keys():
+            for new_rsc_key in sorted(new_rsc_dict.keys(), key=lambda x: len(new_rsc_dict[x]), reverse=True):
                 if eval(eval_condition) and not date_collision_present(old_rsc_dict[old_rsc_key], new_rsc_dict[new_rsc_key]):
                     if old_rsc_key.startswith('inline_script_* '):
                         k = old_rsc_key
@@ -405,7 +405,6 @@ def webpage_view(hash):
                         val = old_rsc_dict[old_rsc_key] + new_rsc_dict[new_rsc_key]
                         del new_rsc_dict[new_rsc_key]
                         new_rsc_dict[k] = val
-                        print("{0} --> {1}".format(k, val))
                         placement_success = True
                         n += 1
                         break
@@ -458,19 +457,20 @@ def webpage_view(hash):
     #
     # TODO: do matching against *any*, not just first entry 
     # TODO: clean/refactor and only define one side of the equals sign
-
     MAX_ALIGNMENT_TIME = 15
     start_time = time.time()
-    print("timing: start")
-    print("timing: {}".format(time.time()))
+    
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        # we do not try to efficiently solve the bin-packing problem and pack these inline_scripts 
+        # as space-efficiently as possible. this is good enough for now.
         resources = exp_filter(resources,
                                "old_rsc_dict[old_rsc_key][0]['url'].startswith('inline_') "
                                 "and "
                                 "new_rsc_dict[new_rsc_key][0]['url'].startswith('inline_')",
-                               "'inline_script_* {}'.format(n)")
+                               "'inline_script_* {}'.format(' '*n)")  # these ' 's will be stripped off in the JS, we need
+                                                                      # each key to be guaranteed unique, so this is good
+                                                                      # enough for now but hacky.
     
-    print("timing: {}".format(time.time()))
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
         resources = exp_filter(resources,
                                "not old_rsc_dict[old_rsc_key][0]['url'].startswith('inline_') "
@@ -478,24 +478,21 @@ def webpage_view(hash):
                                  "urlparse(new_rsc_dict[new_rsc_key][0]['url']).netloc"
                                  " == "
                                  "urlparse(old_rsc_dict[old_rsc_key][0]['url']).netloc",
-                               "'Resource from {0} {1}'.format(urlparse(new_rsc_dict[new_rsc_key][0]['url']).netloc, n)")
+                               "'Rsrc from {0} {1}'.format(urlparse(new_rsc_dict[new_rsc_key][0]['url']).netloc, ' '*n)")
 
-  
-    print("timing: {}".format(time.time()))
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
         resources = exp_filter(resources,   
                                "urlparse(old_rsc_dict[old_rsc_key][0]['url']).path.split('/')[-1]"
                                  " == "
                                  "urlparse(new_rsc_dict[new_rsc_key][0]['url']).path.split('/')[-1]", 
-                               "'Resource with filename {}'.format(urlparse(old_rsc_dict[old_rsc_key][0]['url']).path.split('/')[-1])")
+                               "'Rsrc with filename {}'.format(urlparse(old_rsc_dict[old_rsc_key][0]['url']).path.split('/')[-1])")
         
-    print("timing: {}".format(time.time()))
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
         resources = exp_filter(resources,
                                "new_rsc_dict[new_rsc_key][0]['hash']"
                                  " == "
                                  "old_rsc_dict[old_rsc_key][0]['hash']",
-                               "'Resource with hash {0}'.format(new_rsc_dict[new_rsc_key][0]['hash'][:12])")
+                               "'Rsrc with hash {0}'.format(new_rsc_dict[new_rsc_key][0]['hash'][:12])")
 
     # Reduce the results to the expected JSON format
     final_resources = []

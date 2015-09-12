@@ -63,6 +63,7 @@
     var xAxis = d3.svg.axis().scale(x).orient("top").tickFormat(formatDays);
 
     function truncate(str, maxLength) {
+        str = str.trim()
         if(str.length > maxLength) {
             str = str.substring(0, maxLength + 1); 
             str += "...";
