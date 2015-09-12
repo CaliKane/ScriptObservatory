@@ -28,6 +28,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
 import external.jsbeautifier
 
 
+def memoize(f):
+    """ from http://www.python-course.eu/python3_memoization.php """
+    memo = {}
+    def helper(x):
+        if x not in memo:            
+            memo[x] = f(x)
+        return memo[x]
+    return helper
+
+urlparse = memoize(urlparse)
+
+
 def verify_ip_is_authorized(**kw):
     """ check to see if the request's IP is in the whitelist. If it's not, report
         the IP to the suggestions API (for now) and don't let the request proceed """
@@ -51,39 +63,32 @@ def get_resource_content_location(hash):
     return directory, '{0}.txt.gz'.format(f)
 
 
-def date_collision_present(list_a, list_b):
-    """ detect if any two objects from two different lists contain the same 'date'
-        (helper function for resource alignment algorithm) """ 
-    for a in list_a:
-        for b in list_b:
-            if a['date'] == b['date']:
-                return True
-    return False
-
-
 def view_list_sorter(a, b):
     """ custom sorting algorithm for experimental resource visualization """
     # put inline_scripts_ last by default
     if a['name'].startswith('inline_') and not b['name'].startswith('inline_'):
         return 1
-    
     elif b['name'].startswith('inline_') and not a['name'].startswith('inline_'):
         return -1
 
-    # then put those with the most entries towards the top
-    if a['total'] > b['total']: 
+    # then put those with significantly more entries towards the top
+    if a['total'] > b['total']*1.1: 
         return -1
-
-    elif b['total'] > a['total']: 
+    elif b['total'] > a['total']*1.1: 
         return 1
-    
+
     # then try to put those with more recent "last seen" dates towards the top
     if a['views'][-1]['date'] > b['views'][-1]['date']: 
         return -1
-
     elif b['views'][-1]['date'] > a['views'][-1]['date']: 
         return 1
-
+     
+    # sort alphabetically by resource name
+    if a['name'] > b['name']:
+        return -1
+    elif b['name'] > a['name']:
+        return 1
+ 
     return 0
 
 
@@ -366,30 +371,49 @@ def search_api():
 
 @app.route('/webpage/<hash>', methods=['GET'])
 def webpage_view(hash):
-    def exp_filter(old_rsc, eval_condition, eval_rekey):
+    def date_collision_present(list_a, list_b):
+        """ detect if any two objects from two different lists contain the same 'date'
+            (helper function for resource alignment algorithm) """ 
+        dates_a = list(map(lambda x: x['date'], list_a))
+        dates_b = list(map(lambda x: x['date'], list_b))
+        if len(set(dates_a)) + len(set(dates_b)) == len(set(dates_a + dates_b)):
+            return False
+        else:
+            return True
+
+    def exp_filter(old_rsc_dict, eval_condition, eval_rekey):
         """ Helper function that combines two resource lists if there's no date collision 
             and *eval_condition* is met. The *old_rsc* dict is rekeyed with *eval_rekey*
             after processing is finished.
             
             WARNING: neither *eval_condition* or *eval_rekey* should ever be user-controlled! """
 
-        new_rsc = {}
-        for old_rsc_key in old_rsc.keys():
+        new_rsc_dict = {}
+        print("timing: n old_rsc_dict keys: {}".format(len(old_rsc_dict.keys())))
+        n = 0
+        for old_rsc_key in old_rsc_dict.keys():
             placement_success = False
-            for new_rsc_key in new_rsc.keys():
-                if eval(eval_condition) and not date_collision_present(old_rsc[old_rsc_key], new_rsc[new_rsc_key]):
-                    k = eval(eval_rekey)
-                    val = old_rsc[old_rsc_key] + new_rsc[new_rsc_key]
-                    del new_rsc[new_rsc_key]
-                    new_rsc[k] = val
-                    placement_success = True
-                    break
+            print("timing: n new_rsc_dict keys: {}".format(len(new_rsc_dict.keys())))
+            for new_rsc_key in new_rsc_dict.keys():
+                if eval(eval_condition) and not date_collision_present(old_rsc_dict[old_rsc_key], new_rsc_dict[new_rsc_key]):
+                    if old_rsc_key.startswith('inline_script_* '):
+                        k = old_rsc_key
+                    else:
+                        k = eval(eval_rekey)
+                    
+                    if k:
+                        val = old_rsc_dict[old_rsc_key] + new_rsc_dict[new_rsc_key]
+                        del new_rsc_dict[new_rsc_key]
+                        new_rsc_dict[k] = val
+                        print("{0} --> {1}".format(k, val))
+                        placement_success = True
+                        n += 1
+                        break
 
             if placement_success == False:
-                url = old_rsc[old_rsc_key][0]['url']
-                new_rsc[url] = old_rsc[old_rsc_key]
+                new_rsc_dict[old_rsc_key] = old_rsc_dict[old_rsc_key]
         
-        return new_rsc
+        return new_rsc_dict
 
     webpage = Webpage.query.filter(Webpage.id == hash).first()
     if webpage is None:
@@ -397,27 +421,37 @@ def webpage_view(hash):
 
     ## Pull out all relevant resources
     FIRST_T = False
+    MAX_RESOURCES = 5000
     resources = {}
     i = 0
-    for pv in webpage.pageviews:
+    for pv in sorted(webpage.pageviews, key=lambda x: x.date, reverse=True):
         for r in pv.resources:
-            resources[str(i)] = [{'url': r.url, 
-                                  'hash': r.hash, 
-                                  'parent_url': r.pageview.url, 
-                                  'date': pv.date}]
+            new_rsc = {'url': r.url, 
+                       'hash': r.hash, 
+                       'parent_url': r.pageview.url, 
+                       'date': pv.date}
             
+            if r.url in resources.keys():
+                resources[r.url].append(new_rsc)
+            else: 
+                resources[r.url] = [new_rsc]
+
             i += 1
+            if i >= MAX_RESOURCES:
+                break
 
         if not FIRST_T or pv.date < FIRST_T:
             FIRST_T = pv.date
     
-    #
+        if i >= MAX_RESOURCES:
+            break
+
     # Align our resources as best we can, following the order:
+    # - collapse inline_scripts as much as possible
     # - equal urls
     # - equal filenames
     # - equal hash values
     # - equal subdomains & paths
-    # - (lastly) collapse inline_scripts as much as possible
     #
     # We do the best we can, but our hard limit for the time we're
     # willing to spend on alignment is 5s (for now).
@@ -425,42 +459,44 @@ def webpage_view(hash):
     # TODO: do matching against *any*, not just first entry 
     # TODO: clean/refactor and only define one side of the equals sign
 
-    MAX_ALIGNMENT_TIME = 5
+    MAX_ALIGNMENT_TIME = 15
     start_time = time.time()
-    resources = exp_filter(resources, 
-                           "new_rsc[new_rsc_key][0]['url'] == old_rsc[old_rsc_key][0]['url']", 
-                           "new_rsc_key")
+    print("timing: start")
+    print("timing: {}".format(time.time()))
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,
+                               "old_rsc_dict[old_rsc_key][0]['url'].startswith('inline_') "
+                                "and "
+                                "new_rsc_dict[new_rsc_key][0]['url'].startswith('inline_')",
+                               "'inline_script_* {}'.format(n)")
+    
+    print("timing: {}".format(time.time()))
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,
+                               "not old_rsc_dict[old_rsc_key][0]['url'].startswith('inline_') "
+                                 "and "
+                                 "urlparse(new_rsc_dict[new_rsc_key][0]['url']).netloc"
+                                 " == "
+                                 "urlparse(old_rsc_dict[old_rsc_key][0]['url']).netloc",
+                               "'Resource from {0} {1}'.format(urlparse(new_rsc_dict[new_rsc_key][0]['url']).netloc, n)")
 
+  
+    print("timing: {}".format(time.time()))
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
         resources = exp_filter(resources,   
-                               "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]"
+                               "urlparse(old_rsc_dict[old_rsc_key][0]['url']).path.split('/')[-1]"
                                  " == "
-                                 "urlparse(new_rsc[new_rsc_key][0]['url']).path.split('/')[-1]", 
-                               "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]")
+                                 "urlparse(new_rsc_dict[new_rsc_key][0]['url']).path.split('/')[-1]", 
+                               "'Resource with filename {}'.format(urlparse(old_rsc_dict[old_rsc_key][0]['url']).path.split('/')[-1])")
         
+    print("timing: {}".format(time.time()))
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
         resources = exp_filter(resources,
-                               "new_rsc[new_rsc_key][0]['hash']"
+                               "new_rsc_dict[new_rsc_key][0]['hash']"
                                  " == "
-                                 "old_rsc[old_rsc_key][0]['hash']",
-                               "new_rsc[new_rsc_key][0]['hash']")
+                                 "old_rsc_dict[old_rsc_key][0]['hash']",
+                               "'Resource with hash {0}'.format(new_rsc_dict[new_rsc_key][0]['hash'][:12])")
 
-    if time.time() - start_time < MAX_ALIGNMENT_TIME:
-        resources = exp_filter(resources,
-                               "not old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
-                                 "and "
-                                 "new_rsc[new_rsc_key][0]['url'].split('/')[:-1]"
-                                 " == "
-                                 "old_rsc[old_rsc_key][0]['url'].split('/')[:-1]",
-                               "'Resource from {0}'.format(urlparse(new_rsc[new_rsc_key][0]['url']).netloc)")
-         
-    if time.time() - start_time < MAX_ALIGNMENT_TIME:
-        resources = exp_filter(resources,
-                               "old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
-                                "and "
-                                "new_rsc[new_rsc_key][0]['url'].startswith('inline_')",
-                               "'inline_script_*'")
-        
     # Reduce the results to the expected JSON format
     final_resources = []
     for ind, key in enumerate(resources.keys()):
