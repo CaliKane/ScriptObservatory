@@ -16,15 +16,15 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/bin
 0 0 * * 0,1,3,5 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 5 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/03-four-times-weekly/*  >> /tmp/cron
 
 # 04-twice-weekly (priority 6)
-0 0 * * 2,5 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 6 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/04-twice-weekly/* >> /tmp/cron
+#0 0 * * 2,5 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 6 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/04-twice-weekly/* >> /tmp/cron
 
 # 05-weekly (priority 7)
-0 0 * * 6 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 7 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/05-weekly/* >> /tmp/cron
+#0 0 * * 6 /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 7 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/05-weekly/* >> /tmp/cron
 
 # 06-twice-monthly (priority 8)
-0 0 1,15 * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 8 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/06-twice-monthly/*  >> /tmp/cron
+#0 0 1,15 * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 8 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/06-twice-monthly/*  >> /tmp/cron
 
 # 07-monthly (priority 9)
-0 0 8 * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 9 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/07-monthly/*  >> /tmp/cron
+#0 0 8 * * /home/andy/projects/ScriptObservatory/robo-browser/robo-scheduler.py 9 /home/andy/projects/ScriptObservatory/robo-browser/website-lists/07-monthly/*  >> /tmp/cron
 
 
