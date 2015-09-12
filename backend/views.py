@@ -419,38 +419,48 @@ def webpage_view(hash):
     # - equal subdomains & paths
     # - (lastly) collapse inline_scripts as much as possible
     #
+    # We do the best we can, but our hard limit for the time we're
+    # willing to spend on alignment is 5s (for now).
+    #
     # TODO: do matching against *any*, not just first entry 
     # TODO: clean/refactor and only define one side of the equals sign
+
+    MAX_ALIGNMENT_TIME = 5
+    start_time = time.time()
     resources = exp_filter(resources, 
                            "new_rsc[new_rsc_key][0]['url'] == old_rsc[old_rsc_key][0]['url']", 
                            "new_rsc_key")
 
-    resources = exp_filter(resources,   
-                           "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]"
-                             " == "
-                             "urlparse(new_rsc[new_rsc_key][0]['url']).path.split('/')[-1]", 
-                           "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]")
-    
-    resources = exp_filter(resources,
-                           "new_rsc[new_rsc_key][0]['hash']"
-                             " == "
-                             "old_rsc[old_rsc_key][0]['hash']",
-                           "new_rsc[new_rsc_key][0]['hash']")
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,   
+                               "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]"
+                                 " == "
+                                 "urlparse(new_rsc[new_rsc_key][0]['url']).path.split('/')[-1]", 
+                               "urlparse(old_rsc[old_rsc_key][0]['url']).path.split('/')[-1]")
+        
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,
+                               "new_rsc[new_rsc_key][0]['hash']"
+                                 " == "
+                                 "old_rsc[old_rsc_key][0]['hash']",
+                               "new_rsc[new_rsc_key][0]['hash']")
 
-    resources = exp_filter(resources,
-                           "not old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
-                             "and "
-                             "new_rsc[new_rsc_key][0]['url'].split('/')[:-1]"
-                             " == "
-                             "old_rsc[old_rsc_key][0]['url'].split('/')[:-1]",
-                           "'Resource from {0}'.format(urlparse(new_rsc[new_rsc_key][0]['url']).netloc)")
-     
-    resources = exp_filter(resources,
-                           "old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
-                             "and "
-                             "new_rsc[new_rsc_key][0]['url'].startswith('inline_')",
-                           "'inline_script_*'")
-    
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,
+                               "not old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
+                                 "and "
+                                 "new_rsc[new_rsc_key][0]['url'].split('/')[:-1]"
+                                 " == "
+                                 "old_rsc[old_rsc_key][0]['url'].split('/')[:-1]",
+                               "'Resource from {0}'.format(urlparse(new_rsc[new_rsc_key][0]['url']).netloc)")
+         
+    if time.time() - start_time < MAX_ALIGNMENT_TIME:
+        resources = exp_filter(resources,
+                               "old_rsc[old_rsc_key][0]['url'].startswith('inline_') "
+                                "and "
+                                "new_rsc[new_rsc_key][0]['url'].startswith('inline_')",
+                               "'inline_script_*'")
+        
     # Reduce the results to the expected JSON format
     final_resources = []
     for ind, key in enumerate(resources.keys()):
