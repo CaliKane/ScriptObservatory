@@ -73,6 +73,7 @@
     var svg = d3.select("plot").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .attr("font-family", "Courier, monospace")
         .style("background-color", "#F0F0F0")
         //.style("margin-left", margin.left + "px")
         .append("g")
@@ -128,7 +129,7 @@
                 .attr("x", 0)
                 .attr("y", 45 + j*height_per_row)
                 .attr("class","label")
-                .text(truncate(data[j]['name'], 35))
+                .text(truncate(data[j]['name'], 37))
                 .style("fill", function(d, i) { return j; })
         };
 
