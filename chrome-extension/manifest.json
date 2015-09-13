@@ -21,6 +21,7 @@
 
     "background": {
         "scripts": [
+            "js/settings.js",
             "js/sha256.js",
             "js/extension.js"
         ],
