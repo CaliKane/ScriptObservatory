@@ -184,12 +184,14 @@ def get_resource_content(hash, beautify=True):
             content = f.read().decode('utf-8')
 
     if beautify:
-        content = external.jsbeautifier.beautify(content, opts)
+        beautified_content = external.jsbeautifier.beautify(content, opts)
     else:
-        content = html.escape(content)
-
-    return render_template('resource-content/view_script_content.html',
-                           scriptcontent=[{'hash': hash, 'content': content}],
+        beautified_content = ""
+    
+    return render_template('resource_content.html',
+                           scriptcontent=[{'hash': hash, 
+                                           'content': content,
+                                           'beautified_content': beautified_content}],
                            beautified=beautify)
 
 # TODO: handle 'sub_frame' type too

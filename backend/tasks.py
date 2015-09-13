@@ -162,7 +162,7 @@ def yara_scan_file_for_email(email, path):
 
     except (sqlalchemy.exc.DatabaseError, sqlalchemy.exc.OperationalError) as exc:
         print("retrying....")
-        raise self.retry(exc=exc)
+        #raise yara_scan_file_for_email.retry(exc=exc)
 
 
 @task

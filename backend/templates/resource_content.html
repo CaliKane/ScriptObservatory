@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block explore_active %} class = "active" {% endblock %}
+ 
+{% block body %}
+  {% for sc in scriptcontent -%}
+      <h4><b>Archived Content for <span style="font-family:'Courier New', Courier, monospace, sans-serif;">{{ sc.hash }}</span>:</b></h4>
+      
+      {% if beautified_content != "" %}
+      <i>This copy has been cleaned up with <a href="https://github.com/beautify-web/js-beautify" target="_blank">js-beautify</a> (scroll down for the original)</i>
+      <br>
+      <pre style="white-space:pre-wrap; font-size:11px; font-family:'Courier New', Courier, monospace, sans-serif;">{{ sc.beautified_content }}</pre>
+      <br>
+      <br>
+      {% endif %}
+
+      <i>This is what was originally observed:</i>
+      <br>
+      <pre style="white-space:pre-wrap; font-size:11px; font-family:'Courier New', Courier, monospace, sans-serif;">{{ sc.content }}</pre>
+
+  {% endfor -%}
+{% endblock %}
