@@ -22,12 +22,19 @@ CONTENT_API_URL = "https://scriptobservatory.org/api/resource-content";
 /*
  * Global Variables / Data Structures
  * ----------------------------------
+ * These should eventually be refactored out, but for now they are:
+ *
  * - RESOURCES: Maps the tabId to a dictionary containing the tab's URL and loaded JavaScript
- * - resources_to_send --> temporarily global until refactor (TODO)
+ *
+ *       if the settings allow, data is sent to one of two queues before sending:
+ *
+ * - METADATA_QUEUE: Queue for sending the *metadata* of the resources observed
+ * - CONTENT_QUEUE: Queue for sending the *content* of the resources observed
+ *
  */
 var RESOURCES = {};
+var METADATA_QUEUE = [];
 var CONTENT_QUEUE = {};
-var resources_to_send = [];
 
 
 /*
@@ -43,6 +50,7 @@ function httpGet(url){
     xmlHttp.send();
     return xmlHttp.responseText;  
 }
+
 
 /*
  * httpPatch(url, data)
@@ -78,6 +86,7 @@ function httpPatch(site_url, data){
     
     contentFlushQueue();
 }
+
 
 /*
  * httpPost(url, data)
@@ -179,7 +188,6 @@ function contentFlushQueue(){
  * More general information is available in the chrome.webRequest docs: 
  *   http://developer.chrome.com/extensions/webRequest
  */
-
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         if (GENERAL_REPORTING_ON == false){
@@ -281,7 +289,6 @@ chrome.webRequest.onBeforeRequest.addListener(
  * collected and send a POST request to the PAGEVIEW_API_URL with the browsing data 
  * from RESOURCES. 
  */
-
 var onCompleteListener = function(details){
     if (GENERAL_REPORTING_ON == false){
         return {cancel: false}; 
@@ -298,7 +305,7 @@ var onCompleteListener = function(details){
     if ("resources" in details && typeof details["resources"] != 'undefined'){
         // we were triggered by a main_frame request
         // TODO: hacky & should be refactored
-        resources_to_send = details.resources;
+        METADATA_QUEUE = details.resources;
     }
     else {
         // we were triggered by onCompleted
@@ -306,7 +313,7 @@ var onCompleteListener = function(details){
             console.log("a main_frame request has already caused us to upload this pageview");
             return; 
         }
-        resources_to_send = RESOURCES[tabId]["resources"];
+        METADATA_QUEUE = RESOURCES[tabId]["resources"];
         delete RESOURCES[tabId];
     }
 
@@ -329,11 +336,11 @@ var onCompleteListener = function(details){
                 var hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Base64);
                 var url = "inline_script_" + hash.slice(0,18);
                 
-                resources_to_send.push({"url": url, "hash": hash, "type": "script"});
+                METADATA_QUEUE.push({"url": url, "hash": hash, "type": "script"});
                 contentQueue({"sha256": hash, "content": data}, details.url);
             }
 
-            httpPatch(details.url, {"resources": resources_to_send});
+            httpPatch(details.url, {"resources": METADATA_QUEUE});
         }
     });
 };

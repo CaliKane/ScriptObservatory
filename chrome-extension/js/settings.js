@@ -152,5 +152,6 @@ function regexArrayToStrings(cur_val, ind, arr){
     return str.substr(1, str.length - 3);
 }
 
+
 getSettings();
 
