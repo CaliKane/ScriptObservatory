@@ -7,7 +7,7 @@
       <div class="form-group" align="center">
         <div class="col-sm-2"></div>
         <div class="col-sm-6">
-          <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 (https://scriptobservatory.org)"> 
+          <input type="text" class="form-control" id="queryField" name="url" ng-model="parentQueryText" placeholder="URL or SHA-256 hash (https://scriptobservatory.org)"> 
         </div>
         <div class="col-sm-1">
         <label for="queryField"> 
@@ -39,8 +39,12 @@
         <li><a href="#" ng-click='submitQuery("http://platform.twitter.com/widgets.js");'>http://platform.twitter.com/widgets.js</a></li>
       </ul>
       <br>
-      <h3><i>Got Yara signatures?</i></h3>
-      <p> Click <a href="https://scriptobservatory.org/yara.html">here</a> to submit a Yara rule and be alerted when anything that matches it is reported. Retroactively scanning through past observations is coming soon.
+      <h3><i>Search by content:</i></h3>
+      <p> You can <a href="https://scriptobservatory.org/yara.html">subit a Yara Signature</a> to search through what's been seen and get alerts when new matches are reported.
+      <br><br>
+      <h3><i>Search while you browse the web:</i></h3>
+        <p>You can use this <a href="javascript:q=location.href;open('https://scriptobservatory.org/explore.html?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a> bookmarklet to run a search on whatever webpage you have open.
+        </p>
     </div>
     
     <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_HASH'" id="resource_query_section">
@@ -129,21 +133,11 @@
       </div>
 
       <div class="modal-body">
-        <h4><u>Observed Hashes</u></h4>
-        <table class="table-condensed table-hover" style="background-color:inherit;">
-          <span ng-if="webpageUrl != ''" ng-repeat="hash in currentObj.hashes | object2Array | orderBy:'-occur'"> 
-            <a href="#" ng-click="openObj(hash, 'hash', webpageUrl, resourceUrl);"> {[ hash.hash | limitTo:10 ]} ({[ hash.occur.toFixed(1) ]}%){[ $last ? '' : ', ']} </a>
-          </span>
-          <span ng-if="webpageUrl == ''">
-            To see the observed hashes for this script, you need to look at the results coming from a specific webpage. Viewing all hashes seen across all webpages is coming soon. 
-          </span>
-        </table>
-        <br>
         <h4><u>Actions</u></h4>
         <ul>
           <li> View <a target="_blank" href="{[ currentObj.url ]}">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
           <li ng-if="webpageUrl != ''"> View <a target="_blank" href="{[ webpageUrl ]}">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.url]}">all other webpages that have included this script by its URL</a></li>
+          <li> See <a href="https://scriptobservatory.org/explore.html?query={[currentObj.url]}">all other webpages that have included this script by its URL</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.url ]}">VirusTotal</a> </li>
         </ul>
       </div>
@@ -164,7 +158,7 @@
           <li> View <a href="https://scriptobservatory.org/resource-content/{[ currentObj.hash ]}" target="_blank">Archived Script Content</a> (if available)</li>
           <li ng-if="resourceUrl != ''"> View <a href="{[resourceUrl]}" target="_blank">Current Script Content</a> <i>(Warning: this links to the live site!)</i></li>
           <li ng-if="webpageUrl != ''"> View <a href="{[webpageUrl]}" target="_blank">Parent Webpage</a> <i>(Warning: this links to the live site!)</i></li>
-          <li> See <a href="https://scriptobservatory.org/search/?query={[currentObj.hash]}">all other websites that have included a script with this hash value</a></li>
+          <li> See <a href="https://scriptobservatory.org/explore.html?query={[currentObj.hash]}">all other websites that have included a script with this hash value</a></li>
           <li> View on <a target="_blank" href="https://www.virustotal.com/latest-scan/{[ currentObj.hash]}">VirusTotal</a> </li>
         </ul>
       </div>

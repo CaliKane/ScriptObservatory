@@ -120,7 +120,7 @@
             circles
                 .attr("cx", function(d, i) { return xScale(d['date']); })
                 .attr("cy", 40 + j*height_per_row)
-                .attr("r", function(d) { return 3 + d['n']; })
+                .attr("r", function(d) { return 4.5 + d['n']/5.0; })
                 .style("fill", function(d, i) { return get_color_from_hash(d['details'][0]['hash']); })
                 .on("click", click)
                 .on("mouseover", mouseover)
@@ -171,7 +171,7 @@
                 if (clickable){
                     out += "<a href='https://scriptobservatory.org/explore.html?query=" + detailsList[i].url + "'>" + truncated_url + "</a> (";
                     out += "<a href='https://scriptobservatory.org/explore.html?query=" + detailsList[i].hash + "'>" + truncated_hash + "</a>, ";
-                    out += "<a href='https://scriptobservatory.org/resource-content/" + detailsList[i].hash + "'>archived</a>)";
+                    out += "<a href='https://scriptobservatory.org/resource-content/" + detailsList[i].hash + "'>archived source</a>)";
                 }
                 else{
                     out += truncated_url + " (" + truncated_hash + ")";
