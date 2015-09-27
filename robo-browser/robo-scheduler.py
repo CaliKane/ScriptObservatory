@@ -37,7 +37,7 @@ def add_list_file(list_filename, priority):
         else:
             logging.error(r.status_code)
         
-        time.sleep(0.25)
+        time.sleep(0.75)
 
 
 if __name__ == "__main__":
