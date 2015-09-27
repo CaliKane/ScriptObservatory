@@ -93,6 +93,7 @@ def yara_retroscan_for_rule(rule_id):
         yara_rule = yara.compile(sources=sources)
     except:
         # TODO: this should never happen, so this email should go to the site admin
+        # TODO: this should not catch any/all exceptions!
         sendmail(rule.email, 'YARA Retroscan Results (error in rule compilation!)', render_template('email/yara_error.html'))
         return
 
