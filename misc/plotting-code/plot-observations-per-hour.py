@@ -38,7 +38,7 @@ xmin, xmax, ymin, ymax = plt.axis()
 plt.axis([xmin, xmax, 0, ymax])
 
 n_entries = len(x)
-n_labels = len(axes.get_xticklabels()) - 1
+n_labels = len(axes.get_xticklabels()) - 2
 time_labels = []
 for i in range(n_entries):
     if i % (n_entries // n_labels) == 0:
