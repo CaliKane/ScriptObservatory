@@ -142,19 +142,19 @@ function initialize_data(resp_data){
     var x = d3.scale.linear().range([0, width - NAME_OFFSET]);
 
     if (first_t_in_days_ago >= 3*30){
-        x.domain([-end_day/30, 0]);
+        x.domain([end_day/30, 0]);
         x_label = "months ago";
     }
     else if (first_t_in_days_ago > 3*7){ 
-        x.domain([-end_day/7, 0]);
+        x.domain([end_day/7, 0]);
         x_label = "weeks ago";
     }
     else if (first_t_in_days_ago == 0){
-        x.domain([-end_day, 0]);
+        x.domain([end_day, 0]);
         x_label = "(first seen today)";
     }
     else {
-        x.domain([-end_day, 0]);
+        x.domain([end_day, 0]);
         x_label = "days ago";
     }
 
