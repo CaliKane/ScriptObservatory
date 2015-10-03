@@ -3,6 +3,7 @@
 
 import json
 import logging
+import psycopg2
 import requests
 import sys
 import time
@@ -11,33 +12,15 @@ import time
 API_BASE_URL = "https://www.scriptobservatory.org/api/robotask"
 
 
-#
-# SUGGESTED PRIORITIES:
-#  1 --> manually added sites
-#  2 --> daily sites
-#  3 --> bi-weekly sites
-#  4 --> weekly sites
-#  5 --> monthly sites
-#
-
 def add_list_file(list_filename, priority):
-    logging.warn("adding {0} at priority {1}".format(list_filename, priority))
     for line in open(list_filename, 'r'):
         url = line.strip()
 
         task = {'url': url, 'priority': priority}
 
-        r = requests.post(API_BASE_URL, 
-                          data=json.dumps(task), 
-                          headers={"content-type": "application/json"}, 
-                          verify=False)
-
-        if r.status_code == 201:
-            logging.warn("success!")
-        else:
-            logging.error(r.status_code)
+        cursor.execute("INSERT INTO robotask(url, priority) VALUES(%s,%s)", (url, priority))
         
-        time.sleep(0.75)
+        time.sleep(0.001)
 
 
 if __name__ == "__main__":
@@ -49,10 +32,16 @@ if __name__ == "__main__":
     
     for arg in sys.argv[2:]:
         # we make sure the file is really a domain list by checking for the .list ending
-        if not arg.endswith(".list"):
-            continue
-        
-        add_list_file(arg, priority)
+        if arg.endswith(".list"):
+            logging.warn("adding {0} at priority {1}".format(arg, priority))
+            
+            conn = psycopg2.connect("postgres://postgres@/postgres")
+            cursor = conn.cursor()
     
-    logging.warn("done!")
+            add_list_file(arg, priority)
+    
+            conn.commit()
+            conn.close()
+        
+            logging.warn("done!")
 
