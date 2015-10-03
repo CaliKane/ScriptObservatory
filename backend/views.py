@@ -468,7 +468,7 @@ def get_webpage_view_data(hash):
     #
     # TODO: do matching against *any*, not just first entry 
     # TODO: clean/refactor and only define one side of the equals sign
-    MAX_ALIGNMENT_TIME = 15
+    MAX_ALIGNMENT_TIME = 25
     start_time = time.time()
     
     if time.time() - start_time < MAX_ALIGNMENT_TIME:
