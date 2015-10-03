@@ -373,6 +373,15 @@ def search_api():
 
 @app.route('/webpage/<hash>', methods=['GET'])
 def webpage_view(hash):
+    webpage = Webpage.query.filter(Webpage.id == hash).first()
+    if webpage is None:
+        return 'No result found.'
+
+    return render_template('webpage.html', webpage=webpage)
+
+
+@app.route('/webpage/<hash>/data', methods=['GET'])
+def get_webpage_view_data(hash):
     def date_collision_present(list_a, list_b):
         """ detect if any two objects from two different lists contain the same 'date'
             (helper function for resource alignment algorithm) """ 
@@ -529,10 +538,8 @@ def webpage_view(hash):
     final_resources = sorted(final_resources, 
                              key=functools.cmp_to_key(view_list_sorter))
     
-    return render_template('webpage.html',
-                           webpage=webpage,
-                           json_data=json.dumps(final_resources),
-                           first_t_in_days_ago=first_t_in_days_ago)
+    return json.dumps({'json_data': final_resources, 
+                       'first_t_in_days_ago': first_t_in_days_ago})
 
 
 @app.route('/explore.html')

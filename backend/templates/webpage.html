@@ -22,46 +22,6 @@
         return document.getElementById(id);
     }
 
-    var first_t_in_days_ago = {{ first_t_in_days_ago }};
-    var data = {{ json_data | safe }};
-
-    if (data.length == 0){
-        e("info").innerHTML = "no scripts seen";
-    }
-
-    var margin = {top: 20, right: 20, bottom: 20, left: 20};
-    var height_per_row = 15;
-    var width = 900;
-    var height = height_per_row*data.length + 45;
-    var start_day = 0;
-    var end_day = first_t_in_days_ago;
-
-    var c = d3.scale.category20c();
-
-    var NAME_OFFSET = 350;
-    var x_label;
-    var x = d3.scale.linear().range([0, width - NAME_OFFSET]);
-
-    if (first_t_in_days_ago >= 3*30){
-        x.domain([-end_day/30, 0]);
-        x_label = "months ago";
-    }
-    else if (first_t_in_days_ago > 3*7){ 
-        x.domain([-end_day/7, 0]);
-        x_label = "weeks ago";
-    }
-    else if (first_t_in_days_ago == 0){
-        x.domain([-end_day, 0]);
-        x_label = "(first seen today)";
-    }
-    else {
-        x.domain([-end_day, 0]);
-        x_label = "days ago";
-    }
-
-    var formatDays = d3.format("d");
-    var xAxis = d3.svg.axis().scale(x).orient("top").tickFormat(formatDays);
-
     function truncate(str, maxLength) {
         str = str.trim()
         if(str.length > maxLength) {
@@ -71,27 +31,75 @@
         return str;
     }
 
-    var svg = d3.select("plot").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .attr("font-family", "Courier, monospace")
-        .style("background-color", "#F0F0F0")
-        //.style("margin-left", margin.left + "px")
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
     function get_color_from_hash(h){
         var color = "#" + h.substring(0,6);
-        console.log(color);
         // temp hack to reduce the very light-colored colors chosed
         color = color.replace("f", "5");
         color = color.replace("e", "4");
         color = color.replace("d", "3");
-        console.log(color);
         return color;
     }
-        
+    
+    function httpGet(url){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", url, false);
+        xmlHttp.send();
+        return xmlHttp.responseText;
+    }
+
     function initialize_data(){
+        var x = httpGet("https://scriptobservatory.org/webpage/{{ webpage.id }}/data");
+        console.log(x);      
+        x = JSON.parse(x);
+        var first_t_in_days_ago = x["first_t_in_days_ago"];
+        var data = x["json_data"];
+
+        if (data.length == 0){
+            e("info").innerHTML = "no scripts seen";
+        }
+
+        var margin = {top: 20, right: 20, bottom: 20, left: 20};
+        var height_per_row = 15;
+        var width = 900;
+        var height = height_per_row*data.length + 45;
+        var start_day = 0;
+        var end_day = first_t_in_days_ago;
+
+        var c = d3.scale.category20c();
+
+        var NAME_OFFSET = 350;
+        var x_label;
+        var x = d3.scale.linear().range([0, width - NAME_OFFSET]);
+
+        if (first_t_in_days_ago >= 3*30){
+            x.domain([-end_day/30, 0]);
+            x_label = "months ago";
+        }
+        else if (first_t_in_days_ago > 3*7){ 
+            x.domain([-end_day/7, 0]);
+            x_label = "weeks ago";
+        }
+        else if (first_t_in_days_ago == 0){
+            x.domain([-end_day, 0]);
+            x_label = "(first seen today)";
+        }
+        else {
+            x.domain([-end_day, 0]);
+            x_label = "days ago";
+        }
+
+        var formatDays = d3.format("d");
+        var xAxis = d3.svg.axis().scale(x).orient("top").tickFormat(formatDays);
+
+        var svg = d3.select("plot").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("font-family", "Courier, monospace")
+            .style("background-color", "#F0F0F0")
+            //.style("margin-left", margin.left + "px")
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
         var xScale = d3.scale.linear().domain([start_day, end_day]).range([NAME_OFFSET, width]);
         var g = svg.append("g").attr("class","resource");
         
@@ -132,7 +140,7 @@
                 .attr("class","label")
                 .text(truncate(data[j]['name'], 37))
                 .style("fill", function(d, i) { return j; })
-        };
+        }
 
         function arrayContains(arr, val, equals) {
             var i = arr.length;
@@ -213,10 +221,9 @@
         }
     };
 
-    if (data.length != 0){
-        var view_locked = false;
-        initialize_data();
-    }
+    var view_locked = false;
+    
+    setTimeout(initialize_data, 50);
 
 </script>
 
