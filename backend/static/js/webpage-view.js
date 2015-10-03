@@ -98,6 +98,20 @@ function mouseout(p) {
     }
 }
 
+function getWidth() {
+  if (self.innerHeight) {
+    return self.innerWidth;
+  }
+
+  if (document.documentElement && document.documentElement.clientHeight) {
+    return document.documentElement.clientWidth;
+  }
+
+  if (document.body) {
+    return document.body.clientWidth;
+  }
+}
+
 function initialize_data(resp_data){
     e("progress").style.display = "none";
 
@@ -110,7 +124,13 @@ function initialize_data(resp_data){
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20};
     var height_per_row = 15;
+    
     var width = 900;
+    var true_width = getWidth();
+    if (true_width < 1200){
+        width = true_width * 0.75;
+    }
+
     var height = height_per_row*data.length + 45;
     var start_day = 0;
     var end_day = first_t_in_days_ago;
