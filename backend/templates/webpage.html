@@ -10,9 +10,17 @@
 <div align="center">
 <h3> Website: <b>{{ webpage.url }}</b></h3>
 <p id="info">
+  <pre id="progress">
+    <br>
+    <img src="/img/wait30.gif"></img>
+    <br>
+  </pre>
+  
   <plot></plot>
+  
   Hover over a dot to see more information. Click it to lock the text and make the links clickable. <br>
   (If you find a webpage where the visualization looks bad, send me an email.)
+  
   <pre id="cur"></pre>
 </p>
 
@@ -40,19 +48,28 @@
         return color;
     }
     
-    function httpGet(url){
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", url, false);
-        xmlHttp.send();
-        return xmlHttp.responseText;
-    }
+    var xmlHttp = new XMLHttpRequest();
+    
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+               var obj = JSON.parse(xmlHttp.responseText);
+               initialize_data(obj); 
+            }
+        }
+    };
 
-    function initialize_data(){
-        var x = httpGet("https://scriptobservatory.org/webpage/{{ webpage.id }}/data");
-        console.log(x);      
-        x = JSON.parse(x);
-        var first_t_in_days_ago = x["first_t_in_days_ago"];
-        var data = x["json_data"];
+    function get_data(){
+        var url = "https://scriptobservatory.org/webpage/{{ webpage.id }}/data";
+        xmlHttp.open("GET", url);
+        xmlHttp.send();
+    }   
+
+    function initialize_data(resp_data){
+        e("progress").style.display = "none";
+
+        var first_t_in_days_ago = resp_data["first_t_in_days_ago"];
+        var data = resp_data["json_data"];
 
         if (data.length == 0){
             e("info").innerHTML = "no scripts seen";
@@ -223,7 +240,7 @@
 
     var view_locked = false;
     
-    setTimeout(initialize_data, 50);
+    setTimeout(get_data, 50);
 
 </script>
 
