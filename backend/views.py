@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask.ext.restless import APIManager
 import yara
+from werkzeug.contrib.cache import SimpleCache
 
 import backend
 from backend import app
@@ -26,6 +27,21 @@ from backend.lib import sendmail
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'external'))
 import external.jsbeautifier
+
+
+CACHE_TIMEOUT = 30
+class cached(object):
+    def __init__(self, timeout=None):
+        self.timeout = timeout or CACHE_TIMEOUT
+
+    def __call__(self, f):
+        def decorator(*args, **kwargs):
+            response = cache.get(request.path)
+            if response is None:
+                response = f(*args, **kwargs)
+                cache.set(request.path, response, self.timeout)
+            return response
+        return decorator
 
 
 def memoize(f):
@@ -174,6 +190,7 @@ def is_valid_sha256(h, regex=re.compile(r'^[a-f0-9]{64}$').search):
 
 
 # TODO: handle case where it's a 'sub_frame' type instead of 'script'
+@cached()
 @app.route('/resource-content/<path:hash>', methods=['GET'])
 def get_resource_content(hash, beautify=True):
     _, filename = get_resource_content_location(hash)
@@ -306,6 +323,7 @@ def resource_content_api_post():
     return jsonify(response)
 
 
+@cached()
 @app.route('/api/search', methods=['GET'])
 def search_api():
     url = request.args.get('url')
@@ -371,6 +389,7 @@ def search_api():
     return jsonify(json)
 
 
+@cached()
 @app.route('/webpage/<hash>', methods=['GET'])
 def webpage_view(hash):
     webpage = Webpage.query.filter(Webpage.id == hash).first()
@@ -380,6 +399,7 @@ def webpage_view(hash):
     return render_template('webpage.html', webpage=webpage)
 
 
+@cached()
 @app.route('/webpage/<hash>/data', methods=['GET'])
 def get_webpage_view_data(hash):
     def date_collision_present(list_a, list_b):
@@ -542,21 +562,25 @@ def get_webpage_view_data(hash):
                        'first_t_in_days_ago': first_t_in_days_ago})
 
 
+@cached()
 @app.route('/explore.html')
 def explore():
     return render_template('explore.html')
 
 
+@cached()
 @app.route('/faqs.html')
 def faqs():
     return render_template('faqs.html')
 
 
+@cached()
 @app.route('/scan.html')
 def scan():
     return render_template('scan.html')
 
 
+@cached()
 @app.route('/')
 def index():
     return render_template('index.html')
