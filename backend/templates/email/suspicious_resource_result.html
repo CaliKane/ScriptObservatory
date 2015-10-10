@@ -1,0 +1,20 @@
+A suspicious resource was seen being included on a page you're monitoring!
+
+<br><br>
+
+Someone viewed {{ url }} and resources were seen coming from:
+
+<ul>
+{% for d in domains -%}
+    <li> {{ d }} </li>
+{% endfor -%}
+</ul>
+
+The ones that appeared to be suspicious were:
+
+<ul>
+{% for s in suspicious -%}
+    <li> {{ s }} </li>
+{% endfor -%}
+</ul>
+

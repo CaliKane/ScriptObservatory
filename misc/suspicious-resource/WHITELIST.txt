@@ -1,4 +1,5 @@
 embed.ly
+digicert.com
 conac.cn
 elocallink.tv
 sinajs.cn
@@ -440,3 +441,11 @@ domdex.com
 contobox.com
 connexity.net
 brsrvr.com
+cachefly.net
+campuslabs.com
+iconosquare.com
+netdna-ssl.com
+candidcareer.com
+careerspots.com
+cideronline.org
+serialssolutions.com

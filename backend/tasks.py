@@ -4,6 +4,7 @@ import hashlib
 import os
 import sqlalchemy
 import sys
+from urllib.parse import urlparse
 
 from celery import Celery
 from celery.decorators import task
@@ -12,7 +13,30 @@ import yara
 
 from backend import app, db
 from backend.lib import sendmail
-from backend.models import Resource, YaraRuleset
+from backend.models import Resource, Webpage, Pageview, YaraRuleset
+
+
+TLDS = ['.' + line.strip() for line in open(app.config['TLD_LIST_FILE'], 'r')]
+WHITELIST = [line.strip() for line in open(app.config['WHITELIST_FILE'], 'r')]
+
+
+class Memoize:
+    def __init__(self, f):
+        self.f = f
+        self.memo = {}
+    def __call__(self, *args):
+        if not args in self.memo:
+            self.memo[args] = self.f(*args)
+        return self.memo[args]
+
+def get_root_domain(host):
+    for tld in TLDS:
+        if host.endswith(tld):
+            host = host[:-len(tld)].split('.')[-1] + tld
+            return host
+    return host
+
+get_root_domain = Memoize(get_root_domain)
 
 
 def sha256(string):
@@ -94,7 +118,7 @@ def yara_retroscan_for_rule(rule_id):
     except:
         # TODO: this should never happen, so this email should go to the site admin
         # TODO: this should not catch any/all exceptions!
-        sendmail(rule.email, 'YARA Retroscan Results (error in rule compilation!)', render_template('email/yara_error.html'))
+        sendmail('scriptobservatory@gmail.com', 'YARA Retroscan Results (error in rule compilation!)', render_template('email/yara_error.html'))
         return
 
     os.nice(5)
@@ -173,3 +197,47 @@ def yara_scan_file(path):
     for email in emails:
         yara_scan_file_for_email.delay(email[0], path)
 
+
+@task
+def find_suspicious(pv_id):
+    pageviews = Pageview.query.filter(Pageview.id == pv_id).all()
+    suspicious = []
+
+    if not pageviews:
+        print('ERROR: no pageview found with id {}'.format(pv_id))
+    elif len(pageviews) > 1:
+        print('ERROR: >1 pageviews found with id {}'.format(pv_id))
+    else:
+        pageview = pageviews[0]
+        hostname = urlparse(pageview.url).netloc
+        root_domain = get_root_domain(hostname)
+
+        domains = [get_root_domain(urlparse(rsc.url).netloc) for rsc in pageview.resources]
+ 
+        # dedup the list of domains and drop all empty values:
+        domains = list(set(filter(lambda x: x, domains)))
+
+        # remove any domains that are rooted in the WHITELIST or the current root_domain:
+        suspicious = list(filter(lambda x: not any([x.endswith(y) for y in WHITELIST + [root_domain]]), domains))
+ 
+        if suspicious:
+            print("FOUND SUSPICIOUS DOMAINS: {}".format(suspicious))       
+            sendmail('scriptobservatory@gmail.com',
+                     'Suspicious Resource Result! {}'.format(pageview.url),
+                     render_template('email/suspicious_resource_result.html', url=pageview.url, suspicious=suspicious, domains=domains))
+        else:
+             print("Didn't find any suspicious domains")
+   
+    return suspicious
+
+
+@task
+def schedule_suspicious_scan(url_substr, start_n_hours_ago=1):
+    start_t = datetime.datetime.now() - datetime.timedelta(hours=start_n_hours_ago)
+    print("cur time {0}, start time {1}".format(datetime.datetime.now(), start_t))
+    pageviews = Pageview.query.filter(Pageview.date > start_t).filter(Pageview.url.like("%{}%".format(url_substr))).all()
+    print("got {} pageviews".format(len(pageviews)))
+    
+    for pv in pageviews:
+        print("scheduling pv_id {}".format(pv.id))
+        find_suspicious.delay(pv.id)
