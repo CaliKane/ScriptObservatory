@@ -16,8 +16,12 @@ from backend.lib import sendmail
 from backend.models import Resource, Webpage, Pageview, YaraRuleset
 
 
-TLDS = ['.' + line.strip() for line in open(app.config['TLD_LIST_FILE'], 'r')]
-WHITELIST = [line.strip() for line in open(app.config['WHITELIST_FILE'], 'r')]
+if 'TRAVIS' not in os.environ:
+    TLDS = ['.' + line.strip() for line in open(app.config['TLD_LIST_FILE'], 'r')]
+    WHITELIST = [line.strip() for line in open(app.config['WHITELIST_FILE'], 'r')]
+else:
+    TLDS = []
+    WHITELIST = []
 
 
 class Memoize:
