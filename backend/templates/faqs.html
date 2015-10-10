@@ -56,7 +56,14 @@
       <img src="https://scriptobservatory.org/img/new-entries-per-hour.png"></img>
       <br><br>
       <img src="https://scriptobservatory.org/img/unique-webpages-over-time.png"></img>
-      
       </div>
+      <br><br> 
+	<h3><i>How does ScriptObservatory handle minified / obfuscated JavaScript?</i></h3>
+		When you view the content of a piece of JavaScript, it's cleaned up with <a href="https://github.com/beautify-web/js-beautify" target="_blank">js-beautify</a> before it's presented to you. This does not affect the stored copy, however, and neither the extension nor the backend will do any unpacking, de-obfuscation, dynamic analysis on the sample at the time it's reported. 
+		<br><br>
+		This means the hashes will not match between the packed version of a piece of JavaScript and the original, and the two samples will ultimately considered to be different.
+		<br><br>
+		Depending on the packer, you may still be able to identify and "catch" both pieces of JavaScript using a single, well-written <a href="https://plusvic.github.io/yara/" target="_blank">Yara Rule</a>.
+      <br><br>
     </p>
 {% endblock %}
