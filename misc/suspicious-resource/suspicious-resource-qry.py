@@ -2,32 +2,45 @@
 #
 
 import sys
-
 from urllib.parse import urlparse
 
 from backend.models import Webpage, Pageview, Script
 
 
-WEBPAGE_FILE = sys.argv[1]
-WHITELIST_FILE = sys.argv[2]
+class Memoize:
+	def __init__(self, f):
+        self.f = f
+        self.memo = {}
+    def __call__(self, *args):
+        if not args in self.memo:
+            self.memo[args] = self.f(*args)
+        return self.memo[args]
 
+def get_root_domain(host, tlds):
+    for tld in tlds:
+        if host.endswith(tld):
+            host = host[:-len(tld)].split('.')[-1] + tld
+            return host
+    return host
 
-def run_suspicious_search(url):
+def run_suspicious_search(url, tlds):
     webpages = Webpage.query.filter(Webpage.url.like("%{}%".format(url))).all()
     
     results = {}
     for r in webpages:
-        # TODO: fix this root-domain parsing
-        hostname = urlparse(r.url).netloc.split('.')
-        hostname = ".".join(len(hostname[-2]) < 4 and hostname[-3:] or hostname[-2:])
+        hostname = urlparse(r.url).netloc
+        root_domain = get_root_domain(hostname, tlds)
+        print("{0} --> {1}".format(hostname, root_domain))
 
         domains = []
         for pv in r.pageviews:
-            domains += [urlparse(script.url).netloc for script in pv.scripts]
-            
+            domains += [get_root_domain(urlparse(script.url).netloc, tlds) for script in pv.scripts]
+ 
+        # dedup the list of domains and drop all empty values:
         domains = list(set(filter(lambda x: x, domains)))
 
-        domains = list(filter(lambda x: not any([x.endswith(y) for y in WHITELIST + [hostname]]), domains))
+		# remove any domains that are rooted in the WHITELIST or the current root_domain:
+        domains = list(filter(lambda x: not any([x.endswith(y) for y in WHITELIST + [root_domain]]), domains))
         
         if domains:
             results[r.url] = domains
@@ -35,13 +48,19 @@ def run_suspicious_search(url):
     return results
 
 
-WHITELIST = []
-for line in open(WHITELIST_FILE, 'r'):
-    WHITELIST.append(line.strip())
+if __name__ == "__main__":
+	get_root_domain = Memoize(get_root_domain)
 
-for webpage in open(WEBPAGE_FILE, 'r'):
-    out = run_suspicious_search(webpage.strip())
-    
-    for k in out.keys():
-        if out[k]:
-            print("{0}: {1}".format(k, out[k]))
+	WEBPAGE_FILE = sys.argv[1]
+	WHITELIST_FILE = sys.argv[2]
+	SORTED_TLD_FILE = sys.argv[3]
+
+	tlds = ['.' + line.strip() for line in open(SORTED_TLD_FILE, 'r')]
+	whitelist = [line.strip() for line in open(WHITELIST_FILE, 'r')]
+
+	for webpage in open(WEBPAGE_FILE, 'r'):
+		results = run_suspicious_search(webpage.strip())
+		
+		for k in results.keys():
+			if out[k]:
+				print("{0}: {1}".format(k, out[k]))
