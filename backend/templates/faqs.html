@@ -8,46 +8,61 @@
       <br><br>
       
       <h3><i>How does the Chrome Extension collect the data?</i></h3>
-      The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script" or "subframe". The extension stops the 
-      browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object 
-      back to the browser.
+	  The extension is notified every time your browser is about to make a request for an object that Chrome classifies as a "script" or "sub_frame". The extension stops the browser from making the request and makes its own request instead. Once it receives the content, it calculates a hash of the data and passes the object back to the browser.
       <br><br>
-      This way of grabbing the content isn't ideal performance-wise and will hopefully be improved soon. Documentation of design decisions can be found directly in the source 
-      code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/js/extension.js" target="_blank">chrome-extension/js/extension.js</a>
-      contains all the non-crypto code for the extension.)
+	  This way of grabbing the content isn't ideal, however documentation of design decisions can be found directly in the source code. (<a href="https://github.com/andy11/ScriptObservatory/blob/master/chrome-extension/js/extension.js" target="_blank">chrome-extension/js/extension.js</a> contains all code not related to crypto or the UI.)
       <br><br>
-      With the ScriptObservatory Chrome extension installed, your browser will send these three pieces of information to the ScriptObservatory backend each time you view a webpage:
-      <ul>
-        <li>The URL of the webpage</li>
-        <li>The URL of each piece of JavaScript and iframe included on the webpage</li>
-        <li>The SHA-256 hash of the content of each script and iframe you observe</li>
+      
+	  <h3><i>What does the Chrome Extension do to protect its users' privacy?</i></h3>
+	 
+      It should first be said that, in its current state, there should be no users.
+	  <b>I do not currently use it when I browse the internet and would not recommend it to anyone.</b>
+	  (All "observations" coming from non-whitelisted IP addresses are blocked and will stay blocked
+	  until it's ready to be released anyway.)
+
+	  <br><br>
+
+ 	  That said, here is some information about the general architecture:
+
+ 	  <br><br>
+
+	  With the ScriptObservatory Chrome extension installed, your browser will send these
+	  three pieces of information to the ScriptObservatory backend each time you view a webpage:
+ 	  
+	  <ul>
+		<li>The URL of the webpage</li>
+		<li>The URL of each piece of JavaScript and each iframe included in the webpage</li>
+		<li>The SHA-256 hash of the content of each script and iframe you observe</li>
+	  </ul>
+
+	  You can optionally have the Chrome extension send the full content of the scripts you
+	  observe. This will be turned off by default in all released versions.
+      <br><br>
+
+	  Here are some steps that have been taken to make this process as trustworthy as possible:
+
+	  <ul>
+	  <li>The connection from you to the ScriptObservatory backend will always be 
+   	  	  <a href="https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org">encrypted</a>.</li>
+	  <li>Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded
+   		  in the database. Your observations will be immediately mixed in and the time values will be
+		  <a href="https://github.com/andy11/ScriptObservatory/issues/43">binned into 12-hour bins</a>. 
+   		  If you see an IP address or User ID value in a URL string, let me know
+		  and I'll remove them and blacklist further reports for that website. </li>
+	  <li>The source code for both the client and the server will always be available for you to 
+   		  review. (See the <a href="https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension">chrome-extension/</a>
+   		  and <a href="https://github.com/andy11/ScriptObservatory/tree/master/backend">backend/</a> directories to get started.) </li>
       </ul>
-      <br>
-      <h3><i>Can the ScriptObservatory Chrome Extension block these scripts before I run them?</i></h3>
-      That's <a href="https://github.com/andy11/ScriptObservatory/blob/master/README.md#roadmap" target="_blank">on the roadmap</a>.
-      <br><br>
-      <h3><i>What does the Chrome Extension do to protect its users' privacy?</i></h3>
-      <ul>
-        <li>
-          The connection from you to the ScriptObservatory backend will always be 
-          <a href="https://www.ssllabs.com/ssltest/analyze.html?d=scriptobservatory.org" target="_blank">encrypted with TLS</a>. 
-        </li>
-        <li>
-          Unless they're present in the URLs, no IP addresses or "User ID" values are ever recorded in the database. Your observations will be immediately mixed in with those of everyone else. If you see an IP address or User ID value in a URL string that made it past the filters, let me know and I'll remove the records and blacklist further reports for that website.</li>
-        <li>
-          The source code for both the client and the server will always be available for you to review.
-          (See the <a href="https://github.com/andy11/ScriptObservatory/tree/master/chrome-extension" target="_blank">chrome-extension/</a> and 
-          <a href="https://github.com/andy11/ScriptObservatory/tree/master/backend" target="_blank">backend/</a> directories to get started.)
-        </li>
-      </ul>
-      If you have suggestions for ways to further improve, get in touch!
+      
+	 If you have suggestions for ways to further improve, please <a href="mailto:scriptobservatory@gmail.com">get in touch</a>!
      <br><br>
      <h3><i>What have you found so far?</i></h3>
       As of 2015-08-13, the record contains (at least) 91 webpages serving malicious content. (Where "malicious content" roughly means "something at least as bad as exploit kits like Angler, Nuclear, etc.".)
      <br><br>
       I'd like to do some kind of A/B testing to see if notifying webpage owners that their sites are serving exploits causes them to remediate faster, but I don't have enough time. <i>If you'd be interested in helping out with this, <a href="https://github.com/andy11/ScriptObservatory/issues/34" target="_blank">get in touch!</a></i>
      <br><br>
-     <h3><i>How much data have you collected?</i></h3>
+     
+	  <h3><i>How much data have you collected?</i></h3>
       I started scanning in April 2015. Here are some plots that show the amount that's been collected:
       <br><br>
       <div align="center">
@@ -59,11 +74,13 @@
       </div>
       <br><br> 
 	<h3><i>How does ScriptObservatory handle minified / obfuscated JavaScript?</i></h3>
-		When you view the content of a piece of JavaScript, it's cleaned up with <a href="https://github.com/beautify-web/js-beautify" target="_blank">js-beautify</a> before it's presented to you. This does not affect the stored copy, however, and neither the extension nor the backend will do any unpacking, de-obfuscation, dynamic analysis on the sample at the time it's reported. 
+		When you view the archived content of a piece of JavaScript, you're shown the original content as well as a version that's been cleaned up with <a href="https://github.com/beautify-web/js-beautify" target="_blank">js-beautify</a>. Only the original content is stored, however, and neither the extension nor the backend will do any unpacking, de-obfuscation, or dynamic analysis on the sample at the time it's reported. 
 		<br><br>
-		This means the hashes will not match between the packed version of a piece of JavaScript and the original, and the two samples will ultimately considered to be different.
-		<br><br>
-		Depending on the packer, you may still be able to identify and "catch" both pieces of JavaScript using a single, well-written <a href="https://plusvic.github.io/yara/" target="_blank">Yara Rule</a>.
+		Depending on the packer, you may still be able to identify and "catch" both pieces of JavaScript as they're reported using a single, well-written <a href="https://plusvic.github.io/yara/" target="_blank">Yara Rule</a>.
+      <br><br>
+
+      <h3><i>Can the ScriptObservatory Chrome Extension block scripts instead of running them?</i></h3>
+      That's <a href="https://github.com/andy11/ScriptObservatory/blob/master/README.md#roadmap" target="_blank">on the roadmap</a> but there's no timeline / ETA at this point.
       <br><br>
     </p>
 {% endblock %}
