@@ -55,7 +55,7 @@ function printDetails(detailsList, clickable){
         var truncated_hash = detailsList[i].hash.substr(0,8);
 
         if (clickable){
-            out += "<a href='https://scriptobservatory.org/explore.html?query=" + detailsList[i].url + "'>" + truncated_url + "</a> (";
+            out += "<a href='https://scriptobservatory.org/explore.html?resource_query=" + encodeURIComponent(detailsList[i].url) + "'>" + truncated_url + "</a> (";
             out += "<a href='https://scriptobservatory.org/explore.html?query=" + detailsList[i].hash + "'>" + truncated_hash + "</a>, ";
             out += "<a href='https://scriptobservatory.org/resource-content/" + detailsList[i].hash + "'>archived source</a>)";
         }
@@ -119,7 +119,7 @@ function initialize_data(resp_data){
     var data = resp_data["json_data"];
 
     if (data.length == 0){
-        e("info").innerHTML = "no scripts seen";
+        e("info").innerHTML = "<br>No scripts or iframes have ever been seen on this webpage. <br> A GitHub issue to still show dots for each time the page was observed is open <a href='https://github.com/andy11/ScriptObservatory/issues/44' target='_blank'>here</a>.";
     }
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20};
