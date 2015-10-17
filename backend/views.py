@@ -251,7 +251,7 @@ def resource_content_api_get():
                         content = html.escape(content)
             else:
                 content = 'true'
-                yara_scan_file.delay(filename)  # adding this .delay() call here
+                #yara_scan_file.delay(filename)  # adding this .delay() call here
                                                 # is not ideal, but works for now.
                                                 # we want to re-scan hashes when
                                                 # they're observed for the 2nd, 3rd, etc
