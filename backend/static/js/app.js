@@ -208,6 +208,11 @@ app.controller("AppCtrl", function($http, $scope, $modal){
             $scope.submitQueryForm(q);
             $scope.explore_tab = true;
         }
+		else if ("resource_query" in queryDict){
+			var q = queryDict["resource_query"];
+            $scope.makeResourceQueryByUrl(q);
+            $scope.explore_tab = true;
+		}
     }
 
     // make "all" the default time range choice
@@ -226,8 +231,8 @@ app.controller("AppCtrl", function($http, $scope, $modal){
     }
 
     $scope.submitQuery = function(query){
-        var date_option = $scope.dateRangeChoice;
         /*
+        var date_option = $scope.dateRangeChoice;
         var current_time = (new Date()).getTime();
         var min_time = 0;
         

@@ -40,7 +40,7 @@
       </ul>
       <br>
       <h3><i>Search by content:</i></h3>
-      <p> You can submit a <a href="https://plusvic.github.io/yara/" target="_blank">Yara Signature </a>to search through what's been seen and get alerts when new matches are reported. To get started, <a href="mailto:scriptobservatory@gmail.com">send me an email</a>.
+      <p> You can submit a <a href="https://plusvic.github.io/yara/" target="_blank">Yara Signature </a>to search through what's been seen and get alerts when anything that matches is reported. To get started, <a href="mailto:scriptobservatory@gmail.com">send me an email</a>.
       <br><br>
       <h3><i>Search while you browse the web:</i></h3>
         <p>You can use this <a href="javascript:q=location.href;open('https://scriptobservatory.org/explore.html?query='+encodeURIComponent(q));" class='bookmarklet'>analyze page</a> bookmarklet to run a search on whatever webpage you have open.
@@ -59,7 +59,7 @@
     </div>
     
     <div ng-show="QRY_STATUS == 'HAVE_SCRIPT_RESULTS_URL'" id="resource_query_section">
-      <p> The URL <a href="#" ng-click="openResource({'url':app.resourceQuery}, '')">{[ app.resourceQuery ]}</a> has been seen on:
+      <p> Scripts or iframes with that URL have been seen on:
       </p>
         <ul>
           <li ng-repeat="site in app.resourceQueryResults">
@@ -83,11 +83,11 @@
     </div>
 
     <div ng-show="QRY_STATUS == 'QRY_ERROR'" align="center">
-      <span> Something went wrong. An error report has been logged. <br><br> Either enter a more specific query, or, if you use an ad-blocking extension like uBlock that blocks requests based on URL, check your console. <br> (these are the most common causes of this error) </span>
+      <span> Something went wrong. An error report has been logged. <br><br> <b>If you use an ad-blocking extension that blocks requests based on URL, check your console.</b> (this is the most common cause of this error, you'll need to re-run the search with that functionality disabled) </span>
     </div>
 
     <div ng-show="QRY_STATUS == 'NO_RESULTS'" align="center">
-      <span> No results were found. </span>
+      <span> No results were found. <br><br> <b>If you were searching for a full URL, try searching for just the domain. </b>(for example, search for "scriptobservatory.org" instead of "https://www.scriptobservatory.org/")</span>
     </div>
 
     <br>
